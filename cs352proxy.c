@@ -87,10 +87,10 @@ int initLocalParams() {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
 	}
-	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr->ifr_addr)->sin_addr), &local_info->listenIP);
+	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
 	/* Obtain local MAC ID for tap10 */
-	strncpy(ifr->ifr_name, "tap10", IFNAMSIZ-1);
+	strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
 	if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
 		perror("ioctl(SIOCGIFHWADDR)");
 		return EXIT_FAILURE;
@@ -99,7 +99,7 @@ int initLocalParams() {
 	local_info->ethMAC = ifr->ifr_hwaddr;
 
 	if (debug) {
-		sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
+		// sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
 
 		printf("Interface Name: %s | %s | Address: %s:%d\n", ifr->ifr_name, ethMAC, inet_ntoa(local_info->listenIP), ntohs(local_info->listenPort));
 	}
