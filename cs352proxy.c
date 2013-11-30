@@ -81,6 +81,8 @@ int initLocalParams() {
 	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 	ifr.ifr_addr.sa_family = AF_INET;
 
+	printf("Test: %s\n", ifr.ifr_addr.sa_family);
+
 	// /* Obtain local IP address of eth0 */
 	// strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
 	// if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
