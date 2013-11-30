@@ -75,7 +75,6 @@ int getIP(char *host, char *ip) {
 /* Initiliaze local parameters */
 int initLocalParams() {
 	struct ifreq *ifr;
-	ifr = (struct ifreq *)malloc(sizeof(struct ifreq));
 	char ethMAC[19];
 
 	/* Template for local linkStatePacket */
@@ -84,7 +83,7 @@ int initLocalParams() {
 
 	/* Obtain local IP address of eth0 */
 	strncpy(ifr->ifr_name, "eth0", IFNAMSIZ-1);
-	if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+	if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
 	}
