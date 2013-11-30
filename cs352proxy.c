@@ -89,7 +89,7 @@ int initLocalParams() {
 		return EXIT_FAILURE;
 	}
 	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
-	printf("Addr: %s\n", inet_ntoa(local_info->listenIP));
+	printf("Addr: %s\n", ifr.ifr_name);
 
 	// /* Obtain local MAC ID for tap10 */
 	// strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
