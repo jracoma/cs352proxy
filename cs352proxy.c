@@ -83,7 +83,7 @@ int initLocalParams() {
 	// printf("Test: %s\n", (char *)ifr.ifr_addr.sa_family);
 
 	/* Obtain local IP address of eth0 */
-	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+	strcpy(ifr.ifr_name, "eth0");
 	if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
