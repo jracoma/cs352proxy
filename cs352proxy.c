@@ -79,7 +79,6 @@ int initLocalParams() {
 
 	/* Template for local linkStatePacket */
 	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-	ifr.ifr_addr.sa_family = AF_INET;
 
 	// printf("Test: %s\n", (char *)ifr.ifr_addr.sa_family);
 
