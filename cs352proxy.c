@@ -107,6 +107,7 @@
  	fclose(f);
 
  	if (debug) {
+ 		puts("Local Information:");
  		print_linkState(local_info);
  	}
 
