@@ -83,7 +83,7 @@ struct linkState {
 
 /* Struct for link state source */
 struct linkStateSource {
-  struct linkState ls;
+  struct linkState *ls;
   uint16_t neighbors;
 }__attribute__((packed));
 
