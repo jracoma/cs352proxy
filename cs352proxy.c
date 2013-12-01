@@ -385,10 +385,9 @@
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct linkStatePacket *tmp;
- 	struct timeval temp;
- 	temp = &lsp->uniqueID;
+ 	struct timeval temp = &lsp->uniqueID;
  	struct peerList *peer = (struct peerList *)malloc(sizeof(struct peerList));
-	LL_SEARCH(peerHead, peer, "uniqueID", lsp->uniqueID);
+	LL_SEARCH(peerHead, peer, "uniqueID", temp);
 	if (peer) puts("found");
  }
 
