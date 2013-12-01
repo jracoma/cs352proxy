@@ -417,7 +417,7 @@
  	memcpy(frame.field.data, data, data_len);
 
  	unsigned int frame_len = data_len + ETH_HLEN;
- 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
+ 	strncpy(if_name, "tap11", IFNAMSIZ - 1);
  	printf("Attempting to open %s...\n", if_name);
 	/* Open tap interface */
  	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
