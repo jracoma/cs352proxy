@@ -30,7 +30,6 @@
 
 /* Macro Definitions */
 #define eprintf(...) fprintf(stderr, __VA_ARGS__);
-#define _BSD_SOURCE
 #define MAXBUFFSIZE 2048
 #define BACKLOG 10
 #define MAXLINESIZE 256
