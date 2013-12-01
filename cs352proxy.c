@@ -93,7 +93,6 @@ int initLocalParams() {
   	return EXIT_FAILURE;
   }
   inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
-  close(sock_fd);
 
   /* Obtain local MAC addresses */
   if (ioctl(sock_fd, SIOCGIFADDR, temp) < 0) {
@@ -105,6 +104,8 @@ int initLocalParams() {
   // FILE *f = fopen(buffer, "r");
   // fread(buffer, 1, MAXLINESIZE, f);
   // sscanf(bufer, "%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", )
+
+  close(sock_fd);
 
   if (debug) {
   	printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
