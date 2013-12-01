@@ -322,7 +322,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
- 	struct linkStateSource *lsSource = (struct linkStatePacket *)malloc(sizeof struct linkState);
+ 	struct linkStateSource *lsSource = (struct linkStatePacket *)malloc(sizeof(struct linkStateSource));
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	uint16_t pHeaderInfo[2];
 
