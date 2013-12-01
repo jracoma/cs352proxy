@@ -83,7 +83,7 @@ int initLocalParams() {
     ifr.ifr_addr.sa_family = AF_INET;
 
     //Copy the interface name in the ifreq structure
-    strncpy(ifr.ifr_name , iface , IFNAMSIZ-1);
+    strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
 
     ioctl(fd, SIOCGIFADDR, &ifr);
 
