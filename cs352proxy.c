@@ -396,6 +396,7 @@
 			break;
 		}
  	}
+ 	printf("net_fd: %d\n", peer->net_fd);
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
