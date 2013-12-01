@@ -398,7 +398,7 @@
  	/* Serialize data */
  	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
- 	printf("Test: %s\n", buffer);
+ 	printf("Test: %s\n", htonl(buffer));
 
 
  	pthread_mutex_unlock(&peer_mutex);
