@@ -75,8 +75,9 @@ int getIP(char *host, char *ip) {
 /* Initiliaze local parameters */
 int initLocalParams() {
 	struct ifreq ifr;
+	char ethMAC[19];
+	local_info = malloc(sizeof(linkState));
 
-	printf("test: %d\n", AF_INET6);
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
     //Type of address to retrieve - IPv4 IP address
