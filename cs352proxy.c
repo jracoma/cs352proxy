@@ -322,7 +322,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
- 	struct linkStateSource lsSource;
+ 	struct linkStateSource *lsSource = (struct linkStatePacket *)malloc(sizeof struct linkState);
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	uint16_t pHeaderInfo[2];
 
@@ -356,7 +356,6 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
-
 
  			lsSource.ls = &local_info;
  			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
