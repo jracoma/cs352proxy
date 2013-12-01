@@ -367,7 +367,7 @@
  			lsPacket->header = hdr;
  			print_packetHeader(lsPacket->header);
  			gettimeofday(&current_time, NULL);
- 			lsPacket->uniqueID = &current_time;
+ 			lsPacket->uniqueID = current_time;
  		}
  	}
  	return NULL;
