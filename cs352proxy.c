@@ -349,44 +349,39 @@
  		pthread_exit(NULL);
  	} else {
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
- 		size = send(new_fd, peer->tapDevice, strlen(peer->tapDevice), 0);
- 		if (size < 0) {
- 			perror("send");
- 			pthread_exit(NULL);
- 		} else {
- 			printf("Message %d sent.\n", size);
- 			gettimeofday(&current_time, NULL);
- 			peer->uniqueID = current_time;
- 			peer->net_fd = new_fd;
- 			peer->pid = pthread_self();
- 			pthread_mutex_lock(&peer_mutex);
- 			LL_APPEND(peerHead, peer);
- 			pthread_mutex_unlock(&peer_mutex);
+ 		/* Create link state packet */
+ 		gettimeofday(&current_time, NULL);
+ 		peer->uniqueID = current_time;
+ 		peer->net_fd = new_fd;
+ 		peer->pid = pthread_self();
+ 		pthread_mutex_lock(&peer_mutex);
+ 		LL_APPEND(peerHead, peer);
+ 		pthread_mutex_unlock(&peer_mutex);
 
- 			/* Create link state packet */
- 			lsSource->ls = local_info;
- 			LL_COUNT(peerHead, peer, lsSource->neighbors);
- 			hdr->type = htons(PACKET_LINKSTATE);
- 			lsPacket->header = hdr;
- 			lsPacket->source = lsSource;
- 			lsPacket->uniqueID = current_time;
- 			lsPacket->proxy1 = local_info;
- 			lsPacket->linkWeight = 1;
- 			send_linkStatePacket(lsPacket);
- 			if (debug) print_linkStatePacket(lsPacket);
-	 			pthread_mutex_lock(&linkstate_mutex);
-	 			LL_APPEND(lsHead, lsPacket);
-	 			pthread_mutex_unlock(&linkstate_mutex);
-	 		}
+ 		lsSource->ls = local_info;
+ 		LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 		hdr->type = htons(PACKET_LINKSTATE);
+ 		lsPacket->header = hdr;
+ 		lsPacket->source = lsSource;
+ 		lsPacket->uniqueID = current_time;
+ 		lsPacket->proxy1 = local_info;
+ 		lsPacket->linkWeight = 1;
+ 		if (send_linkStatePacket(lsPacket)) puts("Success");
+ 		if (debug) print_linkStatePacket(lsPacket);
+ 		pthread_mutex_lock(&linkstate_mutex);
+ 		LL_APPEND(lsHead, lsPacket);
+ 		pthread_mutex_unlock(&linkstate_mutex);
  	}
- 	return NULL;
+
  }
+ return NULL;
+}
 
 /* Send linkState */
- void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer[MAXBUFFSIZE];
- 	struct peerList *peer;
- 	int size;
+int send_linkStatePacket(struct linkStatePacket *lsp) {
+	char *buffer[MAXBUFFSIZE];
+	struct peerList *peer;
+	int size;
 
 	pthread_mutex_lock(&peer_mutex);
 	pthread_mutex_lock(&linkstate_mutex);
@@ -394,63 +389,63 @@
 		if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
 			break;
 		}
- 	}
+	}
 
  	/* Serialize data */
- 	lsp->header->length = sizeof(lsp);
- 	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
- 	size = send(peer->net_fd, &buffer, strlen(&buffer), 0);
- 	if (size < 0) {
- 		puts("send failed");
- 	}
+	lsp->header->length = sizeof(lsp);
+	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
+	size = send(peer->net_fd, &buffer, strlen(&buffer), 0);
+	if (size < 0) {
+		puts("send failed");
+	}
 
 
- 	pthread_mutex_unlock(&peer_mutex);
- 	pthread_mutex_unlock(&linkstate_mutex);
- }
+	pthread_mutex_unlock(&peer_mutex);
+	pthread_mutex_unlock(&linkstate_mutex);
+}
 
 /* Print packetHeader information */
- void print_packetHeader(struct packetHeader *pkt) {
+void print_packetHeader(struct packetHeader *pkt) {
 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
- }
+}
 
 /* Print linkState information */
- void print_linkState(struct linkState *ls) {
- 	char ethMAC[19];
- 	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
- }
+void print_linkState(struct linkState *ls) {
+	char ethMAC[19];
+	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
+}
 
 /* Print linkStatePacket information */
- void print_linkStatePacket(struct linkStatePacket *lsp) {
- 	puts("---LINKSTATE PACKET INFORMATION---");
- 	print_packetHeader(lsp->header);
- 	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
- 	printf("-----PROXY 1-----\n");
- 	print_linkState(lsp->proxy1);
- 	printf("-----PROXY 2-----\n");
- 	print_linkState(lsp->proxy2);
- }
+void print_linkStatePacket(struct linkStatePacket *lsp) {
+	puts("---LINKSTATE PACKET INFORMATION---");
+	print_packetHeader(lsp->header);
+	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
+	printf("-----PROXY 1-----\n");
+	print_linkState(lsp->proxy1);
+	printf("-----PROXY 2-----\n");
+	print_linkState(lsp->proxy2);
+}
 
 /* Decode header information */
- uint16_t getHeaderInfo(uint16_t *header) {
- 	puts("testheader");
- 	return 0;
- }
+uint16_t getHeaderInfo(uint16_t *header) {
+	puts("testheader");
+	return 0;
+}
 
 /* Sleeper for quitAfter */
- void *sleeper() {
+void *sleeper() {
  	// sleep(quitAfter);
- 	sleep(20);
- 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
- 	exit(1);
- }
+	sleep(20);
+	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+	exit(1);
+}
 
 /* Main */
- int main (int argc, char *argv[]) {
- 	if (debug) {
- 		puts("DEBUGGING MODE:");
- 	}
+int main (int argc, char *argv[]) {
+	if (debug) {
+		puts("DEBUGGING MODE:");
+	}
 
  // 	struct timeval test;
  // 	gettimeofday(&test, NULL);
@@ -499,11 +494,11 @@
  // 	}
 
 	/* Parse input file */
- 	if (parseInput(argc, argv)) {
- 		perror("parseInput");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
- 	}
+	if (parseInput(argc, argv)) {
+		perror("parseInput");
+		close(tap_fd);
+		return EXIT_FAILURE;
+	}
 
  	/* Set quitAfter sleeper */
 	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
@@ -512,10 +507,10 @@
 	}
 
 	/* Start server path */
- 	server(ntohs(local_info->listenPort));
+	server(ntohs(local_info->listenPort));
 
- 	close(tap_fd);
- 	pthread_exit(NULL);
+	close(tap_fd);
+	pthread_exit(NULL);
 
- 	return 0;
- }
+	return 0;
+}

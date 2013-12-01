@@ -54,7 +54,7 @@ union ethframe
 struct packetHeader {
   uint16_t type;
   uint16_t length;
-}__attribute__((packed));
+}__attribute__((packed));lsp
 
 /* Struct for initial peer list */
 struct peerList {
@@ -106,7 +106,7 @@ void *handle_listen();
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
-void send_linkStatePacket(struct linkStatePacket *lsp);
+int send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket(struct linkStatePacket *lsp);
