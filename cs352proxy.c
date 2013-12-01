@@ -319,7 +319,7 @@
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	struct peerList *newPeer = malloc(sizeof(struct peerList));
+ 	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
