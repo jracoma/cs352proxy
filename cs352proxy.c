@@ -99,9 +99,9 @@ int initLocalParams() {
 	local_info->ethMAC = ifr.ifr_hwaddr;
 
         if (debug) {
-                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info.ethMAC.sa_data[0],(unsigne$
+                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0]);
 
-                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info.liste$
+                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info.listenIP));
         }
 
 	return 0;
