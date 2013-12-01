@@ -398,7 +398,7 @@
 
  	/* Serialize data */
  	lsp->header->length = sizeof(lsp);
- 	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
+ 	sprintf(buffer, "%x%x", lsp->header->type, lsp->header->length);
  	lpackage = strtol(buffer, &temp, 0);
  	printf("Test: %s | %ld | %ld\n", temp, lpackage, htonl(lpackage));
 
