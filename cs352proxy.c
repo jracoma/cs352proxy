@@ -82,7 +82,7 @@ int initLocalParams() {
 	char buffer[MAXLINESIZE];
 
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-	temp->sa_family = "AF_INET";
+	temp->sa_family = AF_INET;
   // &(ifr->ifr_addr)->sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
