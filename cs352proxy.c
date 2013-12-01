@@ -178,7 +178,7 @@ int parseInput(int argc, char *argv[]) {
 			strcpy(current->tapDevice, tapDevice);
 			pthread_mutex_lock(&peer_mutex);
 			int test = pthread_create(&connect_thread, NULL, connectToPeer, (void *)current);
-			if (test) {
+			if (!test) {
 			  perror("connect_thread");
 			  exit(1);
 			}
