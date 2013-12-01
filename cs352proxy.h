@@ -26,7 +26,6 @@
 #include <sys/time.h>
 #include <netdb.h>
 #include <linux/if_ether.h>
-#include "uthash.h"
 #include "utlist.h"
 
 /* Macro Definitions */

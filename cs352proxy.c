@@ -1,12 +1,10 @@
 /* cs352proxy.c
  * Project 2 - Internet Technology - Fall 2013
  * Jan Racoma
- * Objective:
- *        Maintaining link states with multiple peers.
+ * Objective: Maintaining link states with multiple peers.
  */
 
 #include "cs352proxy.h"
-#define MAX_DEV_LINE 256
 /* Debug */
  int debug = 1;
 
