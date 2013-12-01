@@ -384,6 +384,7 @@
 
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
+ 	puts("HEEEERERERERE\n");
  	struct peerList *peer;
  	struct peerLst *tmp;
 	LL_FOREACH(peerHead, peer) {
