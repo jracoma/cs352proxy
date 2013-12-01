@@ -358,6 +358,7 @@
  			printf("Message %d sent.\n", size);
  			gettimeofday(&current_time, NULL);
  			peer->uniqueID = current_time;
+ 			printf("Unique ID: %ld%ld\n", peer->uniqueID);
  			peer->net_fd = new_fd;
  			peer->pid = pthread_self();
  			pthread_mutex_lock(&peer_mutex);
@@ -389,7 +390,6 @@
  	struct peerList *peer;
  	// LL_SEARCH(peerHead, peer, )
  }
-
 
 /* Print packetHeader information */
  void print_packetHeader(struct packetHeader *pkt) {
