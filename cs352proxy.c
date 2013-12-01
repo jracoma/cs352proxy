@@ -85,10 +85,11 @@ int initLocalParams() {
 
     //Copy the interface name in the ifreq structure
     strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
-
-    ioctl(sock_fd, SIOCGIFADDR, &ifr);
-    inet_aton((char *)inet_ntoa(( (struct sockaddr_in *)&ifr.ifr_addr )->sin_addr), &local_info->listenIP);
-    // local_info->listenIP = inet_ntoa(( (struct sockaddr_in *)&ifr.ifr_addr )->sin_addr);
+    if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+    	perror("ioctl(SIOCGIFADDR");
+    	return EXIT_FAILURE;
+    }
+    inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
     close(sock_fd);
 
     //display result
