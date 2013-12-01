@@ -319,7 +319,7 @@ void *connectToPeer(void *temp)
     struct sockaddr_in remote_addr;
     int new_fd, size;
     char *buffer = malloc(MAXBUFFSIZE);
-    struct linkState *peer = (struct linkState *)temp;
+    struct peerList *peer = (struct peerList *)temp;
 
     pthread_mutex_lock(&peer_mutex);
     /* Create TCP Socket */
