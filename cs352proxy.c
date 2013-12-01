@@ -386,7 +386,7 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct peerList *peer;
  	struct peerLst *tmp;
-	LL_FOREACH(peerHead, current) {
+	LL_FOREACH(peerHead, peer) {
 		printf("");
  	}
  }
