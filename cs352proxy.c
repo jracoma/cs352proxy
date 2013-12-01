@@ -17,7 +17,7 @@
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peerHead = NULL;
- struct linkState *local_info = malloc(sizeof(struct linkState));
+ struct linkState *local_info;
  struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
@@ -77,6 +77,7 @@
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
  	char ethMAC[19];
+ 	local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
