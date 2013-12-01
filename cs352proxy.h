@@ -27,6 +27,7 @@
 #include <netdb.h>
 #include <linux/if_ether.h>
 #include "utlist.h"
+#include "helpers.h"
 
 /* Macro Definitions */
 #define eprintf(...) fprintf(stderr, __VA_ARGS__);
