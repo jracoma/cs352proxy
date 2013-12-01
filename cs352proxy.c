@@ -338,30 +338,30 @@
 
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
-  //   /* Connect to server */
-  //   if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-  //   	pthread_mutex_unlock(&peer_mutex);
-  //     return -1;
-  //   } else {
-	 //    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
-  //     char *message = "The Cheese is in The Toaster";
-	 //    size = send(new_fd, message, strlen(message), 0);
-	 //    if (size < 0) {
-	 //    	perror("send");
-	 //    	pthread_mutex_unlock(&peer_mutex);
-	 //    	return EXIT_FAILURE;
-	 //    } else if (size == 0) {
-	 //    	perror("connection closed");
-	 //    	pthread_mutex_unlock(&peer_mutex);
-	 //    	return EXIT_FAILURE;
-	 //    } else {
-	 //    	printf("Message %d sent on fd: %d\n", size);
-	 //    	peer->net_fd = new_fd;
+    /* Connect to server */
+    if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
+    	pthread_mutex_unlock(&peer_mutex);
+      return -1;
+    } else {
+	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+      char *message = "The Cheese is in The Toaster";
+	    size = send(new_fd, message, strlen(message), 0);
+	    if (size < 0) {
+	    	perror("send");
+	    	pthread_mutex_unlock(&peer_mutex);
+	    	return -1;
+	    } else if (size == 0) {
+	    	perror("connection closed");
+	    	pthread_mutex_unlock(&peer_mutex);
+	    	return EXIT_FAILURE;
+	    } else {
+	    	printf("Message %d sent on fd: %d\n", size);
+	    	peer->net_fd = new_fd;
 
-	 //    	pthread_mutex_unlock(&peer_mutex);
-	 //    	return new_fd;
-	 //    }
-  //   }
+	    	pthread_mutex_unlock(&peer_mutex);
+	    	return new_fd;
+	    }
+    }
   //   return new_fd;
 
   //   			if (head == NULL) {
