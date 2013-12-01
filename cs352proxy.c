@@ -330,7 +330,7 @@
  		perror("could not create socket");
  		exit(1);
  	}
-
+ 	printf("Test: %d\n", sizeof(int));
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
@@ -351,11 +351,7 @@
 	    if (size < 0) {
 	    	perror("send");
 	    	pthread_mutex_unlock(&peer_mutex);
-	    	return -1;
-	    } else if (size == 0) {
-	    	perror("connection closed");
-	    	pthread_mutex_unlock(&peer_mutex);
-	    	return EXIT_FAILURE;
+	    	pthread_exit(NULL);
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size);
 	    	peer->net_fd = new_fd;
