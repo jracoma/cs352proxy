@@ -341,7 +341,7 @@
     /* Connect to server */
     if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
     	pthread_mutex_unlock(&peer_mutex);
-    	printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
+    	printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
       return -1;
     } else {
 	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
