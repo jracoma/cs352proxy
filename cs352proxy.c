@@ -370,6 +370,8 @@
  			gettimeofday(&current_time, NULL);
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
+ 			print_linkState(lsPacket->proxy1);
+ 			print_linkState(lsPacket->proxy2);
  		}
  	}
  	return NULL;
