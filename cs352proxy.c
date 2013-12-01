@@ -384,8 +384,9 @@
 
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer[MAXBUFFSIZE];
+ 	char *buffer[MAXBUFFSIZE], *temp;
  	struct peerList *peer;
+ 	long lpackage;
 
 	pthread_mutex_lock(&peer_mutex);
 	pthread_mutex_lock(&linkstate_mutex);
@@ -398,7 +399,8 @@
  	/* Serialize data */
  	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
- 	printf("Test: %s\n", htonl(buffer));
+ 	lpackage = strtol(buffer, temp, 0);
+ 	printf("Test: %ld\n", htonl(lpackage));
 
 
  	pthread_mutex_unlock(&peer_mutex);
