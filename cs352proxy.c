@@ -327,7 +327,6 @@
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	lsPacket->proxy1 = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
- 	uint16_t pHeaderInfo[2];
  	struct timeval current_time;
 
     /* Create TCP Socket */
