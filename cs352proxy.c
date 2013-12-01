@@ -108,7 +108,7 @@ int initLocalParams() {
   fclose(f);
 
 	if (debug) {
-		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x\n", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
 
 		printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
 	}
@@ -178,9 +178,9 @@ int parseInput(int argc, char *argv[]) {
 				current->tapDevice = (char *)malloc(50);
 				strcpy(current->tapDevice, tapDevice);
 				if (connectToPeer(current)) {
-					printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
+					printf("RPeer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
 				} else {
-					printf("Successful connection to %s:%d\n", inet_ntoa(current->peerIP), current->peerPort);
+					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(current->peerIP), current->peerPort);
 					head = current;
 				}
 			} else {
