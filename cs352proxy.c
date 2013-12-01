@@ -387,7 +387,7 @@
  	struct peerList *peer = (struct peerList *)malloc(sizeof(struct peerList));
  	struct peerLst *tmp;
 	LL_FOREACH_SAFE(peerHead, peer, tmp) {
-		printf("Test!");
+		if (peer->uniqueID == lsp->uniqueID) puts("FOUND!");
 	}
  }
 
