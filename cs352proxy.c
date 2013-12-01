@@ -103,7 +103,7 @@ int initLocalParams() {
 	sprintf(buffer, "/sys/class/net/%s/address", dev);
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
-	sscanf(buffer ,"%hhX", local_info->ethMAC.sa_data[0]);
+	sscanf(buffer ,"%hhX", (unsigned char *)local_info->ethMAC.sa_data[0]);
   printf("Buffer: %s\n", buffer);
   fclose(f);
 
