@@ -21,7 +21,7 @@
  struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
- pthread_t sleep, listen_thread, connect_thread, socket_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -159,7 +159,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
- 			if (pthread_create(&sleep, NULL, sleeper, NULL)) {
+ 			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
  			}
