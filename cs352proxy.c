@@ -77,7 +77,7 @@ int initLocalParams() {
 	struct ifreq ifr;
 	char buffer[MAXLINESIZE];
 	// char *ethMAC;
-	char *dev = "eth0";
+	char *dev = "tap10";
   // local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
@@ -85,7 +85,7 @@ int initLocalParams() {
 	ifr.ifr_addr.sa_family = AF_INET;
 
   /* Obtain local IP address of eth0 */
-	strncpy(ifr.ifr_name, dev, IFNAMSIZ-1);
+	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
 	if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
