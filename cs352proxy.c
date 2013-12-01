@@ -105,13 +105,13 @@ int initLocalParams() {
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
 	// sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0]);
-  printf("Buffer: %s\n", buffer);
+  printf("Buffer: %s\n", buffer)
   fclose(f);
 
 	if (debug) {
 		// sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
 
-		printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
+		// printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
 	}
 
 	return 0;
