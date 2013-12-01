@@ -161,11 +161,11 @@ int parseInput(int argc, char *argv[]) {
 				host = ip;
 			}
 			port = atoi(strtok(NULL, " \n"));
-      fgets(line, MAXLINESIZE, input_file);
-      next_field = strtok(line, " \n");
+			fgets(line, MAXLINESIZE, input_file);
+			next_field = strtok(line, " \n");
 			tapDevice = strtok(NULL, " \n");
 			if (head == NULL) {
-				current = malloc(sizeof(peerList));
+				current = malloc(sizeof(struct peerList));
 				inet_aton(host, &current->peerIP);
 				current->peerPort = port;
 				current->tapDevice = (char *)malloc(50);
@@ -195,8 +195,8 @@ int parseInput(int argc, char *argv[]) {
 		printf("Linked List:\n");
 		LL_COUNT(head, current, count);
 		LL_FOREACH(head, current) {
-      printf("Host: %s:%d", inet_ntoa(current->peerIP), current->peerPort);
-      printf(" - %s\n", current->tapDevice);
+			printf("Host: %s:%d", inet_ntoa(current->peerIP), current->peerPort);
+			printf(" - %s\n", current->tapDevice);
 		}
 		printf("Count: %d\n", count);
 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
