@@ -99,7 +99,7 @@ int initLocalParams() {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  // sprintf(ethMAC, " %02x\n",(unsigned char)temp->ifr_hwaddr.sa_data[0]);
+  sprintf(ethMAC, " %02x\n",(unsigned char)ifr->ifr_hwaddr.sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
   // FILE *f = fopen(buffer, "r");
   // fread(buffer, 1, MAXLINESIZE, f);
