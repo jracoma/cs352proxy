@@ -188,7 +188,7 @@ int parseInput(int argc, char *argv[]) {
 				inet_aton(host, &newPeer->peerIP);
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
-				client_fd = connectToPeer(newPeer)
+				client_fd = connectToPeer(newPeer);
 				if (client_fd =< 0) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
