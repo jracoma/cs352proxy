@@ -239,7 +239,7 @@ int parseInput(int argc, char *argv[]) {
 	// }
 
 	/* Close input file */
-	fclose(input_file);
+	// fclose(input_file);
 
 	return 0;
 }
