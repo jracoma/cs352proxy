@@ -374,6 +374,11 @@
  			lsPacket->proxy1 = local_info;
  			print_linkState(lsPacket->proxy1);
  			print_linkState(lsPacket->proxy2);
+ 			lsPacket->linkWeight = 1;
+ 			pthread_mutex_lock(&linkstate_mutex, NULL);
+ 			LL_APPEND(lsHead, lsPacket);
+ 			pthread_mutex_unlock(&linkstate_mutex, NULL);
+
  		}
  	}
  	return NULL;
