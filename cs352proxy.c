@@ -325,6 +325,7 @@
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsPacket->proxy1 = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
  	struct timeval current_time;
@@ -367,6 +368,7 @@
  			hdr->type = htons(PACKET_LINKSTATE);
  			lsPacket->header = hdr;
  			print_packetHeader(lsPacket->header);
+ 			lsPacket->source = lsSource;
  			gettimeofday(&current_time, NULL);
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
@@ -399,7 +401,7 @@ void print_packetHeader(struct packetHeader *pkt) {
  void *sleeper() {
  	// sleep(quitAfter);
  	sleep(20);
- 	printf("%d has elapsed. Program terminating.\n", quitAfter);
+ 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
  	exit(1);
  }
 
