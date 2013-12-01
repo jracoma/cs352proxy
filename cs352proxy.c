@@ -74,7 +74,7 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq ifr;
+	struct ifreq *ifr;
 	char ethMAC[19], tapMAC[19];
 	local_info = malloc(sizeof(linkState));
 	char *dev = "eth0";
@@ -83,22 +83,22 @@ int initLocalParams() {
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
   //Type of address to retrieve - IPv4 IP address
-  ifr.ifr_addr.sa_family = AF_INET;
+  ifr->ifr_addr.sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
-  strncpy(ifr.ifr_name , dev, IFNAMSIZ-1);
-  if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+  strncpy(ifr->ifr_name , dev, IFNAMSIZ-1);
+  if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
+  inet_aton((char *)inet_ntoa(((struct sockaddr_in *)ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
   /* Obtain local MAC addresses */
-  if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+  if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  local_info->ethMAC = &ifr.ifr_hwaddr;
+  local_info->ethMAC = ifr.ifr_hwaddr;
 
   sprintf(ethMAC, " %02x:%02x:%02x\n", (unsigned char)ifr.ifr_hwaddr.sa_data[0], (unsigned char)ifr.ifr_hwaddr.sa_data[1], (unsigned char)ifr.ifr_hwaddr.sa_data[2]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
