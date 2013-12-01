@@ -74,40 +74,39 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq ifr;
-	char ethMAC[19];
+        struct ifreq ifr;
+        char ethMAC[19];
 
-	/* Template for local linkStatePacket */
-	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        /* Template for local linkStatePacket */
+        sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        ifr.ifr_addr.sa_family = AF_INET;
 
-	// printf("Test: %s\n", (char *)ifr.ifr_addr.sa_family);
+        /* Obtain local IP address of eth0 */
+        strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+        if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+                perror("ioctl(SIOCGIADDR)");
+                return EXIT_FAILURE;
+        }
+       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info.listenIP);
 
-	/* Obtain local IP address of eth0 */
-	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
-	if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
-		perror("ioctl(SIOCGIADDR)");
-		return EXIT_FAILURE;
-	}
-	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
-	printf("Addr: %s\n", ifr.ifr_name);
+        /* Obtain local MAC ID for tap10 */
+        strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
+        if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
+                perror("ioctl(SIOCGIFHWADDR)");
+                return EXIT_FAILURE;
+        }
 
-	// /* Obtain local MAC ID for tap10 */
-	// strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
-	// if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
-	// 	perror("ioctl(SIOCGIFHWADDR)");
-	// 	return EXIT_FAILURE;
-	// }
+	local_info.ethMAC = ifr.ifr_hwaddr;
 
-	// local_info->ethMAC = ifr.ifr_hwaddr;
+        if (debug) {
+                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info.ethMAC.sa_data[0],(unsigne$
 
-	if (debug) {
-	// 	sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
-
-	// 	printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP), ntohs(local_info->listenPort));
-	}
+                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info.liste$
+        }
 
 	return 0;
 }
+
 
 /* Parse through input file */
 int parseInput(int argc, char *argv[]) {
