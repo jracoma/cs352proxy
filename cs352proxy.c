@@ -82,7 +82,7 @@ int initLocalParams() {
 	char buffer[MAXLINESIZE];
 
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-	ifr->ifr_addr.sa_family = AF_INET;
+	ifr.ifr_addr.sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
   strncpy(ifr.ifr_name, dev, IFNAMSIZ-1);
@@ -97,7 +97,7 @@ int initLocalParams() {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  local_info->ethMAC = ifr->ifr_hwaddr;
+  local_info->ethMAC = ifr.ifr_hwaddr;
 
   // sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
