@@ -372,7 +372,7 @@
 
 /* Print packetHeader information */
 void print_packetHeader(struct packetHeader *pkt) {
-	printf("---PACKETHEADER: Type: %x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
+	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
 }
 
 /* Print linkState information */
