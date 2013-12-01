@@ -368,7 +368,7 @@
  			print_packetHeader(lsPacket->header);
  			gettimeofday(&current_time, NULL);
  			lsPacket->uniqueID = current_time;
- 			lsPacket->proxy1 = local_info;
+ 			lsPacket->proxy1 = &local_info;
  		}
  	}
  	return NULL;
