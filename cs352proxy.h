@@ -99,4 +99,4 @@ int parseInput(int argc, char *argv[]);
 void *handle_listen();
 void server(int port);
 void *handle_tap();
-int connectToPeer(peerList *peer);
+int connectToPeer(struct peerList *peer);
