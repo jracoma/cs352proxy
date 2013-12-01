@@ -75,7 +75,7 @@ int getIP(char *host, char *ip) {
 /* Initiliaze local parameters */
 int initLocalParams() {
 	struct ifreq ifr;
-	char ethMAC[19];
+	char ethMAC[19], tapMAC[19];
 	local_info = malloc(sizeof(linkState));
 	char *dev = "eth0";
 	char buffer[MAXLINESIZE];
@@ -107,7 +107,7 @@ int initLocalParams() {
   close(sock_fd);
 
   if (debug) {
-  	printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
+  	printf("%s | %s | %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
   }
 
   return 0;
