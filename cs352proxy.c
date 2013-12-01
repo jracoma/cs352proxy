@@ -177,8 +177,7 @@
  			current->tapDevice = (char *)malloc(50);
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
- 			int test = pthread_create(&connect_thread, NULL, connectToPeer, (void *)current);
- 			if (!test) {
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
 				pthread_exit(NULL);
  			}
