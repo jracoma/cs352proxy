@@ -322,8 +322,8 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
- 	struct linkStateSource *lsSource = malloc(sizeof(struct linkStateSource));
- 	struct linkStatePacket *lsPacket = malloc(sizeof(struct linkStatePacket));
+ 	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
+ 	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	uint16_t pHeaderInfo[2];
 
     /* Create TCP Socket */
@@ -357,7 +357,7 @@
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
  			// lsSource->ls = (struct linkState *)&local_info;
- 			lsSource->ls = malloc(sizeof(struct linkState));
+ 			lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  			memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
