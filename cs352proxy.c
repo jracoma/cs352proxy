@@ -375,16 +375,18 @@
  			pthread_mutex_lock(&linkstate_mutex);
  			LL_APPEND(lsHead, lsPacket);
  			pthread_mutex_unlock(&linkstate_mutex);
-
  		}
  	}
  	return NULL;
  }
 
+/* Send linkStatePacket */
+
+
 /* Print packetHeader information */
  void print_packetHeader(struct packetHeader *pkt) {
 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
-}
+ }
 
 /* Print linkState information */
  void print_linkState(struct linkState *ls) {
