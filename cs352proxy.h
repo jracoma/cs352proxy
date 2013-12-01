@@ -84,7 +84,7 @@ struct linkState {
 /* Struct for link state source */
 struct linkStateSource {
   struct linkState ls;
-  uint16_t numNeighbors;
+  uint16_t neighbors;
 }__attribute__((packed));
 
 /* Struct for link state packet information */
@@ -94,6 +94,7 @@ struct linkStatePacket {
   struct linkState proxy1;
   struct linkState proxy2;
   uint32_t linkWeight;
+  struct linkStatePacket *next;
 }__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);

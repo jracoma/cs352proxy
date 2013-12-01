@@ -17,7 +17,8 @@
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *head = NULL;
- struct linkState *local_info;
+ struct linkState *local_info = malloc(sizeof(struct linkState));;
+ struct linkStatePacket *head = NULL;
 
 /* Threads to handle socket and tap */
  pthread_t listen_thread, connect_thread, socket_thread;
@@ -76,7 +77,6 @@
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
  	char ethMAC[19];
- 	local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -343,7 +343,7 @@
     } else {
 	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
       char *message = "The Cheese is in The Toaster";
-	    size = send(new_fd, message, strlen(message), 0);
+	    size = send(new_fd, message, sizeof(message), 0);
 	    if (size < 0) {
 	    	perror("send");
 	    	pthread_exit(NULL);
