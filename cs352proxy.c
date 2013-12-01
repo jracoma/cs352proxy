@@ -396,6 +396,7 @@
  	}
 
  	/* Serialize data */
+ 	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
  	printf("Test: %s\n", buffer);
 
