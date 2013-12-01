@@ -47,10 +47,10 @@ union ethframe
 };
 
 /* Struct for packet headers */
-struct __attribute__((packed)) {
+struct packetHeader {
   uint16_t type;
   uint16_t length;
-} packetHeader;
+}__attribute__((packed));
 
 /* Struct for initial peer list */
 struct __attribute__((packed)) {
