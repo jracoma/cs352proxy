@@ -171,7 +171,12 @@ int parseInput(int argc, char *argv[]) {
 			fgets(line, MAXLINESIZE, input_file);
 			next_field = strtok(line, " \n");
 			tapDevice = strtok(NULL, " \n");
-			if (pthread_create(&connect_thread, NULL, connectToPeer, NULL) != 0) {
+			current = malloc(sizeof(struct peerList));
+			inet_aton(host, &current->peerIP);
+			current->peerPort = port;
+			current->tapDevice = (char *)malloc(50);
+			strcpy(current->tapDevice, tapDevice);
+			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)&current) != 0) {
 			  perror("connect_thread");
 			  exit(1);
 			}
@@ -309,7 +314,7 @@ void *handle_tap()
 }
 
 /* Client Mode */
-void *connectToPeer(struct peerList *peer)
+void *connectToPeer()
 {
     struct sockaddr_in remote_addr;
     int new_fd, size;
