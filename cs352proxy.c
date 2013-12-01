@@ -188,7 +188,7 @@
  		printf("Linked List:\n");
  		LL_COUNT(head, current, count);
  		LL_FOREACH(head, current) {
- 			printf("Host: %s:%d | Tap: %s | net_fd: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd);
+ 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, current->pid);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
@@ -350,6 +350,7 @@
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size);
 	    	peer->net_fd = new_fd;
+	    	peer->pid = pthread_self();
 	    	pthread_mutex_lock(&peer_mutex);
 	    	LL_APPEND(head, peer);
 	    	pthread_mutex_unlock(&peer_mutex);
