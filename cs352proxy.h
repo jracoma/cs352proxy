@@ -54,7 +54,7 @@ union ethframe
 struct packetHeader {
   uint16_t type;
   uint16_t length;
-}__attribute__((packed));lsp
+}__attribute__((packed));
 
 /* Struct for initial peer list */
 struct peerList {
