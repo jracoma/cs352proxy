@@ -319,7 +319,7 @@
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	peer->uniqueID = (struct timeval *)malloc(sizeof(struct timeval));
+ 	// peer->uniqueID = (struct timeval *)malloc(sizeof(struct timeval));
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
@@ -356,6 +356,8 @@
  			pthread_exit(NULL);
  		} else {
  			printf("Message %d sent.\n", size);
+ 			gettimeofday(&current_time, NULL);
+ 			peer->uniqueID = current_time;
  			peer->net_fd = new_fd;
  			peer->pid = pthread_self();
  			pthread_mutex_lock(&peer_mutex);
@@ -368,8 +370,6 @@
  			hdr->type = htons(PACKET_LINKSTATE);
  			lsPacket->header = hdr;
  			lsPacket->source = lsSource;
- 			gettimeofday(&current_time, NULL);
- 			peer->uniqueID = current_time;
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
  			lsPacket->linkWeight = 1;
