@@ -19,7 +19,7 @@ int sock_fd;
 /* Local Parameters */
 int linkPeriod, linkTimeout, quitAfter;
 struct peerList *head = NULL;
-struct linkState local_info;
+struct linkState *local_info;
 
 /* Threads to handle socket and tap */
 pthread_t listen_thread, socket_thread;
@@ -76,7 +76,7 @@ int getIP(char *host, char *ip) {
 int initLocalParams() {
   struct ifreq ifr;
   char ethMAC[19];
-  struct linkState temp;
+  local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
   sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -88,7 +88,7 @@ int initLocalParams() {
     perror("ioctl(SIOCGIADDR)");
     return EXIT_FAILURE;
   }
- inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &temp.listenIP);
+ inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
    /* Obtain local MAC ID for tap10 */
   strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
@@ -104,7 +104,7 @@ int initLocalParams() {
 
           printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP));
   }
-  local_info = temp;
+  local_info = &temp;
 
 	return 0;
 }
