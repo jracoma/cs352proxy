@@ -369,7 +369,7 @@
 
 /* Sleeper for quitAfter */
  void *sleeper() {
- 	slee(20);
+ 	sleep(20);
  	puts("quitAfter reached.");
  	pthread_exit(NULL);
  	exit(1);
