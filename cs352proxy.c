@@ -75,7 +75,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap10";
+ 	char *dev = "eth0";
  	char ethMAC[19];
  	local_info = malloc(sizeof(struct linkState));
 
@@ -84,7 +84,7 @@
  	ifr.ifr_addr.sa_family = AF_INET;
 
   /* Obtain local IP address of eth0 */
- 	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+ 	strncpy(ifr.ifr_name, dev, IFNAMSIZ-1);
  	if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
  		perror("ioctl(SIOCGIADDR)");
  		return EXIT_FAILURE;
@@ -100,6 +100,7 @@
 
 	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
 
+ 	dev = "tap10";
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
@@ -343,7 +344,8 @@
  		pthread_exit(NULL);
  	} else {
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
- 		buffer = "The Cheese is in The Toaster";
+
+
  		size = send(new_fd, buffer, strlen(buffer), 0);
  		if (size < 0) {
  			perror("send");
