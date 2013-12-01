@@ -177,7 +177,7 @@ int parseInput(int argc, char *argv[]) {
 				current->peerPort = port;
 				current->tapDevice = (char *)malloc(50);
 				strcpy(current->tapDevice, tapDevice);
-				if ((client_fd = connectToPeer(current)) < 0) {
+				if ((client_fd = connectToPeer(current)) < 1) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(current->peerIP), current->peerPort);
@@ -189,7 +189,7 @@ int parseInput(int argc, char *argv[]) {
 				inet_aton(host, &newPeer->peerIP);
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
-				if ((connectToPeer(newPeer)) < 0) {
+				if ((connectToPeer(newPeer)) < 1) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
