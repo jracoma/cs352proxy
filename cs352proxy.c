@@ -17,7 +17,7 @@
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peerHead = NULL;
- struct linkState *local_info = malloc(sizeof(struct linkState));;
+ struct linkState *local_info = malloc(sizeof(struct linkState));
  struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
