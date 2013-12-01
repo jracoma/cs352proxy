@@ -90,7 +90,7 @@ int initLocalParams() {
     close(sock_fd);
 // inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), local_info->listenIP);
     //display result
-    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP);
+    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
 
     return 0;
  //        struct ifreq ifr;
