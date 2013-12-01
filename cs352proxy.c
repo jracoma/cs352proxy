@@ -19,7 +19,7 @@ int sock_fd;
 /* Local Parameters */
 int linkPeriod, linkTimeout, quitAfter;
 struct peerList *head = NULL;
-struct linkState *local_info;
+struct linkState local_info;
 
 /* Threads to handle socket and tap */
 pthread_t listen_thread, socket_thread;
@@ -77,7 +77,6 @@ int initLocalParams() {
   struct ifreq ifr;
   char ethMAC[19];
   struct linkState temp;
-  local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
   sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -105,7 +104,7 @@ int initLocalParams() {
 
           printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP));
   }
-  local_info = &temp;
+  local_info = temp;
 
 	return 0;
 }
