@@ -74,9 +74,9 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-        struct ifreq ifr;
-        char ethMAC[19];
-        local_info = malloc(sizeof(linkState));
+  struct ifreq ifr;
+  char ethMAC[19];
+  struct local_info = malloc(sizeof(struct linkState));
 
         sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
