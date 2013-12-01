@@ -74,30 +74,30 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq ifr;
-	struct sockaddr *temp = malloc(sizeof(struct sockaddr));
-	char ethMAC[19], tapMAC[19];
-	local_info = malloc(sizeof(struct linkState));
-	char *dev = "eth0";
-	char buffer[MAXLINESIZE];
+        struct ifreq ifr;
+        char ethMAC[19];
+        local_info = malloc(sizeof(linkState));
 
-	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-	ifr.ifr_addr.sa_family = AF_INET;
+        sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-  //Copy the interface name in the ifreq structure
-  strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
-  if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
-  	perror("ioctl(SIOCGIFADDR)");
-  	return EXIT_FAILURE;
-  }
-  inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
+    //Type of address to retrieve - IPv4 IP address
+    ifr.ifr_addr.sa_family = AF_INET;
 
-  /* Obtain local MAC addresses */
-  if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
-  	perror("ioctl(SIOCGIFADDR");
-  	return EXIT_FAILURE;
-  }
-  local_info->ethMAC = ifr.ifr_hwaddr;
+    //Copy the interface name in the ifreq structure
+    strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
+    if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+            perror("ioctl(SIOCGIFADDR");
+            return EXIT_FAILURE;
+    }
+    inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
+    close(sock_fd);
+
+    //display result
+    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
+
+    close(sock_fd);
+
+    return 0;
 
   // sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
@@ -105,13 +105,13 @@ int initLocalParams() {
   // fread(buffer, 1, MAXLINESIZE, f);
   // sscanf(bufer, "%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", )
 
-  close(sock_fd);
+  // close(sock_fd);
 
-  if (debug) {
-  	printf("%s | %s | %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
-  }
+  // if (debug) {
+  // 	printf("%s | %s | %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
+  // }
 
-  return 0;
+  // return 0;
  //        struct ifreq ifr;
  //        char ethMAC[19];
 
