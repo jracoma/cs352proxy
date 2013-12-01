@@ -47,13 +47,13 @@ union ethframe
 };
 
 /* Struct for packet headers */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) {
   uint16_t type;
   uint16_t length;
 } packetHeader;
 
 /* Struct for initial peer list */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) {
   struct in_addr peerIP;
   uint16_t peerPort;
   char *tapDevice;
@@ -64,13 +64,13 @@ typedef struct __attribute__((packed)) {
 } peerList;
 
 /* Struct for data packet information */
-typedef struct __attribute__((packed)) {
-  packetHeader header;
+struct __attribute__((packed)) {
+  struct packetHeader header;
   char data[MAXBUFFSIZE];
 } dataPacket;
 
 /* Struct for link state */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) {
   struct in_addr listenIP;
   uint16_t listenPort;
   struct sockaddr tapMAC;
@@ -78,15 +78,14 @@ typedef struct __attribute__((packed)) {
 } linkState;
 
 /* Struct for link state source */
-typedef struct __attribute__((packed)) {
-  linkState ls;
+struct __attribute__((packed)) {
+  struct linkState ls;
   uint16_t numNeighbors;
 } linkStateSource;
 
 /* Struct for link state packet information */
-typedef struct __attribute__((packed)) {
-  packetHeader header;
-
+struct __attribute__((packed)) {
+  struct packetHeader header;
   struct timeval uniqueID;
   linkState proxy1;
   linkState proxy2;
