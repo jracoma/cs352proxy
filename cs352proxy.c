@@ -362,6 +362,7 @@
  			lsSource->ls = local_info;
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			print_linkState(lsSource->ls);
+ 			print_packetHeader(lsPacket->header);
  		}
  	}
  	return NULL;
@@ -369,7 +370,7 @@
 
 /* Print packetHeader information */
 void print_packetHeader(struct packetHeader *pkt) {
-
+	printf("---PACKETHEADER: Type: %d | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
 }
 
 /* Print linkState information */
