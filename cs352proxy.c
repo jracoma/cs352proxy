@@ -399,7 +399,7 @@
  	/* Serialize data */
  	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
- 	size = send(peer->net_fd, buffer, strlen(buffer), 0);
+ 	size = send(peer->net_fd, &buffer, strlen(&buffer), 0);
  	if (size < 0) {
  		puts("send failed");
  	}
