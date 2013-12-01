@@ -354,7 +354,7 @@ int connectToPeer(struct peerList *peer)
 
     /* Connect to server */
     if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-      return EXIT_FAILURE;
+      return -1;
     } else {
 	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
       char *message = "The Cheese is in The Toaster";
