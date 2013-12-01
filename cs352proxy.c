@@ -189,7 +189,7 @@ int parseInput(int argc, char *argv[]) {
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
 				client_fd = connectToPeer(newPeer);
-				if (client_fd =< 0) {
+				if (client_fd <= 0) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
