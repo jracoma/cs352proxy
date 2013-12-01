@@ -227,7 +227,7 @@
  		size = read(net_fd, buffer, sizeof(buffer));
  		if (size > 0) {
  			printf("Received message: %d\n", size);
- 			printf("Buffer: %s\n", buffer);
+ 			printf("Buffer: %s\n", (char *)buffer);
  		} else {
  			puts("recv error");
  		}
