@@ -18,8 +18,8 @@ int sock_fd;
 
 /* Local Parameters */
 int linkPeriod, linkTimeout, quitAfter;
-peerList *head = NULL;
-linkState *local_info;
+struct peerList *head = NULL;
+struct linkState *local_info;
 
 /* Threads to handle socket and tap */
 pthread_t listen_thread, socket_thread;
