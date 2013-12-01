@@ -74,12 +74,10 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-int fd;
-    struct ifreq ifr;
+	struct ifreq ifr;
 
-    char iface[] = "eth0";
 
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
+	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
     //Type of address to retrieve - IPv4 IP address
     ifr.ifr_addr.sa_family = AF_INET;
