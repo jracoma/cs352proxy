@@ -326,6 +326,7 @@
  	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	uint16_t pHeaderInfo[2];
+ 	struct timeval current_time;
 
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -365,6 +366,8 @@
  			hdr->type = htons(PACKET_LINKSTATE);
  			lsPacket->header = hdr;
  			print_packetHeader(lsPacket->header);
+ 			gettimeofday(&current_time, NULL);
+ 			lsPacket-> &current_time;
  		}
  	}
  	return NULL;
@@ -390,11 +393,13 @@ void print_packetHeader(struct packetHeader *pkt) {
 
 /* Sleeper for quitAfter */
  void *sleeper() {
- 	sleep(quitAfter);
+ 	// sleep(quitAfter);
+ 	sleep(20);
  	printf("%d has elapsed. Program terminating.\n", quitAfter);
  	exit(1);
  }
 
+/* Main */
  int main (int argc, char *argv[]) {
  	if (debug) {
  		puts("DEBUGGING MODE:");
@@ -454,10 +459,10 @@ void print_packetHeader(struct packetHeader *pkt) {
  	}
 
  	/* Set quitAfter sleeper */
-	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
-	// 	perror("connect thread");
-	// 	pthread_exit(NULL);
-	// }
+	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+		perror("connect thread");
+		pthread_exit(NULL);
+	}
 
 	/* Start server path */
  	server(ntohs(local_info->listenPort));
