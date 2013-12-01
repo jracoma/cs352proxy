@@ -375,9 +375,9 @@
  			print_linkState(lsPacket->proxy1);
  			print_linkState(lsPacket->proxy2);
  			lsPacket->linkWeight = 1;
- 			pthread_mutex_lock(&linkstate_mutex, NULL);
+ 			pthread_mutex_lock(&linkstate_mutex);
  			LL_APPEND(lsHead, lsPacket);
- 			pthread_mutex_unlock(&linkstate_mutex, NULL);
+ 			pthread_mutex_unlock(&linkstate_mutex);
 
  		}
  	}
