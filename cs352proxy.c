@@ -98,8 +98,7 @@ int initLocalParams() {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  local_info->ethMAC.sa_data[0] = ifr.ifr_hwaddr.sa_data[0];
-  local_info->ethMAC.sa_data[1] = ifr.ifr_hwaddr.sa_data[1];
+  local_info->ethMAC = &ifr.ifr_hwaddr;
 
   sprintf(ethMAC, " %02x:%02x:%02x\n", (unsigned char)ifr.ifr_hwaddr.sa_data[0], (unsigned char)ifr.ifr_hwaddr.sa_data[1], (unsigned char)ifr.ifr_hwaddr.sa_data[2]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
