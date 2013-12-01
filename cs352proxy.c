@@ -104,7 +104,7 @@ int initLocalParams() {
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
 	sscanf(buffer ,"%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0]);
-  printf("Buffer: %s\n", buffer);
+  printf("Buffer: %s\n", (unsigned char *)&local_info->ethMAC.sa_data[0]);
   fclose(f);
 
 	if (debug) {
