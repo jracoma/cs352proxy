@@ -364,18 +364,14 @@
  			/* Create link state packet */
  			lsSource->ls = local_info;
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
- 			// print_linkState(lsSource->ls);
  			hdr->type = htons(PACKET_LINKSTATE);
  			lsPacket->header = hdr;
- 			// print_packetHeader(lsPacket->header);
  			lsPacket->source = lsSource;
  			gettimeofday(&current_time, NULL);
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
- 			// print_linkState(lsPacket->proxy1);
- 			// print_linkState(lsPacket->proxy2);
  			lsPacket->linkWeight = 1;
- 			print_linkStatePacket(lsPacket);
+ 			if (debug) print_linkStatePacket(lsPacket);
  			pthread_mutex_lock(&linkstate_mutex);
  			LL_APPEND(lsHead, lsPacket);
  			pthread_mutex_unlock(&linkstate_mutex);
@@ -402,6 +398,10 @@
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
+ 	printf("-----PROXY 1-----\n");
+ 	print_linkState(lsp->proxy1);
+ 	printf("-----PROXY 2-----\n");
+ 	print_linkState(lsp->proxy2);
  }
 
 /* Decode header information */
