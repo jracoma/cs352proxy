@@ -157,13 +157,7 @@
  		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
- 		else if (!strcmp(next_field, "quitAfter")) {
- 			quitAfter = atoi(strtok(NULL, " \n"));
- 			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 				perror("connect thread");
- 				pthread_exit(NULL);
- 			}
- 		}
+ 		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "peer")) {
  			host = strtok(NULL, " \n");
 
@@ -369,8 +363,8 @@
 
 /* Sleeper for quitAfter */
  void *sleeper() {
- 	sleep(20);
- 	puts("quitAfter reached.");
+ 	sleep(quitAfter);
+ 	puts("%d has elapsed. Program terminating.\n", quitAfter);
  	exit(1);
  }
 
@@ -431,6 +425,12 @@
  		close(tap_fd);
  		return EXIT_FAILURE;
  	}
+
+ 	/* Set quitAfter sleeper */
+	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+	// 	perror("connect thread");
+	// 	pthread_exit(NULL);
+	// }
 
 	/* Start server path */
  	server(ntohs(local_info->listenPort));
