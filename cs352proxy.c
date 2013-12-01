@@ -76,31 +76,30 @@ int getIP(char *host, char *ip) {
 int initLocalParams() {
   struct ifreq ifr;
   char ethMAC[19];
-  local_info = malloc(sizeof(struct linkState));
-  struct linkState test;
+  struct linkState temp;
 
-  local_info = &test;
 
-  sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    //Type of address to retrieve - IPv4 IP address
-    ifr.ifr_addr.sa_family = AF_INET;
+  // sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    //Copy the interface name in the ifreq structure
-    strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
-    if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
-            perror("ioctl(SIOCGIFADDR");
-            return EXIT_FAILURE;
-    }
-    inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
-    close(sock_fd);
+  //   //Type of address to retrieve - IPv4 IP address
+  //   ifr.ifr_addr.sa_family = AF_INET;
 
-    //display result
-    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
+  //   //Copy the interface name in the ifreq structure
+  //   strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
+  //   if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+  //           perror("ioctl(SIOCGIFADDR");
+  //           return EXIT_FAILURE;
+  //   }
+  //   inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
+  //   close(sock_fd);
 
-    close(sock_fd);
+  //   //display result
+  //   printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
 
-    return 0;
+  //   close(sock_fd);
+
+  //   return 0;
 
   // sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
@@ -115,37 +114,37 @@ int initLocalParams() {
   // }
 
   // return 0;
- //        struct ifreq ifr;
- //        char ethMAC[19];
+        struct ifreq ifr;
+        char ethMAC[19];
 
- //        /* Template for local linkStatePacket */
- //        sock_fd = socket(AF_INET, SOCK_STREAM, 0);
- //        ifr.ifr_addr.sa_family = AF_INET;
+        /* Template for local linkStatePacket */
+        sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        ifr.ifr_addr.sa_family = AF_INET;
 
- //        /* Obtain local IP address of eth0 */
- //        strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
- //        if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
- //                perror("ioctl(SIOCGIADDR)");
- //                return EXIT_FAILURE;
- //        }
- //       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), local_info->listenIP);
+        /* Obtain local IP address of eth0 */
+        strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+        if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+                perror("ioctl(SIOCGIADDR)");
+                return EXIT_FAILURE;
+        }
+       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), temp.listenIP);
 
- //         Obtain local MAC ID for tap10
- //        strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
- //        if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
- //                perror("ioctl(SIOCGIFHWADDR)");
- //                return EXIT_FAILURE;
- //        }
+         Obtain local MAC ID for tap10
+        strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
+        if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
+                perror("ioctl(SIOCGIFHWADDR)");
+                return EXIT_FAILURE;
+        }
 
-	// local_info.ethMAC = ifr.ifr_hwaddr;
+	temp.ethMAC = ifr.ifr_hwaddr;
 
- //        if (debug) {
- //                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info.ethMAC.sa_data[0],(unsigne$
+        if (debug) {
+                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)temp.ethMAC.sa_data[0],(unsigned char)temp.ethMAC.sa_data[1],(unsigned char)temp.ethMAC.sa_data[2],(unsigned char)temp.ethMAC.sa_data[3],(unsigned char)temp.ethMAC.sa_data[4],(unsigned char)temp.ethMAC.sa_data[5])
 
- //                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info.liste$
- //        }
+                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP), temp.listenPort);
+        }
 
-	// return 0;
+	return 0;
 }
 
 
