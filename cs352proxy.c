@@ -16,9 +16,9 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *head = NULL;
+ struct peerList *peerHead = NULL;
  struct linkState *local_info = malloc(sizeof(struct linkState));;
- struct linkStatePacket *LShead = NULL;
+ struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
  pthread_t listen_thread, connect_thread, socket_thread;
@@ -186,8 +186,8 @@
 
  	if (debug) {
  		printf("Linked List:\n");
- 		LL_COUNT(head, current, count);
- 		LL_FOREACH(head, current) {
+ 		LL_COUNT(peerHead, current, count);
+ 		LL_FOREACH(peerHead, current) {
  			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, current->pid);
  		}
  		printf("Count: %d\n", count);
@@ -352,7 +352,7 @@
 	    	peer->net_fd = new_fd;
 	    	peer->pid = pthread_self();
 	    	pthread_mutex_lock(&peer_mutex);
-	    	LL_APPEND(head, peer);
+	    	LL_APPEND(peerHead, peer);
 	    	pthread_mutex_unlock(&peer_mutex);
 	    	return new_fd;
 	    }
