@@ -1,7 +1,7 @@
 /* cs352proxy.c
  * Project 2 - Internet Technology - Fall 2013
  * Jan Racoma
- * Objective: Maintaining link states with multiple peerHeads.
+ * Objective: Maintaining link states with multiple peers.
  */
 
 #include "cs352proxy.h"
@@ -16,13 +16,13 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerHeadList *peerHeadHead = NULL;
+ struct peerList *peerHead = NULL;
  struct linkState *local_info = malloc(sizeof(struct linkState));;
  struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
  pthread_t listen_thread, connect_thread, socket_thread;
- pthread_mutex_t peerHead_mutex = PTHREAD_MUTEX_INITIALIZER;
+ pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
  int allocate_tunnel(char *dev, int flags) {
@@ -124,11 +124,11 @@
  	char *next_field;
 	/* ptr to current input  */
  	char line[MAXLINESIZE+1];
-	/* Variables for peerHead information */
+	/* Variables for peer information */
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerHeadList *current;
+ 	struct peerList *current;
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -157,7 +157,7 @@
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
- 		else if (!strcmp(next_field, "peerHead")) {
+ 		else if (!strcmp(next_field, "peer")) {
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
@@ -169,26 +169,26 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			current = malloc(sizeof(struct peerHeadList));
+ 			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->peerHeadIP);
- 			current->peerHeadPort = port;
+ 			current->peerort = port;
  			current->tapDevice = (char *)malloc(50);
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peerHead_mutex);
- 			if (pthread_create(&connect_thread, NULL, connectTopeerHead, (void *)current) != 0) {
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
 				pthread_exit(NULL);
  			}
- 			pthread_mutex_unlock(&peerHead_mutex);
+ 			pthread_mutex_unlock(&peer_mutex);
  			pthread_join(connect_thread, NULL);
  		}
  	}
 
  	if (debug) {
  		printf("Linked List:\n");
- 		LL_COUNT(peerHeadHead, current, count);
- 		LL_FOREACH(peerHeadHead, current) {
- 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerHeadIP), current->peerHeadPort, current->tapDevice, current->net_fd, current->pid);
+ 		LL_COUNT(peerHead, current, count);
+ 		LL_FOREACH(peerHead, current) {
+ 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, current->pid);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
@@ -315,12 +315,12 @@
  }
 
 /* Client Mode */
- void *connectTopeerHead(void *temp)
+ void *connectToPeer(void *temp)
  {
  	struct sockaddr_in remote_addr;
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerHeadList *peerHead = (struct peerHeadList *)temp;
+ 	struct peerList *peer = (struct peerList *)temp;
 
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -331,14 +331,14 @@
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peerHead->peerHeadPort);
- 	inet_aton((char *)inet_ntoa(peerHead->peerHeadIP), &remote_addr.sin_addr);
+ 	remote_addr.sin_port = htons(peer->peerPort);
+ 	inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
 
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
     /* Connect to server */
     if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-    	printf("peerHead Removed %s:%d: Failed to connect\n", inet_ntoa(peerHead->peerHeadIP), peerHead->peerHeadPort);
+    	printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
       pthread_exit(NULL);
     } else {
 	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
@@ -349,11 +349,11 @@
 	    	pthread_exit(NULL);
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size);
-	    	peerHead->net_fd = new_fd;
-	    	peerHead->pid = pthread_self();
-	    	pthread_mutex_lock(&peerHead_mutex);
-	    	LL_APPEND(peerHeadHead, peerHead);
-	    	pthread_mutex_unlock(&peerHead_mutex);
+	    	peer->net_fd = new_fd;
+	    	peer->pid = pthread_self();
+	    	pthread_mutex_lock(&peer_mutex);
+	    	LL_APPEND(peerHead, peer);
+	    	pthread_mutex_unlock(&peer_mutex);
 	    	return new_fd;
 	    }
     }
