@@ -87,7 +87,7 @@ int initLocalParams() {
                 perror("ioctl(SIOCGIADDR)");
                 return EXIT_FAILURE;
         }
-       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info.listenIP);
+       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), local_info->listenIP);
 
         /* Obtain local MAC ID for tap10 */
         strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
@@ -105,6 +105,37 @@ int initLocalParams() {
         }
 
 	return 0;
+ //        struct ifreq ifr;
+ //        char ethMAC[19];
+
+ //        /* Template for local linkStatePacket */
+ //        sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+ //        ifr.ifr_addr.sa_family = AF_INET;
+
+ //        /* Obtain local IP address of eth0 */
+ //        strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
+ //        if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
+ //                perror("ioctl(SIOCGIADDR)");
+ //                return EXIT_FAILURE;
+ //        }
+ //       inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), local_info->listenIP);
+
+ //         Obtain local MAC ID for tap10
+ //        strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
+ //        if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
+ //                perror("ioctl(SIOCGIFHWADDR)");
+ //                return EXIT_FAILURE;
+ //        }
+
+	// local_info.ethMAC = ifr.ifr_hwaddr;
+
+ //        if (debug) {
+ //                sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info.ethMAC.sa_data[0],(unsigne$
+
+ //                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info.liste$
+ //        }
+
+	// return 0;
 }
 
 
