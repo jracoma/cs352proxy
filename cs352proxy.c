@@ -76,7 +76,6 @@ int getIP(char *host, char *ip) {
 int initLocalParams() {
 	struct ifreq ifr;
 	char buffer[MAXLINESIZE];
-	// char *ethMAC;
 	char *dev = "tap10";
   // local_info = malloc(sizeof(struct linkState));
 
@@ -104,7 +103,7 @@ int initLocalParams() {
 	sprintf(buffer, "/sys/class/net/%s/address", dev);
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
-	// sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0]);
+	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)local_info->ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0]);
   printf("Buffer: %s\n", buffer);
   fclose(f);
 
