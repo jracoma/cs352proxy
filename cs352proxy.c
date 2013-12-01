@@ -104,7 +104,6 @@ int initLocalParams() {
 
           printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
   }
-  local_info = &temp;
 
 	return 0;
 }
