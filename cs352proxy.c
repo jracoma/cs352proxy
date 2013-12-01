@@ -113,9 +113,9 @@ int initLocalParams() {
   // 	printf("%s | %s | %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
   // }
 
-  // return 0;
-        struct ifreq ifr;
-        char ethMAC[19];
+  // // return 0;
+  //       struct ifreq ifr;
+  //       char ethMAC[19];
 
         /* Template for local linkStatePacket */
         sock_fd = socket(AF_INET, SOCK_STREAM, 0);
