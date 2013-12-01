@@ -359,7 +359,7 @@
  			pthread_mutex_unlock(&peer_mutex);
  			lsSource->ls = &local_info;
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
- 			printf("Test: %s, %d\n", local_info, lsSource->neighbors);
+ 			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
  		}
  	}
  	return NULL;
