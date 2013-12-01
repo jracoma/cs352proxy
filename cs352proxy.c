@@ -182,9 +182,9 @@ int parseInput(int argc, char *argv[]) {
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
 				if (connectToPeer(newPeer)) {
-					printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
-					printf("Successful connection to %s:%d\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 					LL_APPEND(head, newPeer);
 				}
 			}
