@@ -77,7 +77,7 @@
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
  	char ethMAC[19];
- 	local_info = malloc(sizeof(struct linkState));
+ 	local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -325,6 +325,8 @@
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->proxy1 = (struct linkState *)malloc(sizeof(struct linkState));
+ 	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
  	uint16_t pHeaderInfo[2];
  	struct timeval current_time;
 
