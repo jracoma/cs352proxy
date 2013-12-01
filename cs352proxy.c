@@ -386,10 +386,18 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	puts("HEEEERERERERE\n");
  	struct peerList *peer;
- 	struct peerLst *tmp;
+	printf("Searching for: %ld:%ld\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_sec);
+	pthread_mutex_lock(&peer_mutex);
+	pthread_mutex_lock(&linkstate_mutex);
 	LL_FOREACH(peerHead, peer) {
-		printf("%ld:%ld\n", peer->uniqueID.tv_sec, lsp->uniqueID.tv_sec);
+		printf("%ld:%ld\n", peer->uniqueID.tv_sec, peer->uniqueID.tv_sec);
+		if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
+			puts("found");
+			break;
+		}
  	}
+ 	pthread_mutex_unlock(&peer_mutex);
+ 	pthread_mutex_unlock(&linkstate_mutex);
  }
 
 /* Print packetHeader information */
