@@ -384,7 +384,7 @@
 
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	puts("HEEEERERERERE\n");
+ 	char *buffer[MAXBUFFSIZE];
  	struct peerList *peer;
 
 	pthread_mutex_lock(&peer_mutex);
@@ -394,6 +394,11 @@
 			break;
 		}
  	}
+
+ 	/* Serialize data */
+ 	sprintf(buffer, "%x %x", type, length);
+ 	printf("Test: %s\n", buffer);
+
 
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
