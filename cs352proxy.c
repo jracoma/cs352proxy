@@ -357,7 +357,7 @@
  			pthread_mutex_unlock(&peer_mutex);
 
  			lsSource->ls = &local_info;
- 			print_linkState(lsSource->ls);
+ 			print_linkState(&lsSource->ls);
  			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Local Info: %s | Neighbors: %d\n", (char *)local_info, lsSource->neighbors);
