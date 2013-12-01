@@ -400,7 +400,7 @@
  	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
  	lpackage = strtol(buffer, &temp, 0);
- 	printf("Test: %ld | %ld\n", lpackage, htonl(lpackage));
+ 	printf("Test: %s | %ld | %ld\n", temp, lpackage, htonl(lpackage));
 
 
  	pthread_mutex_unlock(&peer_mutex);
