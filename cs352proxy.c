@@ -129,7 +129,7 @@ int parseInput(int argc, char *argv[]) {
 	/* Variables for peer information */
 	char *host, *tapDevice;
 	char ip[100];
-	int port, count, size;
+	int port, count, client_fd;
 	struct peerList *newPeer, *current;
 
 	/* Verifies proper syntax command line */
@@ -192,7 +192,9 @@ int parseInput(int argc, char *argv[]) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+					pthread_mutex_lock(peer_mutex);
 					LL_APPEND(head, newPeer);
+					pthread_mutex_unlock(peer_mutex);
 				}
 			}
 		}
@@ -288,7 +290,6 @@ void server(int port)
 void *handle_tap()
 {
 		puts("create thread for tap");
-		ssize_t size;
 		uint16_t type, length;
 		char *buffer = malloc(MAXBUFFSIZE);
 		union ethframe frame;
@@ -333,8 +334,7 @@ void *handle_tap()
 int connectToPeer(struct peerList *peer)
 {
     struct sockaddr_in remote_addr;
-    int new_fd;
-    int size;
+    int new_fd, size;
     char *buffer = malloc(MAXBUFFSIZE);
 
     /* Create TCP Socket */
