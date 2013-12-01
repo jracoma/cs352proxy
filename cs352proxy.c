@@ -176,7 +176,7 @@ int parseInput(int argc, char *argv[]) {
 			current->peerPort = port;
 			current->tapDevice = (char *)malloc(50);
 			strcpy(current->tapDevice, tapDevice);
-			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)&current) != 0) {
+			if (pthread_create(&connect_thread, NULL, connectToPeer, current) != 0) {
 			  perror("connect_thread");
 			  exit(1);
 			}
@@ -314,12 +314,12 @@ void *handle_tap()
 }
 
 /* Client Mode */
-void *connectToPeer(void *peer)
+void *connectToPeer(void *temp)
 {
     struct sockaddr_in remote_addr;
     int new_fd, size;
     char *buffer = malloc(MAXBUFFSIZE);
-    peer = (struct linkState *)&peer;
+    struct linkState peer = (struct linkState *)&temp;
 
     pthread_mutex_lock(&peer_mutex);
     /* Create TCP Socket */
