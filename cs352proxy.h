@@ -91,8 +91,8 @@ struct linkStateSource {
 struct linkStatePacket {
   struct packetHeader *header;
   struct timeval uniqueID;
-  struct linkState proxy1;
-  struct linkState proxy2;
+  struct linkState *proxy1;
+  struct linkState *proxy2;
   uint32_t linkWeight;
   struct linkStatePacket *next;
 }__attribute__((packed));
