@@ -53,7 +53,7 @@ struct packetHeader {
 }__attribute__((packed));
 
 /* Struct for initial peer list */
-struct __attribute__((packed)) {
+struct peerList {
   struct in_addr peerIP;
   uint16_t peerPort;
   char *tapDevice;
@@ -61,36 +61,36 @@ struct __attribute__((packed)) {
   int net_fd;
   pthread_t pid;
   struct peerList *next;
-} peerList;
+}__attribute__((packed));
 
 /* Struct for data packet information */
-struct __attribute__((packed)) {
+struct dataPacket {
   struct packetHeader header;
   char data[MAXBUFFSIZE];
-} dataPacket;
+}__attribute__((packed));
 
 /* Struct for link state */
-struct __attribute__((packed)) {
+struct linkState {
   struct in_addr listenIP;
   uint16_t listenPort;
   struct sockaddr tapMAC;
   struct sockaddr ethMAC;
-} linkState;
+}__attribute__((packed));
 
 /* Struct for link state source */
-struct __attribute__((packed)) {
+struct linkStateSource {
   struct linkState ls;
   uint16_t numNeighbors;
-} linkStateSource;
+}__attribute__((packed));
 
 /* Struct for link state packet information */
-struct __attribute__((packed)) {
+struct linkStatePacket {
   struct packetHeader header;
   struct timeval uniqueID;
-  linkState proxy1;
-  linkState proxy2;
+  struct linkState proxy1;
+  struct linkState proxy2;
   uint32_t linkWeight;
-} linkStatePacket;
+}__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);
 int getIP(char *host, char *ip);
