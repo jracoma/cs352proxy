@@ -357,7 +357,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
- 			*test = &local_info;
+ 			test.listenPort = local_info->listenPort;
  			// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
