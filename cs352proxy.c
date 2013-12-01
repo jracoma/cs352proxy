@@ -92,7 +92,7 @@ int initLocalParams() {
     close(sock_fd);
 
     //display result
-    printf("%s - %s\n" , ifr.ifr_name, );
+    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP));
 
     return 0;
  //        struct ifreq ifr;
