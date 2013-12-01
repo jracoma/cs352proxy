@@ -152,7 +152,6 @@
  		line_number++;
  		next_field = strtok(line, " \n");
 
- 		if (debug) printf("%d: %s\n", line_number, next_field);
  		if (!next_field || !strcmp(next_field, "//")) continue;
  		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
@@ -178,7 +177,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
-				pthread_exit(NULL);
+ 				pthread_exit(NULL);
  			}
  			pthread_mutex_unlock(&peer_mutex);
  			pthread_join(connect_thread, NULL);
@@ -322,6 +321,7 @@
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *newPeer = malloc(sizeof(struct peerList));
 
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -338,26 +338,25 @@
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
     /* Connect to server */
-    if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-    	printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
-      pthread_exit(NULL);
-    } else {
-	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
-      char *message = "The Cheese is in The Toaster";
-	    size = send(new_fd, message, strlen(message), 0);
-	    if (size < 0) {
-	    	perror("send");
-	    	pthread_exit(NULL);
-	    } else {
-	    	printf("Message %d sent.\n", size);
-	    	peer->net_fd = new_fd;
-	    	peer->pid = pthread_self();
-	    	pthread_mutex_lock(&peer_mutex);
-	    	LL_APPEND(peerHead, peer);
-	    	pthread_mutex_unlock(&peer_mutex);
-	    	return NULL;
-	    }
-    }
+ 	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
+ 		printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
+ 		pthread_exit(NULL);
+ 	} else {
+ 		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 		buffer = "The Cheese is in The Toaster";
+ 		size = send(new_fd, buffer, strlen(message), 0);
+ 		if (size < 0) {
+ 			perror("send");
+ 			pthread_exit(NULL);
+ 		} else {
+ 			printf("Message %d sent.\n", size);
+ 			peer->net_fd = new_fd;
+ 			peer->pid = pthread_self();
+ 			pthread_mutex_lock(&peer_mutex);
+ 			LL_APPEND(peerHead, peer);
+ 			pthread_mutex_unlock(&peer_mutex);
+ 		}
+ 	}
  	return NULL;
  }
 
