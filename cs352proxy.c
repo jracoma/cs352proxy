@@ -76,7 +76,7 @@ int getIP(char *host, char *ip) {
 int initLocalParams() {
 	struct ifreq *ifr;
 	char ethMAC[19], tapMAC[19];
-	local_info = malloc(sizeof(linkState));
+	struct local_info = malloc(sizeof(linkState));
 	char *dev = "eth0";
 	char buffer[MAXLINESIZE];
 
