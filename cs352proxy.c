@@ -107,9 +107,10 @@
  	fclose(f);
 
  	if (debug) {
- 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+ 		print_linkState(&local_info);
+ 		// sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
 
- 		printf("Interface Name: %s | %s | Address: %s\n", dev, ethMAC, inet_ntoa(local_info->listenIP));
+ 		// printf("Interface Name: %s | %s | Address: %s\n", dev, ethMAC, inet_ntoa(local_info->listenIP));
  	}
 
  	return 0;
@@ -365,6 +366,13 @@
  		}
  	}
  	return NULL;
+ }
+
+/* Print linkState information */
+ void print_linkState(struct linkState *ls) {
+ 	int ethMAC;
+ 	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+ 	printf("listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
  }
 
 /* Decode header information */
