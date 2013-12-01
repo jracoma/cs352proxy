@@ -100,7 +100,7 @@ int initLocalParams() {
   }
   local_info->ethMAC = ifr->ifr_hwaddr;
 
-  sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
+  // sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
   // FILE *f = fopen(buffer, "r");
   // fread(buffer, 1, MAXLINESIZE, f);
@@ -109,7 +109,7 @@ int initLocalParams() {
   close(sock_fd);
 
   if (debug) {
-  	printf("%s | %s | %s\n" , ifr.ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
+  	printf("%s | %s | %s\n" , ifr->ifr_name, inet_ntoa(local_info->listenIP), ethMAC);
   }
 
   return 0;
