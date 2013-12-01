@@ -326,13 +326,13 @@ void *connectToPeer(void *peer)
         perror("could not create socket");
     }
 
-  //   puts("Client Mode:");
-  //   memset((char *)&remote_addr, 0, sizeof(remote_addr));
-  //   remote_addr.sin_family = AF_INET;
-  //   remote_addr.sin_port = htons(peer->peerPort);
-		// inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
+    puts("Client Mode:");
+    memset((char *)&remote_addr, 0, sizeof(remote_addr));
+    remote_addr.sin_family = AF_INET;
+    remote_addr.sin_port = htons(peer->peerPort);
+		inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
 
-  //   printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
+    printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
   //   /* Connect to server */
   //   if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
