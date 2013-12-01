@@ -363,6 +363,7 @@
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			print_linkState(lsSource->ls);
  			hdr->type = htons(PACKET_LINKSTATE);
+ 			lsSource->header = hdr;
  			print_packetHeader(lsPacket->header);
  		}
  	}
