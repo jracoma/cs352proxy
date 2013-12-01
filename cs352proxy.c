@@ -386,7 +386,8 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct linkStatePacket *tmp;
  	struct peerList *peer = (struct peerList *)malloc(sizeof(struct peerList));
-	LL_SEARCH(peerHead, peer, "uniqueID", lsp->uniqueID) if (peer) puts("found");
+	LL_SEARCH(peerHead, peer, "uniqueID", lsp->uniqueID);
+	if (peer) puts("found");
  }
 
 /* Print packetHeader information */
