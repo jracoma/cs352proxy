@@ -344,7 +344,7 @@
  	} else {
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
  		buffer = "The Cheese is in The Toaster";
- 		size = send(new_fd, buffer, strlen(message), 0);
+ 		size = send(new_fd, buffer, strlen(buffer), 0);
  		if (size < 0) {
  			perror("send");
  			pthread_exit(NULL);
