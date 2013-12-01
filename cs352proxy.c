@@ -97,7 +97,7 @@ int initLocalParams() {
     return EXIT_FAILURE;
   }
 
-	local_info->ethMAC = &(*ifr.ifr_hwaddr);
+	local_info->ethMAC = &(ifr.ifr_hwaddr);
 
   if (debug) {
           sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)temp.ethMAC.sa_data[0],(unsigned char)temp.ethMAC.sa_data[1],(unsigned char)temp.ethMAC.sa_data[2],(unsigned char)temp.ethMAC.sa_data[3],(unsigned char)temp.ethMAC.sa_data[4],(unsigned char)temp.ethMAC.sa_data[5]);
