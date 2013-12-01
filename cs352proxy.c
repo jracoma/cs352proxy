@@ -324,7 +324,6 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	pthread_mutex_lock(&peer_mutex);
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -341,7 +340,6 @@
 
     /* Connect to server */
     if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-    	pthread_mutex_unlock(&peer_mutex);
     	printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
       pthread_exit(NULL);
     } else {
@@ -350,13 +348,11 @@
 	    size = send(new_fd, message, strlen(message), 0);
 	    if (size < 0) {
 	    	perror("send");
-	    	pthread_mutex_unlock(&peer_mutex);
 	    	pthread_exit(NULL);
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size);
 	    	peer->net_fd = new_fd;
 
-	    	pthread_mutex_unlock(&peer_mutex);
 	    	return new_fd;
 	    }
     }
