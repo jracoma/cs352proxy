@@ -83,7 +83,7 @@ int initLocalParams() {
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
   //Type of address to retrieve - IPv4 IP address
-  ifr->ifr_addr.sa_family = AF_INET;
+  ifr->ifr_addr->sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
   strncpy(ifr->ifr_name , dev, IFNAMSIZ-1);
