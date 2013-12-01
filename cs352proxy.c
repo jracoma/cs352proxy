@@ -368,19 +368,26 @@
  			lsPacket->header = hdr;
  			lsPacket->source = lsSource;
  			gettimeofday(&current_time, NULL);
+ 			peer->uniqueID = current_time;
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
  			lsPacket->linkWeight = 1;
+ 			send_linkStatePacket(lsPacket);
  			if (debug) print_linkStatePacket(lsPacket);
- 			pthread_mutex_lock(&linkstate_mutex);
- 			LL_APPEND(lsHead, lsPacket);
- 			pthread_mutex_unlock(&linkstate_mutex);
- 		}
+	 			pthread_mutex_lock(&linkstate_mutex);
+	 			LL_APPEND(lsHead, lsPacket);
+	 			pthread_mutex_unlock(&linkstate_mutex);
+	 		}
  	}
  	return NULL;
  }
 
-/* Send linkStatePacket */
+/* Send linkState */
+ void send_linkStatePacket(struct linkStatePacket *lsp) {
+ 	struct linkStatePacket *tmp;
+ 	struct peerList *peer;
+ 	LL_SEARCH(peerHead, peer, )
+ }
 
 
 /* Print packetHeader information */
