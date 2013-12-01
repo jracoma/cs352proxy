@@ -364,7 +364,7 @@
 /* Sleeper for quitAfter */
  void *sleeper() {
  	sleep(quitAfter);
- 	puts("%d has elapsed. Program terminating.\n", quitAfter);
+ 	printf("%d has elapsed. Program terminating.\n", quitAfter);
  	exit(1);
  }
 
