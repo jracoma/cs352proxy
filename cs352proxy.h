@@ -106,6 +106,7 @@ void *handle_listen();
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
+void send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket(struct linkStatePacket *lsp);
