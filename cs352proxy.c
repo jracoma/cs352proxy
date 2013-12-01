@@ -100,9 +100,9 @@ int initLocalParams() {
 	local_info->ethMAC = &(ifr.ifr_hwaddr);
 
   if (debug) {
-          sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)temp.ethMAC.sa_data[0],(unsigned char)temp.ethMAC.sa_data[1],(unsigned char)temp.ethMAC.sa_data[2],(unsigned char)temp.ethMAC.sa_data[3],(unsigned char)temp.ethMAC.sa_data[4],(unsigned char)temp.ethMAC.sa_data[5]);
+          sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
 
-          printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP));
+          printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
   }
   local_info = &temp;
 
