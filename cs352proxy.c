@@ -328,6 +328,7 @@
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
+ 		exit(1);
  	}
 
  	puts("Client Mode:");
