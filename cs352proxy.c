@@ -344,7 +344,7 @@
     } else {
 	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
       char *message = "The Cheese is in The Toaster";
-	    size = send(new_fd, message, sizeof(message), 0);
+	    size = send(new_fd, message, strlen(message), 0);
 	    if (size < 0) {
 	    	perror("send");
 	    	pthread_exit(NULL);
@@ -358,35 +358,6 @@
 	    	return NULL;
 	    }
     }
-  //   return new_fd;
-
-  //   			if (head == NULL) {
-		// 		current = malloc(sizeof(struct peerHeadList));
-		// 		inet_aton(host, &current->peerHeadIP);
-		// 		current->peerHeadPort = port;
-		// 		current->tapDevice = (char *)malloc(50);
-		// 		strcpy(current->tapDevice, tapDevice);
-		// 		if ((client_fd = connectTopeerHead(current)) < 0) {
-		// 			printf("peerHead Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerHeadIP), current->peerHeadPort);
-		// 		} else {
-		// 			printf("peerHead Added %s:%d: Successful connection\n", inet_ntoa(current->peerHeadIP), current->peerHeadPort);
-		// 			current->net_fd = client_fd;
-		// 			head = current;
-		// 		}
-		// 	} else {
-		// 		newpeerHead = malloc(sizeof(struct peerHeadList));
-		// 		inet_aton(host, &newpeerHead->peerHeadIP);
-		// 		newpeerHead->peerHeadPort = port;
-		// 		newpeerHead->tapDevice = tapDevice;
-		// 		if ((connectTopeerHead(newpeerHead)) < 0) {
-		// 			printf("peerHead Removed %s:%d: Failed to connect\n", inet_ntoa(newpeerHead->peerHeadIP), newpeerHead->peerHeadPort);
-		// 		} else {
-		// 			printf("peerHead Added %s:%d: Successful connection\n", inet_ntoa(newpeerHead->peerHeadIP), newpeerHead->peerHeadPort);
-		// 			newpeerHead->net_fd = client_fd;
-		// 			pthread_mutex_lock(&peerHead_mutex);
-		// 			LL_APPEND(head, newpeerHead);
-		// 			pthread_mutex_unlock(&peerHead_mutex);
-		// 		}
  	return NULL;
  }
 
@@ -417,7 +388,7 @@
  	memcpy(frame.field.data, data, data_len);
 
  	unsigned int frame_len = data_len + ETH_HLEN;
- 	strncpy(if_name, "tap11", IFNAMSIZ - 1);
+ 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
  	printf("Attempting to open %s...\n", if_name);
 	/* Open tap interface */
  	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
