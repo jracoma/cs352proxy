@@ -170,11 +170,11 @@
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
  			current = malloc(sizeof(struct peerList));
- 			inet_aton(host, &current->peerHeadIP);
+ 			inet_aton(host, &current->peerIP);
  			current->peerort = port;
  			current->tapDevice = (char *)malloc(50);
  			strcpy(current->tapDevice, tapDevice);
- 			pthread_mutex_lock(&peerHead_mutex);
+ 			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
 				pthread_exit(NULL);
