@@ -182,6 +182,7 @@
 				pthread_exit(NULL);
  			}
  			pthread_mutex_unlock(&peer_mutex);
+ 			pthread_join(connect_thread);
  		}
  	}
 
