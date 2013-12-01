@@ -323,6 +323,8 @@
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
+ 	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	uint16_t pHeaderInfo[2];
 
     /* Create TCP Socket */
@@ -355,14 +357,20 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
+
+ 			/* Create link state packet */
  			lsSource->ls = local_info;
- 			print_linkState(lsSource->ls);
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
- 			printf("Local Info: %s | Neighbors: %d\n", (char *)local_info, lsSource->neighbors);
+ 			print_linkState(lsSource->ls);
  		}
  	}
  	return NULL;
  }
+
+/* Print packetHeader information */
+void print_packetHeader(struct packetHeader *pkt) {
+
+}
 
 /* Print linkState information */
  void print_linkState(struct linkState *ls) {

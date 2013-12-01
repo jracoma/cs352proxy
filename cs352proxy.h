@@ -69,7 +69,7 @@ struct peerList {
 
 /* Struct for data packet information */
 struct dataPacket {
-  struct packetHeader header;
+  struct packetHeader *header;
   char data[MAXBUFFSIZE];
 }__attribute__((packed));
 
@@ -89,7 +89,7 @@ struct linkStateSource {
 
 /* Struct for link state packet information */
 struct linkStatePacket {
-  struct packetHeader header;
+  struct packetHeader *header;
   struct timeval uniqueID;
   struct linkState proxy1;
   struct linkState proxy2;
@@ -105,6 +105,7 @@ void *handle_listen();
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
+void print_packetHeader(struct packetHeader *pkt);
 void print_linkState(struct linkState *ls);
 uint16_t getHeaderInfo(uint16_t *header);
 void *sleeper();
