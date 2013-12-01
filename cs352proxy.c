@@ -367,6 +367,7 @@ int connectToPeer(struct peerList *peer)
 	    } else {
 	    	printf("Message %d sent\n", size);
 	    }
+	    return new_fd;
     }
     return new_fd;
 }
