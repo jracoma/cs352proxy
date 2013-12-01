@@ -188,10 +188,11 @@ int parseInput(int argc, char *argv[]) {
 				inet_aton(host, &newPeer->peerIP);
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
-				if (connectToPeer(newPeer)) {
+				if (client_fd = connectToPeer(newPeer)) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+					newPeer->net_fd = client_fd;
 					pthread_mutex_lock(&peer_mutex);
 					LL_APPEND(head, newPeer);
 					pthread_mutex_unlock(&	peer_mutex);
@@ -204,8 +205,7 @@ int parseInput(int argc, char *argv[]) {
 		printf("Linked List:\n");
 		LL_COUNT(head, current, count);
 		LL_FOREACH(head, current) {
-			printf("Host: %s:%d", inet_ntoa(current->peerIP), current->peerPort);
-			printf(" - %s\n", current->tapDevice);
+			printf("Host: %s:%d | Tap: %s | NETFD: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->new_fd);
 		}
 		printf("Count: %d\n", count);
 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
@@ -290,7 +290,7 @@ void server(int port)
 void *handle_tap()
 {
 		puts("create thread for tap");
-		uint16_t type, length;
+		uint16_t type;
 		ssize_t size;
 		char *buffer = malloc(MAXBUFFSIZE);
 		union ethframe frame;
