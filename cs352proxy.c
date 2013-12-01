@@ -77,7 +77,7 @@ int initLocalParams() {
 	struct ifreq ifr;
 	char buffer[MAXLINESIZE];
 	char *dev = "tap10";
-  // local_info = malloc(sizeof(struct linkState));
+  local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
 	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
