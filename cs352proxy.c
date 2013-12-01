@@ -85,12 +85,12 @@ int initLocalParams() {
     //Copy the interface name in the ifreq structure
     strncpy(ifr.ifr_name , "eth0" , IFNAMSIZ-1);
 
-    ioctl(fd, SIOCGIFADDR, &ifr);
+    ioctl(sock_fd, SIOCGIFADDR, &ifr);
 
-    close(fd);
+    close(sock_fd);
 
     //display result
-    printf("%s - %s\n" , iface , inet_ntoa(( (struct sockaddr_in *)&ifr.ifr_addr )->sin_addr) );
+    printf("%s - %s\n" , ifr.ifr_name, inet_ntoa(( (struct sockaddr_in *)&ifr.ifr_addr )->sin_addr) );
 
     return 0;
  //        struct ifreq ifr;
