@@ -21,8 +21,8 @@
  struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
- pthread_t listen_thread, connect_thread, socket_thread;
- pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER;
+ pthread_t sleeper, listen_thread, connect_thread, socket_thread;
+ pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
  int allocate_tunnel(char *dev, int flags) {
@@ -157,7 +157,13 @@
  		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
- 		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
+ 		else if (!strcmp(next_field, "quitAfter")) {
+ 			quitAfter = atoi(strtok(NULL, " \n"));
+ 			if (pthread_create(&sleeper, NULL, sleeper, NULL)) {
+ 				perror("connect thread");
+ 				pthread_exit(NULL);
+ 			}
+ 		}
  		else if (!strcmp(next_field, "peer")) {
  			host = strtok(NULL, " \n");
 
@@ -361,6 +367,14 @@
  	return NULL;
  }
 
+/* Sleeper for quitAfter */
+ void *sleeper() {
+ 	slee(20);
+ 	puts("quitAfter reached.");
+ 	pthread_exit(NULL);
+ 	exit(1);
+ }
+
  int main (int argc, char *argv[]) {
  	if (debug) {
  		puts("DEBUGGING MODE:");
@@ -421,12 +435,6 @@
 
 	/* Start server path */
  	server(ntohs(local_info->listenPort));
-
-	// /* No peerHeads listed in config file */
-	// if (!(parseInput(argc, argv)) && peerHeads == 0) {
-	// 	printf("No peerHeads listed in config file. heading as zero server...\n");
-	// 	server(ntohs(local_info.listenPort));
-	// }
 
  	close(tap_fd);
  	pthread_exit(NULL);
