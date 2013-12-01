@@ -74,16 +74,18 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq ifr;
+	struct ifreq *ifr;
 	char ethMAC[19];
+	memset(&ifr, 0, sizeof(ifr));
 
 	/* Template for local linkStatePacket */
 	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+	ifr.ifr_
 
 	// printf("Test: %s\n", (char *)ifr.ifr_addr.sa_family);
 
 	/* Obtain local IP address of eth0 */
-	strcpy(ifr.ifr_name, "eth0");
+	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
 	if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
@@ -134,77 +136,77 @@ int parseInput(int argc, char *argv[]) {
 	initLocalParams();
 
 	/* Open input file */
-	input_file = fopen(argv[1], "r");
-	if (input_file == NULL) {
-		perror("argv[1]");
-		return EXIT_FAILURE;
-	}
+	// input_file = fopen(argv[1], "r");
+	// if (input_file == NULL) {
+	// 	perror("argv[1]");
+	// 	return EXIT_FAILURE;
+	// }
 
-	/* Iterate through the input line one line at a time */
-	while (fgets(line, MAXLINESIZE, input_file)) {
-		line_number++;
-		next_field = strtok(line, " \n");
+	// /* Iterate through the input line one line at a time */
+	// while (fgets(line, MAXLINESIZE, input_file)) {
+	// 	line_number++;
+	// 	next_field = strtok(line, " \n");
 
-		if (debug) printf("%d: %s\n", line_number, next_field);
-		if (!next_field || !strcmp(next_field, "//")) continue;
-		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
-		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
-		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
-		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
-		else if (!strcmp(next_field, "peer")) {
-			host = strtok(NULL, " \n");
+	// 	if (debug) printf("%d: %s\n", line_number, next_field);
+	// 	if (!next_field || !strcmp(next_field, "//")) continue;
+	// 	else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
+	// 	else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
+	// 	else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
+	// 	else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
+	// 	else if (!strcmp(next_field, "peer")) {
+	// 		host = strtok(NULL, " \n");
 
-			/* Checks for a.b.c.d address, otherwise resolve hostname */
-			if (inet_addr(host) == -1) {
-				getIP(host, ip);
-				host = ip;
-			}
-			port = atoi(strtok(NULL, " \n"));
-      fgets(line, MAXLINESIZE, input_file);
-      next_field = strtok(line, " \n");
-			tapDevice = strtok(NULL, " \n");
-			if (head == NULL) {
-				current = malloc(sizeof(peerList));
-				inet_aton(host, &current->peerIP);
-				current->peerPort = port;
-				current->tapDevice = (char *)malloc(50);
-				strcpy(current->tapDevice, tapDevice);
-				if (connectToPeer(current)) {
-					printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
-				} else {
-					printf("Successful connection to %s:%d\n", inet_ntoa(current->peerIP), current->peerPort);
-					head = current;
-				}
-			} else {
-				newPeer = malloc(sizeof(peerList));
-				inet_aton(host, &newPeer->peerIP);
-				newPeer->peerPort = port;
-				newPeer->tapDevice = tapDevice;
-				if (connectToPeer(newPeer)) {
-					printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
-				} else {
-					printf("Successful connection to %s:%d\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
-					LL_APPEND(head, newPeer);
-				}
-			}
-		}
-	}
+	// 		/* Checks for a.b.c.d address, otherwise resolve hostname */
+	// 		if (inet_addr(host) == -1) {
+	// 			getIP(host, ip);
+	// 			host = ip;
+	// 		}
+	// 		port = atoi(strtok(NULL, " \n"));
+ //      fgets(line, MAXLINESIZE, input_file);
+ //      next_field = strtok(line, " \n");
+	// 		tapDevice = strtok(NULL, " \n");
+	// 		if (head == NULL) {
+	// 			current = malloc(sizeof(peerList));
+	// 			inet_aton(host, &current->peerIP);
+	// 			current->peerPort = port;
+	// 			current->tapDevice = (char *)malloc(50);
+	// 			strcpy(current->tapDevice, tapDevice);
+	// 			if (connectToPeer(current)) {
+	// 				printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
+	// 			} else {
+	// 				printf("Successful connection to %s:%d\n", inet_ntoa(current->peerIP), current->peerPort);
+	// 				head = current;
+	// 			}
+	// 		} else {
+	// 			newPeer = malloc(sizeof(peerList));
+	// 			inet_aton(host, &newPeer->peerIP);
+	// 			newPeer->peerPort = port;
+	// 			newPeer->tapDevice = tapDevice;
+	// 			if (connectToPeer(newPeer)) {
+	// 				printf("Removed %s:%d from peerList: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+	// 			} else {
+	// 				printf("Successful connection to %s:%d\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+	// 				LL_APPEND(head, newPeer);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	if (debug) {
-		printf("Linked List:\n");
-		LL_COUNT(head, current, count);
-		LL_FOREACH(head, current) {
-      printf("Host: %s:%d", inet_ntoa(current->peerIP), current->peerPort);
-      printf(" - %s\n", current->tapDevice);
-		}
-		printf("Count: %d\n", count);
-		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
-	}
+	// if (debug) {
+	// 	printf("Linked List:\n");
+	// 	LL_COUNT(head, current, count);
+	// 	LL_FOREACH(head, current) {
+ //      printf("Host: %s:%d", inet_ntoa(current->peerIP), current->peerPort);
+ //      printf(" - %s\n", current->tapDevice);
+	// 	}
+	// 	printf("Count: %d\n", count);
+	// 	printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
+	// }
 
-	/* Close input file */
-	fclose(input_file);
+	// /* Close input file */
+	// fclose(input_file);
 
-	return 0;
+	// return 0;
 }
 
 /* Read from socket and write to tap */
