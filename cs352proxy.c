@@ -331,7 +331,6 @@
  		perror("could not create socket");
  		exit(1);
  	}
- 	printf("Test: %d\n", sizeof(int));
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
@@ -357,7 +356,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
- 			// lsSource->ls = &local_info;
+ 			lsSource->ls = (struct linkState *)&local_info;
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
  		}
@@ -367,7 +366,7 @@
 
 /* Decode header information */
  uint16_t getHeaderInfo(uint16_t *header) {
- 	puts("test");
+ 	puts("testheader");
  	return 0;
  }
 
