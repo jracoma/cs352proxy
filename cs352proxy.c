@@ -355,22 +355,13 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
-
  			lsSource->ls = local_info;
  			print_linkState(lsSource->ls);
- 			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Local Info: %s | Neighbors: %d\n", (char *)local_info, lsSource->neighbors);
  		}
  	}
  	return NULL;
- }
-
-/* Print linkState information */
- void print_linkState(struct linkState *ls) {
- 	char ethMAC[19];
- 	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
  }
 
 /* Decode header information */
