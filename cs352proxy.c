@@ -366,8 +366,8 @@ int connectToPeer(struct peerList *peer)
 	    	return EXIT_FAILURE;
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size, new_fd);
+	    	return new_fd;
 	    }
-	    return new_fd;
     }
     return new_fd;
 }
