@@ -371,7 +371,6 @@
  void *sleeper() {
  	sleep(20);
  	puts("quitAfter reached.");
- 	pthread_exit(NULL);
  	exit(1);
  }
 
