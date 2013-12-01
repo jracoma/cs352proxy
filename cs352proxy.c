@@ -105,7 +105,7 @@ int initLocalParams() {
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
 	// sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0], (unsigned char *)ethMAC[0]);
-  printf("Buffer: %s\n", buffer)
+  printf("Buffer: %s\n", buffer);
   fclose(f);
 
 	if (debug) {
