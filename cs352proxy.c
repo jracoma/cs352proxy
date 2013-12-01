@@ -238,10 +238,10 @@ int parseInput(int argc, char *argv[]) {
 	// 	printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
 	// }
 
-	// /* Close input file */
-	// fclose(input_file);
+	/* Close input file */
+	fclose(input_file);
 
-	// return 0;
+	return 0;
 }
 
 /* Read from socket and write to tap */
