@@ -95,7 +95,7 @@ int initLocalParams() {
   inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
   /* Obtain local MAC addresses */
-  if (ioctl(sock_fd, SIOCGIFADDR, temp) < 0) {
+  if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
