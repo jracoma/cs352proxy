@@ -105,6 +105,6 @@ void *handle_listen();
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
-void print_linkState(struct linkState *ls)
+void print_linkState(struct linkState *ls);
 uint16_t getHeaderInfo(uint16_t *header);
 void *sleeper();
