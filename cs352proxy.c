@@ -188,7 +188,7 @@ int parseInput(int argc, char *argv[]) {
 				inet_aton(host, &newPeer->peerIP);
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
-				if ((client_fd = connectToPeer(newPeer))) {
+				if (!(client_fd = connectToPeer(newPeer))) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
@@ -205,7 +205,7 @@ int parseInput(int argc, char *argv[]) {
 		printf("Linked List:\n");
 		LL_COUNT(head, current, count);
 		LL_FOREACH(head, current) {
-			printf("Host: %s:%d | Tap: %s | NETFD: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd);
+			printf("Host: %s:%d | Tap: %s | net_fd: %d\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd);
 		}
 		printf("Count: %d\n", count);
 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
