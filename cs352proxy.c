@@ -178,7 +178,7 @@ int parseInput(int argc, char *argv[]) {
 				current->tapDevice = (char *)malloc(50);
 				strcpy(current->tapDevice, tapDevice);
 				if (connectToPeer(current)) {
-					printf("RPeer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
+					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(current->peerIP), current->peerPort);
 					head = current;
@@ -335,6 +335,7 @@ int connectToPeer(struct peerList *peer)
     struct sockaddr_in remote_addr;
     int new_fd;
     int size;
+    char *buffer = malloc(MAXBUFFSIZE);
 
     /* Create TCP Socket */
     if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
