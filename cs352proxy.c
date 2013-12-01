@@ -426,51 +426,51 @@
  		puts("DEBUGGING MODE:");
  	}
 
- 	struct timeval test;
- 	gettimeofday(&test, NULL);
- 	if (debug) {
- 		printf("Time of Day: %ld:%ld\n", test.tv_sec, test.tv_usec);
- 	}
+ // 	struct timeval test;
+ // 	gettimeofday(&test, NULL);
+ // 	if (debug) {
+ // 		printf("Time of Day: %ld:%ld\n", test.tv_sec, test.tv_usec);
+ // 	}
 
- 	int size;
- 	char if_name[IFNAMSIZ] = "";
- 	unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
- 	unsigned short proto = 0x1234;
- 	char *data = "hello world~!!!";
- 	unsigned short data_len = strlen(data);
+ // 	int size;
+ // 	char if_name[IFNAMSIZ] = "";
+ // 	unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
+ // 	unsigned short proto = 0x1234;
+ // 	char *data = "hello world~!!!";
+ // 	unsigned short data_len = strlen(data);
 
- 	unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
+ // 	unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
 
- 	union ethframe frame;
- 	memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
- 	memcpy(frame.field.header.h_source, source, ETH_ALEN);
- 	frame.field.header.h_proto = htons(proto);
- 	memcpy(frame.field.data, data, data_len);
+ // 	union ethframe frame;
+ // 	memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
+ // 	memcpy(frame.field.header.h_source, source, ETH_ALEN);
+ // 	frame.field.header.h_proto = htons(proto);
+ // 	memcpy(frame.field.data, data, data_len);
 
- 	unsigned int frame_len = data_len + ETH_HLEN;
- 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
- 	printf("Attempting to open %s...\n", if_name);
-	/* Open tap interface */
- 	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
- 		perror("Opening tap interface failed!");
- 		return EXIT_FAILURE;
- 	} else {
- 		printf("Successfully opened %s interface...\n", if_name);
- 	}
+ // 	unsigned int frame_len = data_len + ETH_HLEN;
+ // 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
+ // 	printf("Attempting to open %s...\n", if_name);
+	// /* Open tap interface */
+ // 	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
+ // 		perror("Opening tap interface failed!");
+ // 		return EXIT_FAILURE;
+ // 	} else {
+ // 		printf("Successfully opened %s interface...\n", if_name);
+ // 	}
 
- 	if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
- 		perror("write to tap");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
- 	} else {
- 		printf("%d bytes sent to tap..\n", size);
+ // 	if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
+ // 		perror("write to tap");
+ // 		close(tap_fd);
+ // 		return EXIT_FAILURE;
+ // 	} else {
+ // 		printf("%d bytes sent to tap..\n", size);
 
- 	}
+ // 	}
 
- 	if (pthread_create(&socket_thread, NULL, handle_tap, NULL) != 0 ) {
- 		perror("socket_thread");
- 		return EXIT_FAILURE;
- 	}
+ // 	if (pthread_create(&socket_thread, NULL, handle_tap, NULL) != 0 ) {
+ // 		perror("socket_thread");
+ // 		return EXIT_FAILURE;
+ // 	}
 
 	/* Parse input file */
  	if (parseInput(argc, argv)) {
