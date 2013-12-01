@@ -399,7 +399,9 @@
 
 /* Print linkStatePacket information */
  void print_linkStatePacket(struct linkStatePacket *lsp) {
+ 	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
+ 	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source.neighbors);
  }
 
 /* Decode header information */
