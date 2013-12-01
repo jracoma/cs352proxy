@@ -177,7 +177,7 @@ int parseInput(int argc, char *argv[]) {
 					head = current;
 				}
 			} else {
-				newPeer = malloc(sizeof(peerList));
+				newPeer = malloc(sizeof(struct peerList));
 				inet_aton(host, &newPeer->peerIP);
 				newPeer->peerPort = port;
 				newPeer->tapDevice = tapDevice;
