@@ -6,6 +6,4 @@
  *         Proxy will use two Ethernet devices to implement VLAN; client/server.
  */
 
-#include "cs352proxy.h"
-
 void print_linkState(struct linkState *ls);
