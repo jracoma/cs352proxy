@@ -345,7 +345,7 @@
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
 
 
- 		size = send(new_fd, peer, strlen(peer), 0);
+ 		size = send(new_fd, peer->tapDevice, strlen(peer->tapDevice), 0);
  		if (size < 0) {
  			perror("send");
  			pthread_exit(NULL);
