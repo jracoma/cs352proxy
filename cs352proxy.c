@@ -160,7 +160,7 @@ int parseInput(int argc, char *argv[]) {
 	char *host, *tapDevice;
 	char ip[100];
 	int port, count, size;
-	peerList *newPeer, *current;
+	struct peerList *newPeer, *current;
 
 	/* Verifies proper syntax command line */
 	if (argc != 2) {
