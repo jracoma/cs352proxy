@@ -91,7 +91,7 @@ int initLocalParams() {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
   }
-  inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr->ifr_addr).sin_addr), &local_info->listenIP);
+  inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr->ifr_addr)->sin_addr), &local_info->listenIP);
 
   /* Obtain local MAC addresses */
   if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
@@ -100,7 +100,7 @@ int initLocalParams() {
   }
   local_info->ethMAC = ifr->ifr_hwaddr;
 
-  sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr)->sa_data[0]);
+  sprintf(ethMAC, " %02x:\n", ((char *)&ifr->ifr_hwaddr).sa_data[0]);
   // sprintf(buffer, "/sys/class/net/%s/address", dev);
   // FILE *f = fopen(buffer, "r");
   // fread(buffer, 1, MAXLINESIZE, f);
