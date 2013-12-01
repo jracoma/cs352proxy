@@ -386,7 +386,7 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct linkStatePacket *tmp;
  	struct peerList *peer;
- 	LL_SEARCH(peerHead, peer, )
+ 	// LL_SEARCH(peerHead, peer, )
  }
 
 
