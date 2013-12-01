@@ -319,7 +319,6 @@
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	// peer->uniqueID = (struct timeval *)malloc(sizeof(struct timeval));
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
@@ -358,7 +357,6 @@
  			printf("Message %d sent.\n", size);
  			gettimeofday(&current_time, NULL);
  			peer->uniqueID = current_time;
-		 	printf("UID: %ld:%ld\n", peer->uniqueID.tv_sec, peer->uniqueID.tv_usec);
  			peer->net_fd = new_fd;
  			peer->pid = pthread_self();
  			pthread_mutex_lock(&peer_mutex);
@@ -387,8 +385,9 @@
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct linkStatePacket *tmp;
- 	struct peerList *peer;
- 	// LL_SEARCH(peerHead, peer, )
+ 	struct peerList *peer = (struct peerList *)malloc(struct peerList);
+	LL_SEARCH(peerHead, peer, uniqueID, lsp->uniqueID);
+	if (peer) puts("found");
  }
 
 /* Print packetHeader information */
