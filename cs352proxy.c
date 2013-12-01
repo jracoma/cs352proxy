@@ -358,7 +358,7 @@
  			printf("Message %d sent.\n", size);
  			gettimeofday(&current_time, NULL);
  			peer->uniqueID = current_time;
-		 	printf("UID: %ld:%ld\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec)
+		 	printf("UID: %ld:%ld\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec);
  			peer->net_fd = new_fd;
  			peer->pid = pthread_self();
  			pthread_mutex_lock(&peer_mutex);
