@@ -74,7 +74,7 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq *ifr;
+	struct ifreq *ifr = malloac(sizeof(struct ifreq));
 	struct sockaddr *temp = malloc(sizeof(struct sockaddr));
 	char ethMAC[19], tapMAC[19];
 	local_info = malloc(sizeof(struct linkState));
@@ -82,8 +82,8 @@ int initLocalParams() {
 	char buffer[MAXLINESIZE];
 
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-	temp->sa_family = AF_INET;
-  // &(ifr->ifr_addr)->sa_family = AF_INET;
+	// temp->sa_family = AF_INET;
+  ifr->ifr_addr->sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
   strncpy(ifr->ifr_name, dev, IFNAMSIZ-1);
