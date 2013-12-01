@@ -385,7 +385,7 @@
 /* Send linkState */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	struct peerList *peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	struct peerLst tmp;
+ 	struct peerLst *tmp;
 	LL_FOREACH_SAFE(peerHead, peer, tmp) {
 		printf("Test!");
 	}
