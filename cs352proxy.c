@@ -77,6 +77,7 @@ int initLocalParams() {
 	struct ifreq ifr;
 	char buffer[MAXLINESIZE];
 	char *dev = "tap10";
+	char ethMAC[19];
   local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
@@ -91,26 +92,25 @@ int initLocalParams() {
 	}
 	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
- /* Obtain local MAC ID for tap10 */
- //  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
- //  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
- //    perror("ioctl(SIOCGIFHWADDR)");
- //    return EXIT_FAILURE;
- //  }
+	/* Obtain local MAC ID for tap10 */
+	//  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
+	//  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
+	//    perror("ioctl(SIOCGIFHWADDR)");
+	//    return EXIT_FAILURE;
+	//  }
 
 	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
 
 	sprintf(buffer, "/sys/class/net/%s/address", dev);
 	FILE *f = fopen(buffer, "r");
 	fread(buffer, 1, MAXLINESIZE, f);
-	sscanf(buffer ,"%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0]);
-  printf("Buffer: %02x\n", (unsigned char)local_info->ethMAC.sa_data[0]);
+	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
   fclose(f);
 
 	if (debug) {
-		// sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
+		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x\n", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
 
-		// printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
+		printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(local_info->listenIP));
 	}
 
 	return 0;
