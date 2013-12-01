@@ -77,6 +77,7 @@ int initLocalParams() {
   struct ifreq ifr;
   char ethMAC[19];
   struct linkState temp;
+  local_info = malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
   sock_fd = socket(AF_INET, SOCK_STREAM, 0);
