@@ -350,7 +350,9 @@
 	    } else {
 	    	printf("Message %d sent on fd: %d\n", size);
 	    	peer->net_fd = new_fd;
-
+	    	pthread_mutex_lock(&peer_mutex);
+	    	LL_APPEND(head, peer);
+	    	pthread_mutex_unlock(&peer_mutex);
 	    	return new_fd;
 	    }
     }

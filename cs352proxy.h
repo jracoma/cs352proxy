@@ -33,6 +33,11 @@
 #define MAXBUFFSIZE 2048
 #define BACKLOG 10
 #define MAXLINESIZE 256
+/* Packet Definitions */
+#define PACKET_DATA 0xABCD
+#define PACKET_LEAVE 0xAB01
+#define PACKET_QUIT 0xAB12
+#define PACKET_LINKSTATE 0xABAC
 
 /* Ethernet Frame Header */
 union ethframe
