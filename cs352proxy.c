@@ -391,7 +391,7 @@ void *connectToPeer(void *temp)
 		// 			LL_APPEND(head, newPeer);
 		// 			pthread_mutex_unlock(&peer_mutex);
 		// 		}
-    return NULL;
+    pthread_exit(NULL)
 }
 
 int main (int argc, char *argv[]) {
