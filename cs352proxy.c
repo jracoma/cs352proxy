@@ -141,7 +141,7 @@ int initLocalParams() {
         if (debug) {
                 sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)temp.ethMAC.sa_data[0],(unsigned char)temp.ethMAC.sa_data[1],(unsigned char)temp.ethMAC.sa_data[2],(unsigned char)temp.ethMAC.sa_data[3],(unsigned char)temp.ethMAC.sa_data[4],(unsigned char)temp.ethMAC.sa_data[5]);
 
-                printf("Interface Name: %s | %s | Address: %s:%d\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP), temp.listenPort);
+                printf("Interface Name: %s | %s | Address: %s\n", ifr.ifr_name, ethMAC, inet_ntoa(temp.listenIP));
         }
         local_info = &temp;
 
