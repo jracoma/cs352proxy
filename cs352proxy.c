@@ -74,9 +74,8 @@ int getIP(char *host, char *ip) {
 
 /* Initiliaze local parameters */
 int initLocalParams() {
-	struct ifreq *ifr;
+	struct ifreq ifr;
 	char ethMAC[19];
-	memset(&ifr, 0, sizeof(ifr));
 
 	/* Template for local linkStatePacket */
 	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -84,13 +83,13 @@ int initLocalParams() {
 	// printf("Test: %s\n", (char *)ifr.ifr_addr.sa_family);
 
 	/* Obtain local IP address of eth0 */
-	strncpy(ifr->ifr_name, "eth0", IFNAMSIZ-1);
+	strncpy(ifr.ifr_name, "eth0", IFNAMSIZ-1);
 	if (ioctl(sock_fd, SIOCGIFADDR, ifr) < 0) {
 		perror("ioctl(SIOCGIADDR)");
 		return EXIT_FAILURE;
 	}
-	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr->ifr_addr)->sin_addr), &local_info->listenIP);
-	printf("Addr: %s\n", ifr->ifr_name);
+	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
+	printf("Addr: %s\n", ifr.ifr_name);
 
 	// /* Obtain local MAC ID for tap10 */
 	// strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
