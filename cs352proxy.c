@@ -172,7 +172,7 @@
  			tapDevice = strtok(NULL, " \n");
  			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->peerIP);
- 			current->peerort = port;
+ 			current->peerPort = port;
  			current->tapDevice = (char *)malloc(50);
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
@@ -189,7 +189,7 @@
  		printf("Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
- 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, current->pid);
+ 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
