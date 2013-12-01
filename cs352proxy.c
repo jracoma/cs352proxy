@@ -359,7 +359,7 @@
  			pthread_mutex_unlock(&peer_mutex);
  			test.listenPort = ntohs(local_info->listenPort);
 
- 			lsSource->ls = temp;
+ 			lsSource->ls = &temp;
  			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
