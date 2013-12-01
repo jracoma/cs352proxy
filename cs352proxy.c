@@ -75,7 +75,8 @@ int getIP(char *host, char *ip) {
 /* Initiliaze local parameters */
 int initLocalParams() {
 	struct ifreq ifr;
-	char ethMAC[MAXLINESIZE];
+	char buffer[MAXLINESIZE];
+	char ethMAC[19];
 	char *dev = "eth0";
   // local_info = malloc(sizeof(struct linkState));
 
@@ -100,7 +101,11 @@ int initLocalParams() {
 
 	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
 
-	// sprintf(buffer, "/")
+	sprintf(buffer, "/sys/class/net/%s/address", dev);
+	FILE *f = fopen(buffer, "r");
+	fread(buffer, 1, MAXLINESIZE, f);
+	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", ethMAC[0], ethMAC[0], ethMAC[0], ethMAC[0], ethMAC[0], ethMAC[0]);
+  fclose(f);
 
 	if (debug) {
 		// sprintf(ethMAC, " %02x:%02x:%02x:%02x:%02x:%02x",(unsigned char)local_info->ethMAC.sa_data[0],(unsigned char)local_info->ethMAC.sa_data[1],(unsigned char)local_info->ethMAC.sa_data[2],(unsigned char)local_info->ethMAC.sa_data[3],(unsigned char)local_info->ethMAC.sa_data[4],(unsigned char)local_info->ethMAC.sa_data[5]);
