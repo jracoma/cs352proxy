@@ -87,7 +87,7 @@ int initLocalParams() {
   ifr.ifr_addr.sa_family = AF_INET;
 
   //Copy the interface name in the ifreq structure
-  strncpy(ifr.ifr_name , dev , IFNAMSIZ-1);
+  strncpy(ifr.ifr_name , dev, IFNAMSIZ-1);
   if (ioctl(sock_fd, SIOCGIFADDR, &ifr) < 0) {
   	perror("ioctl(SIOCGIFADDR");
   	return EXIT_FAILURE;
