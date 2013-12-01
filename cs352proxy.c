@@ -388,7 +388,7 @@
  	struct peerList *peer;
  	struct peerLst *tmp;
 	LL_FOREACH(peerHead, peer) {
-		printf("%ld:%ld\n", peer->uniqueID.tv_sec, peer->uniqueID.tv_usec);
+		printf("%ld:%ld\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec);
  	}
  }
 
