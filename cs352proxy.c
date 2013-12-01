@@ -130,7 +130,7 @@ int parseInput(int argc, char *argv[]) {
 	char *host, *tapDevice;
 	char ip[100];
 	int port, count;
-	struct peerList *newPeer, *current;
+	struct peerList *current;
 
 	/* Verifies proper syntax command line */
 	if (argc != 2) {
@@ -320,11 +320,11 @@ void *connectToPeer(void *peer)
     int new_fd, size;
     char *buffer = malloc(MAXBUFFSIZE);
 
-  //   pthread_mutex_lock(&peer_mutex);
-  //   /* Create TCP Socket */
-  //   if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-  //       perror("could not create socket");
-  //   }
+    pthread_mutex_lock(&peer_mutex);
+    /* Create TCP Socket */
+    if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("could not create socket");
+    }
 
   //   puts("Client Mode:");
   //   memset((char *)&remote_addr, 0, sizeof(remote_addr));
