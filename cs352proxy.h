@@ -105,4 +105,5 @@ void *handle_listen();
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
+uint16_t getHeaderInfo(uint16_t *header);
 void *sleeper();

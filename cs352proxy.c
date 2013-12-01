@@ -322,6 +322,9 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = malloc(sizeof(struct peerList));
+ 	struct linkStateSource *lsSource = malloc(sizeof(struct linkStateSource));
+ 	struct linkStatePacket *lsPacket = malloc(sizeof(struct linkStatePacket));
+ 	uint16_t pHeaderInfo[2];
 
     /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -343,8 +346,6 @@
  		pthread_exit(NULL);
  	} else {
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
-
-
  		size = send(new_fd, peer->tapDevice, strlen(peer->tapDevice), 0);
  		if (size < 0) {
  			perror("send");
@@ -356,9 +357,18 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
+ 			lsSource->ls = local_info;
+ 			LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 			printf("Test: %s, %d\n", local_info, lsSource->neighbors);
  		}
  	}
  	return NULL;
+ }
+
+/* Decode header information */
+ uint16_t getHeaderInfo(uint16_t *header) {
+ 	puts("test");
+ 	return 0;
  }
 
 /* Sleeper for quitAfter */
