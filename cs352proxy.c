@@ -192,9 +192,9 @@ int parseInput(int argc, char *argv[]) {
 					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 				} else {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
-					pthread_mutex_lock(peer_mutex);
+					pthread_mutex_lock(&peer_mutex);
 					LL_APPEND(head, newPeer);
-					pthread_mutex_unlock(peer_mutex);
+					pthread_mutex_unlock(&peer_mutex);
 				}
 			}
 		}
