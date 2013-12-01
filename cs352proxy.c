@@ -194,7 +194,7 @@ int parseInput(int argc, char *argv[]) {
 					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
 					pthread_mutex_lock(&peer_mutex);
 					LL_APPEND(head, newPeer);
-					pthread_mutex_unlock(&peer_mutex);
+					pthread_mutex_unlock(&	peer_mutex);
 				}
 			}
 		}
@@ -291,6 +291,7 @@ void *handle_tap()
 {
 		puts("create thread for tap");
 		uint16_t type, length;
+		ssize_t size;
 		char *buffer = malloc(MAXBUFFSIZE);
 		union ethframe frame;
 
