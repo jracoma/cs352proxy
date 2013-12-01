@@ -356,7 +356,8 @@
  			pthread_mutex_lock(&peer_mutex);
  			LL_APPEND(peerHead, peer);
  			pthread_mutex_unlock(&peer_mutex);
- 			lsSource->ls = (struct linkState *)&local_info;
+ 			// lsSource->ls = (struct linkState *)&local_info;
+ 			memcpy(lsSource->, local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
  		}
