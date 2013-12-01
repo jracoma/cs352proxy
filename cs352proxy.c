@@ -358,7 +358,7 @@
  			pthread_mutex_unlock(&peer_mutex);
 
 
- 			lsSource->ls = &local_info;
+ 			lsSource.ls = &local_info;
  			// memcpy(lsSource->ls, &local_info, sizeof(local_info));
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
  			printf("Test: %s, %d\n", (char *)local_info, lsSource->neighbors);
