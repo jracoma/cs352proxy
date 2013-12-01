@@ -364,17 +364,18 @@
  			/* Create link state packet */
  			lsSource->ls = local_info;
  			LL_COUNT(peerHead, peer, lsSource->neighbors);
- 			print_linkState(lsSource->ls);
+ 			// print_linkState(lsSource->ls);
  			hdr->type = htons(PACKET_LINKSTATE);
  			lsPacket->header = hdr;
- 			print_packetHeader(lsPacket->header);
+ 			// print_packetHeader(lsPacket->header);
  			lsPacket->source = lsSource;
  			gettimeofday(&current_time, NULL);
  			lsPacket->uniqueID = current_time;
  			lsPacket->proxy1 = local_info;
- 			print_linkState(lsPacket->proxy1);
- 			print_linkState(lsPacket->proxy2);
+ 			// print_linkState(lsPacket->proxy1);
+ 			// print_linkState(lsPacket->proxy2);
  			lsPacket->linkWeight = 1;
+
  			pthread_mutex_lock(&linkstate_mutex);
  			LL_APPEND(lsHead, lsPacket);
  			pthread_mutex_unlock(&linkstate_mutex);
@@ -385,7 +386,7 @@
  }
 
 /* Print packetHeader information */
-void print_packetHeader(struct packetHeader *pkt) {
+ void print_packetHeader(struct packetHeader *pkt) {
 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
 }
 
@@ -394,6 +395,11 @@ void print_packetHeader(struct packetHeader *pkt) {
  	char ethMAC[19];
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
+ }
+
+/* Print linkStatePacket information */
+ void print_linkStatePacket(struct linkStatePacket *lsp) {
+ 	print_packetHeader(lsp->header);
  }
 
 /* Decode header information */
