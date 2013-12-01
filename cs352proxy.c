@@ -22,8 +22,8 @@ struct peerList *head = NULL;
 struct linkState *local_info;
 
 /* Threads to handle socket and tap */
-pthread_t listen_thread, socket_thread;
-pthread_mutex_t peer_mutex;
+pthread_t listen_thread, connect_thread, socket_thread;
+pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
 int allocate_tunnel(char *dev, int flags) {
@@ -129,7 +129,7 @@ int parseInput(int argc, char *argv[]) {
 	/* Variables for peer information */
 	char *host, *tapDevice;
 	char ip[100];
-	int port, count, client_fd;
+	int port, count;
 	struct peerList *newPeer, *current;
 
 	/* Verifies proper syntax command line */
@@ -171,33 +171,9 @@ int parseInput(int argc, char *argv[]) {
 			fgets(line, MAXLINESIZE, input_file);
 			next_field = strtok(line, " \n");
 			tapDevice = strtok(NULL, " \n");
-			if (head == NULL) {
-				current = malloc(sizeof(struct peerList));
-				inet_aton(host, &current->peerIP);
-				current->peerPort = port;
-				current->tapDevice = (char *)malloc(50);
-				strcpy(current->tapDevice, tapDevice);
-				if ((client_fd = connectToPeer(current)) < 1) {
-					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
-				} else {
-					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(current->peerIP), current->peerPort);
-					current->net_fd = client_fd;
-					head = current;
-				}
-			} else {
-				newPeer = malloc(sizeof(struct peerList));
-				inet_aton(host, &newPeer->peerIP);
-				newPeer->peerPort = port;
-				newPeer->tapDevice = tapDevice;
-				if ((connectToPeer(newPeer)) < 1) {
-					printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
-				} else {
-					printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
-					newPeer->net_fd = client_fd;
-					pthread_mutex_lock(&peer_mutex);
-					LL_APPEND(head, newPeer);
-					pthread_mutex_unlock(&peer_mutex);
-				}
+			if (pthread_create(&connect_thread, NULL, connectToPeer, NULL) != 0) {
+			  perror("connect_thread");
+			  exit(1);
 			}
 		}
 	}
@@ -339,38 +315,73 @@ int connectToPeer(struct peerList *peer)
     int new_fd, size;
     char *buffer = malloc(MAXBUFFSIZE);
 
-    /* Create TCP Socket */
-    if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("could not create socket");
-    }
+  //   pthread_mutex_lock(&peer_mutex);
+  //   /* Create TCP Socket */
+  //   if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  //       perror("could not create socket");
+  //   }
 
-    puts("Client Mode:");
-    memset((char *)&remote_addr, 0, sizeof(remote_addr));
-    remote_addr.sin_family = AF_INET;
-    remote_addr.sin_port = htons(peer->peerPort);
-		inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
+  //   puts("Client Mode:");
+  //   memset((char *)&remote_addr, 0, sizeof(remote_addr));
+  //   remote_addr.sin_family = AF_INET;
+  //   remote_addr.sin_port = htons(peer->peerPort);
+		// inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
 
-    printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
+  //   printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
-    /* Connect to server */
-    if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-      return -1;
-    } else {
-	    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
-      char *message = "The Cheese is in The Toaster";
-	    size = send(new_fd, message, strlen(message), 0);
-	    if (size < 0) {
-	    	perror("send");
-	    	return EXIT_FAILURE;
-	    } else if (size == 0) {
-	    	perror("connection closed");
-	    	return EXIT_FAILURE;
-	    } else {
-	    	printf("Message %d sent on fd: %d\n", size, new_fd);
-	    	return new_fd;
-	    }
-    }
-    return new_fd;
+  //   /* Connect to server */
+  //   if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
+  //   	pthread_mutex_unlock(&peer_mutex);
+  //     return -1;
+  //   } else {
+	 //    printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+  //     char *message = "The Cheese is in The Toaster";
+	 //    size = send(new_fd, message, strlen(message), 0);
+	 //    if (size < 0) {
+	 //    	perror("send");
+	 //    	pthread_mutex_unlock(&peer_mutex);
+	 //    	return EXIT_FAILURE;
+	 //    } else if (size == 0) {
+	 //    	perror("connection closed");
+	 //    	pthread_mutex_unlock(&peer_mutex);
+	 //    	return EXIT_FAILURE;
+	 //    } else {
+	 //    	printf("Message %d sent on fd: %d\n", size);
+	 //    	peer->net_fd = new_fd;
+
+	 //    	pthread_mutex_unlock(&peer_mutex);
+	 //    	return new_fd;
+	 //    }
+  //   }
+  //   return new_fd;
+
+  //   			if (head == NULL) {
+		// 		current = malloc(sizeof(struct peerList));
+		// 		inet_aton(host, &current->peerIP);
+		// 		current->peerPort = port;
+		// 		current->tapDevice = (char *)malloc(50);
+		// 		strcpy(current->tapDevice, tapDevice);
+		// 		if ((client_fd = connectToPeer(current)) < 0) {
+		// 			printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(current->peerIP), current->peerPort);
+		// 		} else {
+		// 			printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(current->peerIP), current->peerPort);
+		// 			current->net_fd = client_fd;
+		// 			head = current;
+		// 		}
+		// 	} else {
+		// 		newPeer = malloc(sizeof(struct peerList));
+		// 		inet_aton(host, &newPeer->peerIP);
+		// 		newPeer->peerPort = port;
+		// 		newPeer->tapDevice = tapDevice;
+		// 		if ((connectToPeer(newPeer)) < 0) {
+		// 			printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+		// 		} else {
+		// 			printf("Peer Added %s:%d: Successful connection\n", inet_ntoa(newPeer->peerIP), newPeer->peerPort);
+		// 			newPeer->net_fd = client_fd;
+		// 			pthread_mutex_lock(&peer_mutex);
+		// 			LL_APPEND(head, newPeer);
+		// 			pthread_mutex_unlock(&peer_mutex);
+		// 		}
 }
 
 int main (int argc, char *argv[]) {
