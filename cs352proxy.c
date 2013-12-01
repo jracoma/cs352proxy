@@ -360,7 +360,7 @@ void *handle_tap()
 }
 
 /* Client Mode */
-int connectToPeer(peerList *peer)
+int connectToPeer(struct peerList *peer)
 {
     struct sockaddr_in remote_addr;
     int new_fd;
