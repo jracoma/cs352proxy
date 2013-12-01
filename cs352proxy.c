@@ -129,7 +129,7 @@ int initLocalParams() {
         }
        inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &temp.listenIP);
 
-         Obtain local MAC ID for tap10
+         /* Obtain local MAC ID for tap10 */
         strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
         if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
                 perror("ioctl(SIOCGIFHWADDR)");
