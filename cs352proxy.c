@@ -349,13 +349,13 @@
 	    	perror("send");
 	    	pthread_exit(NULL);
 	    } else {
-	    	printf("Message %d sent on fd: %d\n", size);
+	    	printf("Message %d sent.\n", size);
 	    	peer->net_fd = new_fd;
 	    	peer->pid = pthread_self();
 	    	pthread_mutex_lock(&peer_mutex);
 	    	LL_APPEND(peerHead, peer);
 	    	pthread_mutex_unlock(&peer_mutex);
-	    	return new_fd;
+	    	return NULL;
 	    }
     }
   //   return new_fd;
