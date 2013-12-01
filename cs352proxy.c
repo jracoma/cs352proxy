@@ -267,7 +267,7 @@ void server(int port)
 				exit(1);
 		}
 
-		printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info.listenIP), port);
+		printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
 
 		/* Wait for connections on a new thread
 		* net_fd is new fd to be used for read/write */
