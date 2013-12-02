@@ -412,7 +412,7 @@
  void send_linkState(struct linkState *ls, int peer_fd) {
  	char *buffer[MAXBUFFSIZE];
 
- 	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
+ 	sprintf(&buffer, "%s", inet_ntoa(ls->listenIP));
  	send(peer_fd, buffer, sizeof(buffer), 0);
  	printf("SENT2: %s\n", buffer);
  }
