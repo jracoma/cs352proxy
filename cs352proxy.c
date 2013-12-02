@@ -203,7 +203,6 @@
  {
  	int size;
  	char buffer[MAXBUFFSIZE];
- 	struct packetHeader *header;
 
  	while (1) {
  		if (debug) puts("create thread for listening");
@@ -223,10 +222,10 @@
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = read(net_fd, header, strlen(header));
+ 		size = read(net_fd, buffer, sizeof(buffer));
  		if (size > 0) {
  			printf("Received message: %d\n", size);
- 			print_packetHeader(header);
+ 			printf("Buffer: %s\n", (char *)buffer);
  		} else {
  			puts("recv error");
  		}
@@ -380,7 +379,6 @@
 int send_linkStatePacket(struct linkStatePacket *lsp) {
 	char *buffer[MAXBUFFSIZE];
 	struct peerList *peer;
-	int size;
 
 	pthread_mutex_lock(&peer_mutex);
 	pthread_mutex_lock(&linkstate_mutex);
@@ -392,9 +390,8 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
 
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
-	// sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5]);
-	size = send(peer->net_fd, &lsp->header, strlen(&lsp->header), 0);
-	if (debug) printf("SENT: %d bytes!\n", size);
+	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5]);
+	send(peer->net_fd, &buffer, strlen(&buffer), 0);
 
 	pthread_mutex_unlock(&peer_mutex);
 	pthread_mutex_unlock(&linkstate_mutex);
@@ -499,10 +496,10 @@ int main (int argc, char *argv[]) {
 	}
 
  	/* Set quitAfter sleeper */
-	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
-		perror("connect thread");
-		pthread_exit(NULL);
-	}
+	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+	// 	perror("connect thread");
+	// 	pthread_exit(NULL);
+	// }
 
 	/* Start server path */
 	server(ntohs(local_info->listenPort));
