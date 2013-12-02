@@ -172,7 +172,7 @@
  			current->peerPort = port;
  			// current->tapDevice = (char *)malloc(50);
  			current->tapDevice = &tapDevice;
- 			printf("TESTSTST: %s\n", current->tapDevice);
+ 			printf("TESTSTST: %s\n", (char *)current->tapDevice);
  			// strcpy((char *)current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
