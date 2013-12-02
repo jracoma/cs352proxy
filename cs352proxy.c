@@ -390,7 +390,7 @@
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_addr = remote_addr.sin_addr;
  		sin->sin_family = ARPHRD_ETHER;
-		// strncpy(areq.arp_dev, peer->(&tapDevice), 15);
+		strncpy(areq.arp_dev, buffer, 15);
 
 	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
 		perror("-- Error: unable to make ARP request, error");
