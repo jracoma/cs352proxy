@@ -206,11 +206,10 @@
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
 
-
-
  	while (1) {
  		if (debug) puts("create thread for listening");
-	/* Listens for connection, backlog 10 */
+
+		/* Listens for connection, backlog 10 */
  		if (listen(sock_fd, BACKLOG) < 0) {
  			perror("listen");
  			exit(1);
