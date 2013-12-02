@@ -390,7 +390,7 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
 
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
-	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5]);
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
 
 	pthread_mutex_unlock(&peer_mutex);
