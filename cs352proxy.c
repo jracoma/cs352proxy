@@ -382,6 +382,7 @@
  		lsPacket->uniqueID = current_time;
  		lsPacket->proxy1 = local_info;
  		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
+ 		newLS->listenPort = remote_addr.sin_port;
  		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		lsPacket->proxy2 = newLS;
