@@ -204,6 +204,7 @@
  	int size;
  	char buffer[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
+ 	socklen_t addrlen = sizeof(client_addr);
 
  	if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
  		perror("accept");
@@ -233,8 +234,6 @@
  void server(int port)
  {
  	struct sockaddr_in local_addr;
-
-	socklen_t addrlen = sizeof(client_addr);
  	int optval = 1;
 
 		/* Allows reuse of socket if not closed properly */
