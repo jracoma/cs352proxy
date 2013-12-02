@@ -381,7 +381,7 @@
  	char *buffer[MAXBUFFSIZE];
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
- 	printf("TEST: %s\n", buffer);
+ 	printf("TEST: %d\n", peer_fd);
  	send(peer_fd, buffer, sizeof(buffer), 0);
  	printf("SENT: %s\n", buffer);
  	return 1;
