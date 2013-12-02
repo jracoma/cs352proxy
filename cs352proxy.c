@@ -237,14 +237,14 @@
 
  			LL_FOREACH(peerHead, peer) {
  				if (peer->net_fd == new_fd) {
- 					printf("found\n");
+ 					puts("found");
  				}
  			}
  			close(new_fd);
  			pthread_mutex_unlock(&peer_mutex);
  			pthread_mutex_unlock(&linkstate_mutex);
  		} else {
- 			puts("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
+ 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
  			close(new_fd);
  			break;
  		}
