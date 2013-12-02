@@ -227,7 +227,7 @@
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
 
-	 			printf("TYPE: %d\n", (int)buffer2);
+	 			printf("TYPE: %s\n", (int)buffer2);
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
  			}
