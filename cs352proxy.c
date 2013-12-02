@@ -230,6 +230,7 @@
  			strcpy(buffer, "moo");
  			printf("Sending: %s\n", buffer);
  			send(net_fd, buffer, sizeof(&buffer), 0);
+ 			sleep(20);
  		} else {
  			puts("recv error");
  		}
