@@ -378,7 +378,7 @@
  		lsSource->ls = local_info;
  		LL_COUNT(peerHead, peer, lsSource->neighbors);
  		hdr->type = htons(PACKET_LINKSTATE);
- 		printf("TEAJSD %d\n", ntohs(hdr->type));
+ 		printf("TEAJSD %d --- %d\n", ntohs(hdr->type), hdr->type);
  		lsPacket->header = hdr;
  		lsPacket->source = lsSource;
  		lsPacket->uniqueID = current_time;
