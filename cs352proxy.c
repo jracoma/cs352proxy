@@ -205,6 +205,7 @@
  	char buffer[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
+ 	struct peerList *peer;
 
  	if (debug) puts("create thread for listening");
 
@@ -228,6 +229,18 @@
  			printf("Received: %s\n", buffer);
  		} else {
  			puts("recv error");
+ 		} else if (size == 0) {
+ 			pthread_mutex_lock(&peer_mutex);
+ 			pthread_mutex_lock(&linkstate_mutex);
+
+		 	LL_FOREACH(peerHead, peer) {
+		 		if (peerList->net_fd == new_fd) {
+	 				puts("found")
+	 			}
+	 		}
+	 		close(new_fd);
+		 	pthread_mutex_unlock(&peer_mutex);
+		 	pthread_mutex_unlock(&linkstate_mutex);
  		}
 
  	}
