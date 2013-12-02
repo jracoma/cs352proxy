@@ -228,7 +228,7 @@
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
  				type = (uint16_t)strtol (buffer2,&buffer2,16);
-	 			printf("TYPE: %x\n", type);
+	 			printf("TYPE: %x\n", PACKET_LINKSTATE);
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
  			}
