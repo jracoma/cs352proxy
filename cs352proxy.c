@@ -390,7 +390,7 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
 
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
-	sprintf(buffer, "%x %x %s %d", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort))
+	sprintf(buffer, "%x %x %s %d", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort));
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
 
 	pthread_mutex_unlock(&peer_mutex);
