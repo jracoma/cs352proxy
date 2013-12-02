@@ -390,7 +390,7 @@
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_family = AF_INET;
 
- 		printf("TEST REMOTE MAC: %x\n", remote_addr.)
+ 		// printf("TEST REMOTE MAC: %x\n", remote_addr.)
  		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		lsPacket->proxy2 = newLS;
