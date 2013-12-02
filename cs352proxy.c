@@ -421,7 +421,7 @@
 
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer[MAXBUFFSIZE];
  	struct peerList *peer;
 
  	pthread_mutex_lock(&peer_mutex);
