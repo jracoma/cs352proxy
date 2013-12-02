@@ -226,7 +226,7 @@
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
- 				strncpy(buffer2, buffer, 6);
+ 				strncpy(buffer2, buffer, 20);
  				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 16);
  				printf("TYPE: %x\n", type);
  				switch (type) {
@@ -414,7 +414,7 @@
 
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
  	sprintf(buffer, "0xabac %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	send(peer_fd, buffer, sizeof(buffer), 0);
+ 	// send(peer_fd, buffer, sizeof(buffer), 0);
  	return buffer;
  }
 
