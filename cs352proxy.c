@@ -232,7 +232,7 @@
  			pthread_mutex_lock(&linkstate_mutex);
 
 		 	LL_FOREACH(peerHead, peer) {
-		 		if (peerList->net_fd == new_fd) {
+		 		if (peer->net_fd == new_fd) {
 	 				puts("found")
 	 			}
 	 		}
