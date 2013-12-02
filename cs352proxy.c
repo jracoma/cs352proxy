@@ -367,7 +367,7 @@
 
 /* Create link state packet */
  		gettimeofday(&current_time, NULL);
- 		printf("TEST TESTq %s\n", peer->tapDevice);
+ 		strcpy(buffer, peer->tapDevice);
  		peer->uniqueID = current_time;
  		peer->net_fd = new_fd;
  		peer->pid = pthread_self();
@@ -390,9 +390,6 @@
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_addr = remote_addr.sin_addr;
  		sin->sin_family = ARPHRD_ETHER;
- 		char *tapDevice = malloc(MAXBUFFSIZE);
- 		// strcpy(tapDevice, peer->tapDevice);
- 		printf("TEST TEST %s\n", peer->tapDevice);
 		// strncpy(areq.arp_dev, peer->(&tapDevice), 15);
 
 	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
