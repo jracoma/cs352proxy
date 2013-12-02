@@ -424,7 +424,7 @@
 
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer[MAXBUFFSIZE];
+ 	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer;
  	int size;
 
