@@ -379,7 +379,6 @@
 int send_linkStatePacket(struct linkStatePacket *lsp) {
 	char *buffer[MAXBUFFSIZE];
 	struct peerList *peer;
-	int size;
 
 	pthread_mutex_lock(&peer_mutex);
 	pthread_mutex_lock(&linkstate_mutex);
@@ -392,11 +391,9 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
 	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
-	size = send(peer->net_fd, &buffer, strlen(&buffer), 0);
-	if (size < 0) {
-		puts("send failed");
-	}
-
+	send(peer->net_fd, &buffer, strlen(&buffer), 0);
+	sprint(buffer, "%s", inet_ntoa(lsp->source->ls->listenIP));
+	send(peer->net_fd, &buffer, strlen(&buffer), 0);
 
 	pthread_mutex_unlock(&peer_mutex);
 	pthread_mutex_unlock(&linkstate_mutex);
