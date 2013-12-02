@@ -227,7 +227,8 @@
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
- 				type = (uint16_t)buffer2;
+ 				// type = (uint16_t)buffer2;
+ 				sprintf((char *)type, "%x", buffer2);
 	 			printf("TYPE: %x\n", type);
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
