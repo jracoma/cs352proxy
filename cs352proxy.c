@@ -228,13 +228,14 @@
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
  				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 16);
-	 			printf("TYPE: %x\n", type);
-	 			switch (type)
-	 			case PACKET_LINKSTATE:
-	 				printf("Received message: %d bytes\n", size);
- 					printf("Received: %s\n", buffer);
- 				default:
- 					printf("Negative.\n");
+ 				printf("TYPE: %x\n", type);
+ 				switch (type) {
+ 					case PACKET_LINKSTATE:
+	 					printf("Received message: %d bytes\n", size);
+	 					printf("Received: %s\n", buffer);
+ 					default:
+	 					printf("Negative.\n");
+ 				}
  			}
  		} else if (size == 0) {
  			pthread_mutex_lock(&peer_mutex);
@@ -394,7 +395,7 @@
  		lsPacket->proxy1 = local_info;
  		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
  		newLS->listenPort = remote_addr.sin_port;
-		print_linkState(newLS);
+ 		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		lsPacket->proxy2 = newLS;
  		send_linkStatePacket(lsPacket);
