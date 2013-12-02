@@ -223,10 +223,10 @@
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = read(net_fd, buffer, sizeof(buffer));
+ 		size = read(net_fd, header, strlen(header));
  		if (size > 0) {
  			printf("Received message: %d\n", size);
- 			printf("Buffer: %s\n", (char *)buffer);
+ 			print_packetHeader(header);
  		} else {
  			puts("recv error");
  		}
