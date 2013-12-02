@@ -61,7 +61,7 @@ struct packetHeader {
 struct peerList {
   struct in_addr peerIP;
   uint16_t peerPort;
-  char tapDevice[10];
+  char tapDevice[5];
   struct timeval uniqueID;
   int net_fd;
   pthread_t pid;
