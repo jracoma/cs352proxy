@@ -171,7 +171,6 @@
  			inet_aton(host, &current->peerIP);
  			current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			printf("TEST: %s ----- %s\n", tapDevice, current->tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
@@ -400,7 +399,7 @@
 
 /* Send linkState */
  void send_linkState(struct linkState *ls, int peer_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer[MAXBUFFSIZE];
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
  	send(peer_fd, buffer, sizeof(buffer), 0);
@@ -409,7 +408,7 @@
 
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer[MAXBUFFSIZE];
  	struct peerList *peer;
  	int size;
 
