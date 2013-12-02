@@ -378,7 +378,7 @@
 /* Send linkState */
  char send_linkState(struct linkState *ls) {
  	char test = "test";
- 	return test;
+ 	return (int)test;
  }
 
 /* Send linkStatePacket */
