@@ -222,9 +222,9 @@
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = recv(net_fd, buffer, sizeof(&buffer), 0);
+ 		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
- 			printf("Received message: %d\n", size);
+ 			printf("Received message: %d bytes\n", size);
  			printf("Received: %s\n", buffer);
  			memset(buffer, 0, MAXBUFFSIZE);
  			strcpy(buffer, "moo");
