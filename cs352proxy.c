@@ -201,7 +201,7 @@
 /* Read from socket and write to tap */
  void *handle_listen()
  {
- 	int size;
+ 	int size, new_fd;
  	char buffer[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
@@ -212,7 +212,7 @@
  			exit(1);
  		}
 
- 		if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
+ 		if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
  			perror("accept");
  			exit(1);
  		}
@@ -226,7 +226,7 @@
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
  			printf("Received message: %d\n", size);
- 			printf("Buffer: %s\n", (char *)buffer);
+ 			printf("Buffer: %s\n", buffer);
  		} else {
  			puts("recv error");
  		}
