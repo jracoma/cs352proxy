@@ -231,7 +231,7 @@
  				printf("TYPE: %x\n", type);
  				switch (type) {
  					case PACKET_LINKSTATE:
- 					strncpy(buffer, buffer+6, sizeof(buffer));
+ 					strncpy(buffer, buffer+7, sizeof(buffer));
  					printf("Received message: %d bytes\n", size);
  					printf("Received: %s\n", buffer);
  					decode_linkStatePacket();
