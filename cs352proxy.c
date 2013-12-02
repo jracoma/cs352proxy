@@ -227,7 +227,7 @@
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 20);
- 				printf("tes: %s\n", buffer2);
+ 				printf("tes: %s\n", buffer);
  				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 16);
  				printf("TYPE: %x\n", type);
  				switch (type) {
