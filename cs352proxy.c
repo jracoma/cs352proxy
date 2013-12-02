@@ -329,7 +329,8 @@
 
 /* Client Mode */
  void *connectToPeer(void *temp) {
- 	struct sockaddr_in remote_addr;
+ 	struct sockaddr_in remote_addr, *sin;
+ 	struct arpreq areq;
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
@@ -383,6 +384,13 @@
  		lsPacket->proxy1 = local_info;
  		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
  		newLS->listenPort = remote_addr.sin_port;
+
+ 		/* Retrieve remote MAC address */
+ 		memset(&areq, 0, sizeof(areq));
+ 		sin = (struct sockaddr_in *)&areq.arp_pa;
+ 		sin->sin_family = AF_INET;
+
+ 		printf("TEST REMOTE MAC: %x\n", remote_addr.)
  		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		lsPacket->proxy2 = newLS;
