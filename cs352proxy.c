@@ -400,8 +400,6 @@
  		}
  	}
 
- 	if (debug) printf("NET_FD FOUND: %d", peer->net_fd);
-
  	/* Serialize data */
  	/* Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | */
  	lsp->header->length = sizeof(lsp);
