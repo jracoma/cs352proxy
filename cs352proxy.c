@@ -170,7 +170,7 @@
  			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->peerIP);
  			current->peerPort = port;
- 			current->tapDevice = (char *)malloc(50);
+ 			// current->tapDevice = (char *)malloc(50);
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
