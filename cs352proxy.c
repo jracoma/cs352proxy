@@ -226,7 +226,7 @@
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
  			printf("Received message: %d bytes\n", size);
- 			printf("Received: %s\n", buffer);
+ 			printf("Received: %s | Length: %d\n", buffer, strlen(buffer));
  		} else if (size == 0) {
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
