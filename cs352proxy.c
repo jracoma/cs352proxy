@@ -227,7 +227,7 @@
  			printf("Received message: %d\n", size);
  			printf("Buffer: %s\n", buffer);
  			memset(buffer, 0, MAXBUFFSIZE);
- 			buffer = "good";
+ 			strcpy(buffer, "moo");
  			printf("Buffer: %s\n", buffer);
  		} else {
  			puts("recv error");
