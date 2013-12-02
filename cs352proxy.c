@@ -75,7 +75,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap11";
+ 	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
@@ -510,10 +510,10 @@
  	}
 
  	/* Set quitAfter sleeper */
-	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
-	// 	perror("connect thread");
-	// 	pthread_exit(NULL);
-	// }
+	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+		perror("connect thread");
+		pthread_exit(NULL);
+	}
 
 	/* Start server path */
  	server(ntohs(local_info->listenPort));
