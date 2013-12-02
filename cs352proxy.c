@@ -384,22 +384,7 @@
  		lsPacket->proxy1 = local_info;
  		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
  		newLS->listenPort = remote_addr.sin_port;
-
- 		/* Retrieve remote MAC address */
- 		memset(&areq, 0, sizeof(areq));
- 		sin = (struct sockaddr_in *)&areq.arp_pa;
- 		sin->sin_addr = remote_addr.sin_addr;
- 		sin->sin_family = ARPHRD_ETHER;
- 		printf("TEST TEST %s\n", buffer);
-		strncpy(areq.arp_dev, buffer, 15);
-
-	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
-		perror("-- Error: unable to make ARP request, error");
-		exit(1);
-	}
-
- 		// printf("TEST REMOTE MAC: %x\n", remote_addr.)
- 		print_linkState(newLS);
+		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		lsPacket->proxy2 = newLS;
  		send_linkStatePacket(lsPacket);
