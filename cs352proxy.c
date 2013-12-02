@@ -376,13 +376,16 @@
  }
 
 /* Send linkState */
- char send_linkState(struct linkState *ls) {
- 	char test = "test";
- 	return (int)test;
+ void send_linkState(struct linkState *ls, int net_fd) {
+ 	char *buffer[MAXBUFFSIZE];
+
+ 	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
+ 	send(net_fd, buffer, strlen(buffer));
+ 	return 1;
  }
 
 /* Send linkStatePacket */
-	int send_linkStatePacket(struct linkStatePacket *lsp) {
+	void send_linkStatePacket(struct linkStatePacket *lsp) {
 	char *buffer[MAXBUFFSIZE];
 	struct peerList *peer;
 
@@ -399,10 +402,7 @@
 	lsp->header->length = sizeof(lsp);
 	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec);
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
-	char *test;
-	buffer = send_linkState(lsp->source->ls);
- 	memcpy(test, buffer, sizeof(buffer));
-	printf("TEST!! %s\n", test);
+	send_linkState(lsp->source->ls, peer->net_fd);
 	pthread_mutex_unlock(&peer_mutex);
 	pthread_mutex_unlock(&linkstate_mutex);
 
