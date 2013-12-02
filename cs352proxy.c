@@ -381,7 +381,7 @@
  		lsPacket->source = lsSource;
  		lsPacket->uniqueID = current_time;
  		lsPacket->proxy1 = local_info;
- 		newLS->listenIP = inet_ntoa(remote_addr.sin_addr);
+ 		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
  		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
  		send_linkStatePacket(lsPacket);
