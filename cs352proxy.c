@@ -409,7 +409,7 @@
  }
 
 /* Send linkState */
- void send_linkState(struct linkState *ls, int peer_fd) {
+ char send_linkState(struct linkState *ls, int peer_fd) {
  	char buffer[MAXBUFFSIZE];
 
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
