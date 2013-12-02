@@ -391,8 +391,8 @@
  		sin->sin_addr = remote_addr.sin_addr;
  		sin->sin_family = ARPHRD_ETHER;
  		char *tapDevice;
- 		strcpy(peer->tapDevice, tapDevice);
- 		// printf("TEST TEST %s\n", &peer->tapDevice);
+ 		// strcpy(peer->tapDevice, tapDevice);
+ 		printf("TEST TEST %d\n", peer->net_fd);
 		// strncpy(areq.arp_dev, peer->(&tapDevice), 15);
 
 	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
