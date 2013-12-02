@@ -225,248 +225,248 @@
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
- 			if (strlen(buffer) > 0) {}
+ 			if (strlen(buffer) > 0) {
  				printf("Received message: %d bytes\n", size);
- 			printf("Received: %s\n", buffer);
- 		}
- 	} else if (size == 0) {
- 		pthread_mutex_lock(&peer_mutex);
- 		pthread_mutex_lock(&linkstate_mutex);
-
- 		LL_FOREACH(peerHead, peer) {
- 			if (peer->net_fd == new_fd) {
- 				puts("found");
+ 				printf("Received: %s\n", buffer);
  			}
+ 		} else if (size == 0) {
+ 			pthread_mutex_lock(&peer_mutex);
+ 			pthread_mutex_lock(&linkstate_mutex);
+
+ 			LL_FOREACH(peerHead, peer) {
+ 				if (peer->net_fd == new_fd) {
+ 					puts("found");
+ 				}
+ 			}
+ 			close(new_fd);
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			pthread_mutex_unlock(&linkstate_mutex);
+ 		} else {
+ 			puts("recv error");
  		}
- 		close(new_fd);
- 		pthread_mutex_unlock(&peer_mutex);
- 		pthread_mutex_unlock(&linkstate_mutex);
- 	} else {
- 		puts("recv error");
+
  	}
 
+ 	return NULL;
  }
 
- return NULL;
-}
-
 /* Server Mode */
-void server(int port)
-{
-	struct sockaddr_in local_addr;
-	int optval = 1;
+ void server(int port)
+ {
+ 	struct sockaddr_in local_addr;
+ 	int optval = 1;
 
 		/* Allows reuse of socket if not closed properly */
-	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
-		perror("setsockopt");
-		exit(1);
-	}
+ 	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
+ 		perror("setsockopt");
+ 		exit(1);
+ 	}
 
 		/* Bind socket */
-	memset((char *)&local_addr, 0, sizeof(local_addr));
-	local_addr.sin_family = AF_INET;
-	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	local_addr.sin_port = htons(port);
-	if (bind(sock_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
-		perror("bind");
-		exit(1);
-	}
+ 	memset((char *)&local_addr, 0, sizeof(local_addr));
+ 	local_addr.sin_family = AF_INET;
+ 	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+ 	local_addr.sin_port = htons(port);
+ 	if (bind(sock_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
+ 		perror("bind");
+ 		exit(1);
+ 	}
 
-	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
+ 	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
 
 		/* Wait for connections on a new thread
 		* net_fd is new fd to be used for read/write */
-	if (pthread_create(&listen_thread, NULL, handle_listen, NULL) != 0) {
-		perror("listen_thread");
-		exit(1);
-	}
-}
+ 	if (pthread_create(&listen_thread, NULL, handle_listen, NULL) != 0) {
+ 		perror("listen_thread");
+ 		exit(1);
+ 	}
+ }
 
 /* Thread to open and handle tap device, read from tap and send to socket */
-void *handle_tap()
-{
-	puts("create thread for tap");
-	uint16_t type;
-	ssize_t size;
-	char *buffer = malloc(MAXBUFFSIZE);
-	union ethframe frame;
+ void *handle_tap()
+ {
+ 	puts("create thread for tap");
+ 	uint16_t type;
+ 	ssize_t size;
+ 	char *buffer = malloc(MAXBUFFSIZE);
+ 	union ethframe frame;
 
-	while (1) {
-		puts("in while tap");
-		size = read(tap_fd, &frame, MAXBUFFSIZE);
-		printf("tapSize: %d\n", size);
+ 	while (1) {
+ 		puts("in while tap");
+ 		size = read(tap_fd, &frame, MAXBUFFSIZE);
+ 		printf("tapSize: %d\n", size);
 		// if(errno!=EINTR) {
 		// 	perror("EINTR");
 		// 	exit(1);
 		// }
-		if (size < 0) {
-			perror("not connected tap");
-			close(net_fd);
-			close(tap_fd);
-			exit(1);
-		} else if (size == 0) {
-			printf("0 tap");
-			close(tap_fd);
-			close(net_fd);
-			exit(1);
-		}
-		type = htons(0xABCD);
-		buffer[size] = '\0';
-		printf("Tap Message: %s | Size: %d bytes.\n", buffer, size);
-		if (write(tap_fd, buffer, sizeof(buffer)) < 0) {
-			perror("write to tap");
-			close(tap_fd);
-			close(net_fd);
-			exit(1);
-		} else {
-			printf("Message sent to socket.\n");
-			close(tap_fd);
-			pthread_exit(NULL);
-		}
-	}
-	return NULL;
-}
+ 		if (size < 0) {
+ 			perror("not connected tap");
+ 			close(net_fd);
+ 			close(tap_fd);
+ 			exit(1);
+ 		} else if (size == 0) {
+ 			printf("0 tap");
+ 			close(tap_fd);
+ 			close(net_fd);
+ 			exit(1);
+ 		}
+ 		type = htons(0xABCD);
+ 		buffer[size] = '\0';
+ 		printf("Tap Message: %s | Size: %d bytes.\n", buffer, size);
+ 		if (write(tap_fd, buffer, sizeof(buffer)) < 0) {
+ 			perror("write to tap");
+ 			close(tap_fd);
+ 			close(net_fd);
+ 			exit(1);
+ 		} else {
+ 			printf("Message sent to socket.\n");
+ 			close(tap_fd);
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+ 	return NULL;
+ }
 
 /* Client Mode */
-void *connectToPeer(void *temp) {
-	struct sockaddr_in remote_addr;
-	int new_fd, size;
-	char *buffer = malloc(MAXBUFFSIZE);
-	struct peerList *peer = (struct peerList *)temp;
-	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
-	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
-	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
-	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
-	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
-	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
-	lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
-	lsPacket->proxy1 = (struct linkState *)malloc(sizeof(struct linkState));
-	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
-	struct timeval current_time;
+ void *connectToPeer(void *temp) {
+ 	struct sockaddr_in remote_addr;
+ 	int new_fd, size;
+ 	char *buffer = malloc(MAXBUFFSIZE);
+ 	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
+ 	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
+ 	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
+ 	struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
+ 	lsPacket->proxy1 = (struct linkState *)malloc(sizeof(struct linkState));
+ 	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
+ 	struct timeval current_time;
 
 /* Create TCP Socket */
-	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		perror("could not create socket");
-		exit(1);
-	}
-	puts("Client Mode:");
-	memset((char *)&remote_addr, 0, sizeof(remote_addr));
-	remote_addr.sin_family = AF_INET;
-	remote_addr.sin_port = htons(peer->peerPort);
-	inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
+ 	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+ 		perror("could not create socket");
+ 		exit(1);
+ 	}
+ 	puts("Client Mode:");
+ 	memset((char *)&remote_addr, 0, sizeof(remote_addr));
+ 	remote_addr.sin_family = AF_INET;
+ 	remote_addr.sin_port = htons(peer->peerPort);
+ 	inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
 
-	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
+ 	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 /* Connect to server */
-	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
-		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
-		pthread_exit(NULL);
-	} else {
-		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
+ 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
+ 		pthread_exit(NULL);
+ 	} else {
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
 
 /* Create link state packet */
-		gettimeofday(&current_time, NULL);
-		peer->uniqueID = current_time;
-		peer->net_fd = new_fd;
-		peer->pid = pthread_self();
-		pthread_mutex_lock(&peer_mutex);
-		LL_APPEND(peerHead, peer);
-		pthread_mutex_unlock(&peer_mutex);
+ 		gettimeofday(&current_time, NULL);
+ 		peer->uniqueID = current_time;
+ 		peer->net_fd = new_fd;
+ 		peer->pid = pthread_self();
+ 		pthread_mutex_lock(&peer_mutex);
+ 		LL_APPEND(peerHead, peer);
+ 		pthread_mutex_unlock(&peer_mutex);
 
-		lsSource->ls = local_info;
-		LL_COUNT(peerHead, peer, lsSource->neighbors);
-		hdr->type = htons(PACKET_LINKSTATE);
-		lsPacket->header = hdr;
-		lsPacket->source = lsSource;
-		lsPacket->uniqueID = current_time;
-		lsPacket->proxy1 = local_info;
-		lsPacket->linkWeight = 1;
-		send_linkStatePacket(lsPacket);
-		puts("NEW PEER: Single link state record sent.");
-		if (debug) print_linkStatePacket(lsPacket);
-		pthread_mutex_lock(&linkstate_mutex);
-		LL_APPEND(lsHead, lsPacket);
-		pthread_mutex_unlock(&linkstate_mutex);
-	}
-	return NULL;
-}
+ 		lsSource->ls = local_info;
+ 		LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 		hdr->type = htons(PACKET_LINKSTATE);
+ 		lsPacket->header = hdr;
+ 		lsPacket->source = lsSource;
+ 		lsPacket->uniqueID = current_time;
+ 		lsPacket->proxy1 = local_info;
+ 		lsPacket->linkWeight = 1;
+ 		send_linkStatePacket(lsPacket);
+ 		puts("NEW PEER: Single link state record sent.");
+ 		if (debug) print_linkStatePacket(lsPacket);
+ 		pthread_mutex_lock(&linkstate_mutex);
+ 		LL_APPEND(lsHead, lsPacket);
+ 		pthread_mutex_unlock(&linkstate_mutex);
+ 	}
+ 	return NULL;
+ }
 
 /* Send linkState */
-void send_linkState(struct linkState *ls, int peer_fd) {
-	char *buffer[MAXBUFFSIZE];
+ void send_linkState(struct linkState *ls, int peer_fd) {
+ 	char *buffer[MAXBUFFSIZE];
 
-	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
-	send(peer_fd, buffer, sizeof(buffer), 0);
-	printf("SENT2: %s\n", buffer);
-}
+ 	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
+ 	send(peer_fd, buffer, sizeof(buffer), 0);
+ 	printf("SENT2: %s\n", buffer);
+ }
 
 /* Send linkStatePacket */
-void send_linkStatePacket(struct linkStatePacket *lsp) {
-	char *buffer[MAXBUFFSIZE];
-	struct peerList *peer;
-	int size;
+ void send_linkStatePacket(struct linkStatePacket *lsp) {
+ 	char *buffer[MAXBUFFSIZE];
+ 	struct peerList *peer;
+ 	int size;
 
-	pthread_mutex_lock(&peer_mutex);
-	pthread_mutex_lock(&linkstate_mutex);
-	LL_FOREACH(peerHead, peer) {
-		if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
-			break;
-		}
-	}
+ 	pthread_mutex_lock(&peer_mutex);
+ 	pthread_mutex_lock(&linkstate_mutex);
+ 	LL_FOREACH(peerHead, peer) {
+ 		if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
+ 			break;
+ 		}
+ 	}
 
  	/* Serialize data */
  	/* Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | */
-	lsp->header->length = sizeof(lsp);
-	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec);
-	send(peer->net_fd, &buffer, sizeof(buffer), 0);
-	printf("SENT1: %s\n", buffer);
-	send_linkState(lsp->proxy1, peer->net_fd);
-	pthread_mutex_unlock(&peer_mutex);
-	pthread_mutex_unlock(&linkstate_mutex);
-}
+ 	lsp->header->length = sizeof(lsp);
+ 	sprintf(buffer, "%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec);
+ 	send(peer->net_fd, &buffer, sizeof(buffer), 0);
+ 	printf("SENT1: %s\n", buffer);
+ 	send_linkState(lsp->proxy1, peer->net_fd);
+ 	pthread_mutex_unlock(&peer_mutex);
+ 	pthread_mutex_unlock(&linkstate_mutex);
+ }
 
 /* Print packetHeader information */
-void print_packetHeader(struct packetHeader *pkt) {
-	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
-}
+ void print_packetHeader(struct packetHeader *pkt) {
+ 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
+ }
 
 /* Print linkState information */
-void print_linkState(struct linkState *ls) {
-	char ethMAC[19];
-	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
-	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
-}
+ void print_linkState(struct linkState *ls) {
+ 	char ethMAC[19];
+ 	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+ 	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), ethMAC);
+ }
 
 /* Print linkStatePacket information */
-void print_linkStatePacket(struct linkStatePacket *lsp) {
-	puts("---LINKSTATE PACKET INFORMATION---");
-	print_packetHeader(lsp->header);
-	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
-	printf("-----PROXY 1-----\n");
-	print_linkState(lsp->proxy1);
-	printf("-----PROXY 2-----\n");
-	print_linkState(lsp->proxy2);
-}
+ void print_linkStatePacket(struct linkStatePacket *lsp) {
+ 	puts("---LINKSTATE PACKET INFORMATION---");
+ 	print_packetHeader(lsp->header);
+ 	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
+ 	printf("-----PROXY 1-----\n");
+ 	print_linkState(lsp->proxy1);
+ 	printf("-----PROXY 2-----\n");
+ 	print_linkState(lsp->proxy2);
+ }
 
 /* Decode header information */
-uint16_t getHeaderInfo(uint16_t *header) {
-	puts("testheader");
-	return 0;
-}
+ uint16_t getHeaderInfo(uint16_t *header) {
+ 	puts("testheader");
+ 	return 0;
+ }
 
 /* Sleeper for quitAfter */
-void *sleeper() {
+ void *sleeper() {
  	// sleep(quitAfter);
-	sleep(20);
-	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
-	exit(1);
-}
+ 	sleep(20);
+ 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+ 	exit(1);
+ }
 
 /* Main */
-int main (int argc, char *argv[]) {
-	if (debug) {
-		puts("DEBUGGING MODE:");
-	}
+ int main (int argc, char *argv[]) {
+ 	if (debug) {
+ 		puts("DEBUGGING MODE:");
+ 	}
 
  // 	struct timeval test;
  // 	gettimeofday(&test, NULL);
@@ -515,23 +515,23 @@ int main (int argc, char *argv[]) {
  // 	}
 
 	/* Parse input file */
-	if (parseInput(argc, argv)) {
-		perror("parseInput");
-		close(tap_fd);
-		return EXIT_FAILURE;
-	}
+ 	if (parseInput(argc, argv)) {
+ 		perror("parseInput");
+ 		close(tap_fd);
+ 		return EXIT_FAILURE;
+ 	}
 
  	/* Set quitAfter sleeper */
-	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
-		perror("connect thread");
-		pthread_exit(NULL);
-	}
+ 	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 		perror("connect thread");
+ 		pthread_exit(NULL);
+ 	}
 
 	/* Start server path */
-	server(ntohs(local_info->listenPort));
+ 	server(ntohs(local_info->listenPort));
 
-	close(tap_fd);
-	pthread_exit(NULL);
+ 	close(tap_fd);
+ 	pthread_exit(NULL);
 
-	return 0;
-}
+ 	return 0;
+ }
