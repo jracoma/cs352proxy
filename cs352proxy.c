@@ -340,7 +340,7 @@
 /* Client Mode */
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
- 	int new_fd;
+ 	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
