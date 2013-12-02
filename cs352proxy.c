@@ -224,7 +224,7 @@
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
- 			strncpy(buffer2, buffer, 3);
+ 			strncpy(buffer2, buffer, 2);
  			printf("TYPE: 0x%x\n", buffer2);
  			if (strlen(buffer) > 0) {
  				printf("Received message: %d bytes\n", size);
