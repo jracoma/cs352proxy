@@ -366,7 +366,7 @@
  		lsPacket->uniqueID = current_time;
  		lsPacket->proxy1 = local_info;
  		lsPacket->linkWeight = 1;
- 		if (send_linkStatePacket(lsPacket)) puts("NEW PEER: Single link state record sent.");
+ 		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
  		pthread_mutex_lock(&linkstate_mutex);
  		LL_APPEND(lsHead, lsPacket);
