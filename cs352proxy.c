@@ -222,13 +222,14 @@
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = read(net_fd, buffer, sizeof(buffer));
+ 		size = recv(net_fd, buffer, sizeof(&buffer), 0);
  		if (size > 0) {
  			printf("Received message: %d\n", size);
- 			printf("Buffer: %s\n", buffer);
+ 			printf("Received: %s\n", buffer);
  			memset(buffer, 0, MAXBUFFSIZE);
  			strcpy(buffer, "moo");
- 			printf("Buffer: %s\n", buffer);
+ 			printf("Sending: %s\n", buffer);
+ 			send(net_fd, buffer, sizeof(&buffer), 0);
  		} else {
  			puts("recv error");
  		}
