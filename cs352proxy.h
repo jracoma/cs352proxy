@@ -112,5 +112,5 @@ void send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket(struct linkStatePacket *lsp);
-uint16_t getHeaderInfo(uint16_t *header);
+struct linkStatePacket decode_linkStatePacket();
 void *sleeper();

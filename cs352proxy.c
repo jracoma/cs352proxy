@@ -233,6 +233,7 @@
  					case PACKET_LINKSTATE:
  					printf("Received message: %d bytes\n", size);
  					printf("Received: %s\n", buffer);
+ 					decode_linkStatePacket();
  					default:
  					printf("Negative.\n");
  				}
@@ -463,10 +464,11 @@
  	print_linkState(lsp->proxy2);
  }
 
-/* Decode header information */
- uint16_t getHeaderInfo(uint16_t *header) {
- 	puts("testheader");
- 	return 0;
+/* Decode linkStatePacket information */
+ struct linkStatePacket decode_linkStatePacket() {
+ 	struct linkStatePacket test;
+ 	puts("HERE!");
+ 	return test;
  }
 
 /* Sleeper for quitAfter */
