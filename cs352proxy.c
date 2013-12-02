@@ -390,6 +390,7 @@
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_addr = remote_addr.sin_addr;
  		sin->sin_family = ARPHRD_ETHER;
+ 		printf("TEST TEST %s\n", buffer);
 		strncpy(areq.arp_dev, buffer, 15);
 
 	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
