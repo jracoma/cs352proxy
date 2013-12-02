@@ -435,7 +435,7 @@
  	lsp->header->length = sizeof(lsp);
  	sprintf(buffer, "0x%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->linkWeight);
  	send(peer->net_fd, &buffer, sizeof(buffer), 0);
- 	printf("SENT1: %s\n", buffer);
+ 	printf("SENT1: %s | Length: %d\n", buffer, strlen(buffer));
  	send_linkState(lsp->proxy1, peer->net_fd);
  	send_linkState(lsp->proxy2, peer->net_fd);
  	pthread_mutex_unlock(&peer_mutex);
