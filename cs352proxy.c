@@ -384,7 +384,6 @@
 /* Send linkState */
  void send_linkState(struct linkState *ls, int peer_fd) {
  	char *buffer[MAXBUFFSIZE];
- 	int size;
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
  	send(peer_fd, buffer, sizeof(buffer), 0);
@@ -395,6 +394,7 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	char *buffer[MAXBUFFSIZE];
  	struct peerList *peer;
+ 	int size;
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
