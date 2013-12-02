@@ -389,6 +389,7 @@
  		memset(&areq, 0, sizeof(areq));
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_family = AF_INET;
+ 		sin->sin_addr = remote_addr.sin_addr;
 
  		// printf("TEST REMOTE MAC: %x\n", remote_addr.)
  		print_linkState(newLS);
