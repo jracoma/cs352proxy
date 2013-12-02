@@ -227,10 +227,10 @@
  			printf("Received message: %d bytes\n", size);
  			printf("Received: %s\n", buffer);
  			memset(buffer, 0, MAXBUFFSIZE);
- 			strcpy(buffer, "moo");
+ 			strcpy(buffer, "ACK12");
  			printf("Sending: %s\n", buffer);
  			send(net_fd, buffer, sizeof(&buffer), 0);
- 			sleep(20);
+ 			// sleep(20);
  		} else {
  			puts("recv error");
  		}
