@@ -227,8 +227,6 @@
  		if (size > 0) {
  			printf("Received message: %d bytes\n", size);
  			printf("Received: %s\n", buffer);
- 		} else {
- 			puts("recv error");
  		} else if (size == 0) {
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
@@ -241,6 +239,8 @@
 	 		close(new_fd);
 		 	pthread_mutex_unlock(&peer_mutex);
 		 	pthread_mutex_unlock(&linkstate_mutex);
+ 		} else {
+ 			puts("recv error");
  		}
 
  	}
