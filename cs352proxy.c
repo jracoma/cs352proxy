@@ -377,12 +377,12 @@
  }
 
 /* Send linkState */
- void send_linkState(struct linkState *ls, int net_fd) {
+ void send_linkState(struct linkState *ls, int peer_fd) {
  	char *buffer[MAXBUFFSIZE];
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
  	printf("TEST: %s\n", buffer);
- 	send(net_fd, buffer, strlen(&buffer), 0);
+ 	send(peer_fd, buffer, strlen(&buffer), 0);
  	return 1;
  }
 
