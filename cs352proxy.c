@@ -245,6 +245,8 @@
  			pthread_mutex_unlock(&linkstate_mutex);
  		} else {
  			puts("recv error");
+ 			close(new_fd);
+ 			return;
  		}
 
  	}
