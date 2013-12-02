@@ -367,7 +367,7 @@
 
 /* Create link state packet */
  		gettimeofday(&current_time, NULL);
- 		printf("TEST TEST %s\n", peer->tapDevice);
+ 		printf("TEST TESTq %s\n", peer->tapDevice);
  		peer->uniqueID = current_time;
  		peer->net_fd = new_fd;
  		peer->pid = pthread_self();
