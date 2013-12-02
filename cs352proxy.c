@@ -219,15 +219,15 @@
  			exit(1);
  		}
  	while (1) {
-
-
-
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = read(net_fd, buffer, sizeof(buffer));
  		if (size > 0) {
  			printf("Received message: %d\n", size);
+ 			printf("Buffer: %s\n", buffer);
+ 			memset(buffer, 0, MAXBUFFSIZE);
+ 			buffer = "good";
  			printf("Buffer: %s\n", buffer);
  		} else {
  			puts("recv error");
