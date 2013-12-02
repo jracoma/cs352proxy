@@ -231,10 +231,10 @@
  				printf("TYPE: %x\n", type);
  				switch (type) {
  					case PACKET_LINKSTATE:
-	 					printf("Received message: %d bytes\n", size);
-	 					printf("Received: %s\n", buffer);
+ 					printf("Received message: %d bytes\n", size);
+ 					printf("Received: %s\n", buffer);
  					default:
-	 					printf("Negative.\n");
+ 					printf("Negative.\n");
  				}
  			}
  		} else if (size == 0) {
@@ -410,7 +410,7 @@
  void send_linkState(struct linkState *ls, int peer_fd) {
  	char buffer[MAXBUFFSIZE];
 
- 	sprintf(buffer, "0xabac %s", inet_ntoa(ls->listenIP));
+ 	sprintf(buffer, "0xabac %s %d", inet_ntoa(ls->listenIP), ntohs(ls->listenPort));
  	send(peer_fd, buffer, sizeof(buffer), 0);
  	printf("SENT2: %s\n", buffer);
  }
