@@ -415,7 +415,6 @@
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
  	sprintf(buffer, "0xabac %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	send(peer_fd, buffer, sizeof(buffer), 0);
- 	printf("SENT2: %s\n", buffer);
  	return buffer;
  }
 
@@ -438,7 +437,7 @@
  	send(peer->net_fd, &buffer, strlen(buffer), 0);
  	printf("SENT1: %s | Length: %d\n", buffer, strlen(buffer));
  	buffer = send_linkState(lsp->proxy1, peer->net_fd);
- 	printf("SENT1: %s | Length: %d\n", buffer, strlen(buffer));
+ 	printf("SENT2: %s | Length: %d\n", buffer, strlen(buffer));
  	send_linkState(lsp->proxy2, peer->net_fd);
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
