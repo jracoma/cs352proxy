@@ -313,8 +313,7 @@
  }
 
 /* Client Mode */
- void *connectToPeer(void *temp)
- {
+ void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd, size;
  	char *buffer = malloc(MAXBUFFSIZE);
@@ -330,7 +329,7 @@
  	lsPacket->proxy2 = (struct linkState *)malloc(sizeof(struct linkState));
  	struct timeval current_time;
 
-    /* Create TCP Socket */
+/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
  		exit(1);
@@ -343,14 +342,14 @@
 
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
-    /* Connect to server */
+/* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
- 		printf("Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
+ 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
  		pthread_exit(NULL);
  	} else {
- 		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
 
- 		/* Create link state packet */
+/* Create link state packet */
  		gettimeofday(&current_time, NULL);
  		peer->uniqueID = current_time;
  		peer->net_fd = new_fd;
@@ -367,15 +366,14 @@
  		lsPacket->uniqueID = current_time;
  		lsPacket->proxy1 = local_info;
  		lsPacket->linkWeight = 1;
- 		if (send_linkStatePacket(lsPacket)) puts("Success");
+ 		if (send_linkStatePacket(lsPacket)) puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
  		pthread_mutex_lock(&linkstate_mutex);
  		LL_APPEND(lsHead, lsPacket);
  		pthread_mutex_unlock(&linkstate_mutex);
-
+ 	}
+ 	return NULL;
  }
- return NULL;
-}
 
 /* Send linkState */
 int send_linkStatePacket(struct linkStatePacket *lsp) {
