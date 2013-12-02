@@ -388,8 +388,15 @@
  		/* Retrieve remote MAC address */
  		memset(&areq, 0, sizeof(areq));
  		sin = (struct sockaddr_in *)&areq.arp_pa;
- 		sin->sin_family = AF_INET;
  		sin->sin_addr = remote_addr.sin_addr;
+ 		sin->sin_family = ARPHRD_ETHER;
+
+		strncpy(areq.arp_dev, peer->tapDevice, 15);
+
+	if (ioctl(s, SIOCGARP, (caddr_t) &areq) == -1) {
+		perror("-- Error: unable to make ARP request, error");
+		exit(1);
+	}
 
  		// printf("TEST REMOTE MAC: %x\n", remote_addr.)
  		print_linkState(newLS);
