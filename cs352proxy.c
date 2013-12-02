@@ -171,7 +171,6 @@
  			inet_aton(host, &current->peerIP);
  			current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
@@ -392,7 +391,7 @@
  		sin->sin_family = ARPHRD_ETHER;
  		char *tapDevice = malloc(MAXBUFFSIZE);
  		// strcpy(tapDevice, peer->tapDevice);
- 		printf("TEST TEST %s\n", &(peer->tapDevice));
+ 		printf("TEST TEST %s\n", peer->tapDevice);
 		// strncpy(areq.arp_dev, peer->(&tapDevice), 15);
 
 	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
