@@ -232,7 +232,9 @@
 	 			switch (type)
 	 			case PACKET_LINKSTATE:
 	 				printf("Received message: %d bytes\n", size);
- 				printf("Received: %s\n", buffer);
+ 					printf("Received: %s\n", buffer);
+ 				default:
+ 					printf("Negative.\n");
  			}
  		} else if (size == 0) {
  			pthread_mutex_lock(&peer_mutex);
