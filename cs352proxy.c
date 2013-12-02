@@ -380,7 +380,7 @@
  	char *buffer[MAXBUFFSIZE];
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
- 	send(net_fd, buffer, strlen(buffer));
+ 	send(net_fd, buffer, strlen(&buffer), 0);
  	return 1;
  }
 
