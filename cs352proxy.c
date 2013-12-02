@@ -416,7 +416,7 @@
  	sprintf(buffer, "0xabac %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	send(peer_fd, buffer, sizeof(buffer), 0);
  	printf("SENT2: %s\n", buffer);
- 	return buffer;
+ 	return &buffer;
  }
 
 /* Send linkStatePacket */
