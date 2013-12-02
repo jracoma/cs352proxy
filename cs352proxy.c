@@ -201,7 +201,7 @@
  void *handle_listen()
  {
  	int size, new_fd;
- 	uint16_t type;
+ 	long int type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
@@ -227,7 +227,7 @@
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
- 				type = (uint16_t)buffer2;
+ 				type = strtol (buffer2,&buffer2,16);
 	 			printf("TYPE: %x\n", type);
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
