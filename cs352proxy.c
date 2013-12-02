@@ -171,6 +171,7 @@
  			inet_aton(host, &current->peerIP);
  			current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
+ 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
