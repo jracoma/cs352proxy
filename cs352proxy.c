@@ -397,6 +397,8 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
 
 	pthread_mutex_unlock(&peer_mutex);
 	pthread_mutex_unlock(&linkstate_mutex);
+
+	return 1;
 }
 
 /* Print packetHeader information */
