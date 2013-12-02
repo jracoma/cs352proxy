@@ -227,7 +227,7 @@
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
- 				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 16);
+ 				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
  				printf("TYPE: %x\n", type);
  				switch (type) {
  					case PACKET_LINKSTATE:
