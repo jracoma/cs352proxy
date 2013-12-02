@@ -225,7 +225,7 @@
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
  			strncpy(buffer2, "test", 2);
- 			printf("TYPE: 0x%x\n", buffer2);
+ 			printf("TYPE: %s\n", buffer2);
  			if (strlen(buffer) > 0) {
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
