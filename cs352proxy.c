@@ -203,6 +203,12 @@
  {
  	int size;
  	char buffer[MAXBUFFSIZE];
+ 	struct sockaddr_in client_addr;
+
+ 	if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
+ 		perror("accept");
+ 		exit(1);
+ 	}
 
  	while (1) {
  		if (debug) puts("create thread for listening");
@@ -227,7 +233,7 @@
  void server(int port)
  {
  	struct sockaddr_in local_addr;
- 	struct sockaddr_in client_addr;
+
 	socklen_t addrlen = sizeof(client_addr);
  	int optval = 1;
 
@@ -250,10 +256,6 @@
 	/* Listens for connection, backlog 5 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
- 		exit(1);
- 	}
- 	if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
- 		perror("accept");
  		exit(1);
  	}
 
