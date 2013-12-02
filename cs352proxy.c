@@ -339,12 +339,11 @@
 
 /* Client Mode */
  void *connectToPeer(void *temp) {
- 	struct sockaddr_in remote_addr, *sin;
- 	struct arpreq areq;
- 	int new_fd, size;
+ 	struct sockaddr_in remote_addr;
+ 	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	// struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
  	struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
@@ -421,7 +420,6 @@
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer;
- 	int size;
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
