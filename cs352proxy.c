@@ -233,7 +233,7 @@
 
 		 	LL_FOREACH(peerHead, peer) {
 		 		if (peer->net_fd == new_fd) {
-	 				puts("found")
+	 				puts("found");
 	 			}
 	 		}
 	 		close(new_fd);
