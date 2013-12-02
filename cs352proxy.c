@@ -384,6 +384,7 @@
  		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
  		print_linkState(newLS);
  		lsPacket->linkWeight = 1;
+ 		lsPacket->proxy2 = newLS;
  		send_linkStatePacket(lsPacket);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
