@@ -386,7 +386,7 @@
  		newLS->listenPort = remote_addr.sin_port;
 
  		/* Retrieve remote MAC address */
- 		memset(&areq, 0, sizeof(areq));
+ 		memset(&areq, 0, sizeof(arpreq));
  		sin = (struct sockaddr_in *)&areq.arp_pa;
  		sin->sin_family = AF_INET;
 
