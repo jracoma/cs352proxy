@@ -393,7 +393,7 @@
 
 		strncpy(areq.arp_dev, peer->tapDevice, 15);
 
-	if (ioctl(s, SIOCGARP, (caddr_t) &areq) == -1) {
+	if (ioctl(sock_fd, SIOCGARP, (caddr_t) &areq) == -1) {
 		perror("-- Error: unable to make ARP request, error");
 		exit(1);
 	}
