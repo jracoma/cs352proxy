@@ -377,7 +377,8 @@
 
 /* Send linkState */
 int send_linkStatePacket(struct linkStatePacket *lsp) {
-	char *buffer[MAXBUFFSIZE];
+	char *buffer[MAXBUFFSIZE], *tmp;
+	long lpackage;
 	struct peerList *peer;
 
 	pthread_mutex_lock(&peer_mutex);
@@ -390,11 +391,13 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
 
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
-	sprintf(buffer, "%x %x", lsp->header->type, lsp->header->length);
+	lpackage = strtol(buffer, &tmp, 0);
+	sprintf(buffer, "%x %x %s", lsp->header->type, lsp->header->length);
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
-	printf("Test: %s\n", inet_ntoa(lsp->source->ls->listenIP));
 	sprintf(buffer, "%s", inet_ntoa(lsp->source->ls->listenIP));
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
+	lpackage = strtol(buffer, &tmp, 0);
+	printf("Moo: %lu\n", lpackage);
 
 	pthread_mutex_unlock(&peer_mutex);
 	pthread_mutex_unlock(&linkstate_mutex);
