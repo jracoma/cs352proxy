@@ -204,20 +204,20 @@
  	int size;
  	char buffer[MAXBUFFSIZE];
 
+		/* Listens for connection, backlog 5 */
+ 	if (listen(sock_fd, BACKLOG) < 0) {
+ 		perror("listen");
+ 		exit(1);
+ 	}
+ 	if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
+ 		perror("accept");
+ 		exit(1);
+ 	}
+
  	while (1) {
  		if (debug) puts("create thread for listening");
  		struct sockaddr_in client_addr;
  		socklen_t addrlen = sizeof(client_addr);
-
-		/* Listens for connection, backlog 5 */
- 		if (listen(sock_fd, BACKLOG) < 0) {
- 			perror("listen");
- 			exit(1);
- 		}
- 		if ((net_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
- 			perror("accept");
- 			exit(1);
- 		}
 
  		printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
