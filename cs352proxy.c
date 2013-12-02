@@ -349,6 +349,7 @@
  		pthread_exit(NULL);
  	} else {
  		printf("Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+
  		/* Create link state packet */
  		gettimeofday(&current_time, NULL);
  		peer->uniqueID = current_time;
@@ -371,7 +372,6 @@
  		pthread_mutex_lock(&linkstate_mutex);
  		LL_APPEND(lsHead, lsPacket);
  		pthread_mutex_unlock(&linkstate_mutex);
- 	}
 
  }
  return NULL;
