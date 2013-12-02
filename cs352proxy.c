@@ -167,6 +167,7 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
+ 			printf("TEST: %s\n", tapDevice);
  			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->peerIP);
  			current->peerPort = port;
