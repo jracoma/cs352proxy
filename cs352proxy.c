@@ -201,7 +201,7 @@
  void *handle_listen()
  {
  	int size, new_fd;
- 	char buffer[MAXBUFFSIZE];
+ 	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *peer;
@@ -224,6 +224,8 @@
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(net_fd, buffer, sizeof(buffer), 0);
  		if (size > 0) {
+ 			strncpy(buffer2, buffer, 3);
+ 			printf("TYPE: 0x%x\n", buffer2);
  			if (strlen(buffer) > 0) {
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
