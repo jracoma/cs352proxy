@@ -340,7 +340,7 @@
 /* Client Mode */
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
- 	int new_fd, size;
+ 	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *newPeer = (struct peerList *)malloc(sizeof(struct peerList));
@@ -409,7 +409,7 @@
 
 /* Send linkState */
  void send_linkState(struct linkState *ls, int peer_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer[MAXBUFFSIZE];
 
  	sprintf(buffer, "%s", inet_ntoa(ls->listenIP));
  	send(peer_fd, buffer, sizeof(buffer), 0);
@@ -418,7 +418,7 @@
 
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer[MAXBUFFSIZE];
  	struct peerList *peer;
 
  	pthread_mutex_lock(&peer_mutex);
