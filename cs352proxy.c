@@ -75,7 +75,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap10";
+ 	char *dev = "tap11";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
