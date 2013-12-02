@@ -392,9 +392,7 @@ int send_linkStatePacket(struct linkStatePacket *lsp) {
  	/* Serialize data */
 	lsp->header->length = sizeof(lsp);
 	lpackage = strtol(buffer, &tmp, 0);
-	sprintf(buffer, "%x %x %s", lsp->header->type, lsp->header->length);
-	send(peer->net_fd, &buffer, strlen(&buffer), 0);
-	sprintf(buffer, "%s", inet_ntoa(lsp->source->ls->listenIP));
+	sprintf(buffer, "%x %x %s", lsp->header->type, lsp->header->length, inet_ntoa(lsp->source->ls->listenIP));
 	send(peer->net_fd, &buffer, strlen(&buffer), 0);
 	lpackage = strtol(buffer, &tmp, 0);
 	printf("Moo: %lu\n", lpackage);
