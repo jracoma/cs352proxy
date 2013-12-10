@@ -402,7 +402,6 @@
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
  		pthread_mutex_lock(&linkstate_mutex);
- 		LL_APPEND(lsHead, lsPacket);
  		pthread_mutex_unlock(&linkstate_mutex);
  	}
  	return NULL;
