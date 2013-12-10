@@ -126,7 +126,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current;
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList));
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
@@ -167,7 +167,6 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->lsInfo->listenIP);
  			// current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
