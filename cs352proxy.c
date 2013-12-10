@@ -127,6 +127,7 @@
  	char ip[100];
  	int port, count;
  	struct peerList *current;
+ 	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -167,7 +168,7 @@
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
  			current = malloc(sizeof(struct peerList));
- 			inet_aton(host, &current->peerIP);
+ 			inet_aton(host, &current->lsInfo->listenIP);
  			current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
