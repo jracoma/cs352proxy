@@ -62,8 +62,8 @@ struct peerList {
   struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
   struct timeval uniqueID;
+  uint32_t linkWeight;
   int net_fd;
-  pthread_t pid;
   struct peerList *next;
 }__attribute__((packed));
 
@@ -91,9 +91,7 @@ struct linkStateSource {
 struct linkStatePacket {
   struct packetHeader *header;
   struct linkStateSource *source;
-  struct timeval uniqueID;
   struct peerList *top;
-  uint32_t linkWeight;
 }__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);

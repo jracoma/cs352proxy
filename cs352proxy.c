@@ -375,7 +375,7 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->uniqueID = current_time;
  		peer->net_fd = new_fd;
- 		peer->pid = pthread_self();
+ 		peer->linkWeight = 1;
  		pthread_mutex_lock(&peer_mutex);
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
@@ -446,7 +446,7 @@
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
- 	printf("--Tap: %s | UID: %ld:%ld\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | Next: %s\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd, peer->next->lsInfo->listenIP);
  }
 
 /* Print linkState information */
