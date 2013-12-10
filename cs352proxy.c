@@ -461,7 +461,6 @@
  	print_packetHeader(lsp->header);
  	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
  	printf("-----PROXY 1-----\n");
- 	print_linkState(lsp->proxy1);
  }
 
 /* Decode linkStatePacket information */
