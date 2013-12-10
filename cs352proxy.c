@@ -384,23 +384,23 @@
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
 
- 		lsSource->ls = local_info;
- 		LL_COUNT(peerHead, peer, lsSource->neighbors);
- 		hdr->type = htons(PACKET_LINKSTATE);
- 		lsPacket->header = hdr;
- 		lsPacket->source = lsSource;
- 		lsPacket->uniqueID = current_time;
- 		lsPacket->proxy1 = local_info;
- 		inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
- 		newLS->listenPort = remote_addr.sin_port;
- 		print_linkState(newLS);
- 		lsPacket->linkWeight = 1;
- 		lsPacket->proxy2 = newLS;
- 		send_linkStatePacket(lsPacket);
- 		puts("NEW PEER: Single link state record sent.");
- 		if (debug) print_linkStatePacket(lsPacket);
- 		pthread_mutex_lock(&linkstate_mutex);
- 		pthread_mutex_unlock(&linkstate_mutex);
+ 		// lsSource->ls = local_info;
+ 		// LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 		// hdr->type = htons(PACKET_LINKSTATE);
+ 		// lsPacket->header = hdr;
+ 		// lsPacket->source = lsSource;
+ 		// lsPacket->uniqueID = current_time;
+ 		// lsPacket->proxy1 = local_info;
+ 		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
+ 		// newLS->listenPort = remote_addr.sin_port;
+ 		// print_linkState(newLS);
+ 		// lsPacket->linkWeight = 1;
+ 		// lsPacket->proxy2 = newLS;
+ 		// send_linkStatePacket(lsPacket);
+ 		// puts("NEW PEER: Single link state record sent.");
+ 		// if (debug) print_linkStatePacket(lsPacket);
+ 		// pthread_mutex_lock(&linkstate_mutex);
+ 		// pthread_mutex_unlock(&linkstate_mutex);
  	}
  	return NULL;
  }
