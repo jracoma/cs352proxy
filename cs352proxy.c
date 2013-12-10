@@ -351,7 +351,7 @@
  	struct timeval current_time;
 
 puts("BAM BAM");
-print_peerList(peer);
+print_linkState(peer->lsInfo);
 
 /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
