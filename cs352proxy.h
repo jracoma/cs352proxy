@@ -96,7 +96,6 @@ struct linkStatePacket {
   struct linkState *proxy1;
   struct linkState *proxy2;
   uint32_t linkWeight;
-  struct linkStatePacket *next;
 }__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);
