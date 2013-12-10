@@ -184,6 +184,7 @@
  		printf("Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
+ 			printf("Host: %s | Tap: %s\n", inet_ntoa(current->lsInfo->listenIP), current->tapDevice);
  			// printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
  		}
  		printf("Count: %d\n", count);
