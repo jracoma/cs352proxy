@@ -108,6 +108,7 @@ void *connectToPeer(void *temp);
 char *send_linkState(struct linkState *ls);
 void send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
+void print_peerList(struct peerList *peer);
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket(struct linkStatePacket *lsp);
 struct linkStatePacket decode_linkStatePacket();

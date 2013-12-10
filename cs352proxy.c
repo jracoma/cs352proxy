@@ -447,6 +447,11 @@
  	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
  }
 
+/* Print peerList information */
+ void print_peerList(struct peerList *peer) {
+ 	printf("PEER:");
+ }
+
 /* Print linkState information */
  void print_linkState(struct linkState *ls) {
  	char ethMAC[19];
@@ -461,8 +466,6 @@
  	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
  	printf("-----PROXY 1-----\n");
  	print_linkState(lsp->proxy1);
- 	printf("-----PROXY 2-----\n");
- 	print_linkState(lsp->proxy2);
  }
 
 /* Decode linkStatePacket information */
