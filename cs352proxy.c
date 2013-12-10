@@ -169,7 +169,7 @@
  			tapDevice = strtok(NULL, " \n");
  			current = malloc(sizeof(struct peerList));
  			inet_aton(host, &current->lsInfo->listenIP);
- 			current->peerPort = port;
+ 			// current->peerPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
@@ -185,7 +185,7 @@
  		printf("Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
- 			printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
+ 			// printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
@@ -362,14 +362,14 @@
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peer->peerPort);
- 	inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
+ 	// remote_addr.sin_port = htons(peer->peerPort);
+ 	// inet_aton((char *)inet_ntoa(peer->peerIP), &remote_addr.sin_addr);
 
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 /* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
- 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
+ 		// printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->peerIP), peer->peerPort);
  		pthread_exit(NULL);
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
