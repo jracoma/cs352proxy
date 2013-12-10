@@ -446,6 +446,7 @@
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
+ 	printf("--Tap: %s | UID: %ld:%ld\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec);
  }
 
 /* Print linkState information */
