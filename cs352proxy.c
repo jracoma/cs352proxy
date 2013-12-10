@@ -104,11 +104,6 @@
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
  	fclose(f);
 
- 	if (debug) {
- 		puts("Local Information:");
- 		print_linkState(local_info);
- 	}
-
  	return 0;
  }
 
@@ -181,6 +176,8 @@
  	}
 
  	if (debug) {
+ 		puts("Local Information:");
+ 		print_linkState(local_info);
  		printf("\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
