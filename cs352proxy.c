@@ -168,7 +168,7 @@
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
  			inet_aton(host, &current->lsInfo->listenIP);
- 			// current->peerPort = port;
+ 			current->peerPort->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
@@ -181,11 +181,10 @@
  	}
 
  	if (debug) {
- 		printf("Linked List:\n");
+ 		printf("\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
- 			printf("Host: %s | Tap: %s\n", inet_ntoa(current->lsInfo->listenIP), current->tapDevice);
- 			// printf("Host: %s:%d | Tap: %s | net_fd: %d | pid: %u\n", inet_ntoa(current->peerIP), current->peerPort, current->tapDevice, current->net_fd, (unsigned int)current->pid);
+ 			print_linkState(current->lsInfo);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
