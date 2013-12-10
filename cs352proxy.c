@@ -18,7 +18,6 @@
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peerHead = NULL;
  struct linkState *local_info;
- struct linkStatePacket *lsHead = NULL;
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
@@ -384,8 +383,8 @@
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
 
- 		// lsSource->ls = local_info;
- 		// LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 		lsSource->ls = local_info;
+ 		LL_COUNT(peerHead, peer, lsSource->neighbors);
  		// hdr->type = htons(PACKET_LINKSTATE);
  		// lsPacket->header = hdr;
  		// lsPacket->source = lsSource;
