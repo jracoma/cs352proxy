@@ -380,6 +380,7 @@
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
 
+ 		if (debug) print_peerList(peer);
 
 
  		lsSource->ls = local_info;
