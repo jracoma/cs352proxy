@@ -446,7 +446,7 @@
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | Next: %s\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd, peer->next->lsInfo->listenIP);
+ 	// printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | Next: %s\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd, peer->next->lsInfo->listenIP);
  }
 
 /* Print linkState information */
@@ -460,7 +460,7 @@
  void print_linkStatePacket(struct linkStatePacket *lsp) {
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
- 	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
+ 	// printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
  	printf("-----PROXY 1-----\n");
  }
 
