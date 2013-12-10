@@ -433,8 +433,8 @@
  	/* Add proxy information */
  	// printf("SENT: %s | Length: %d\n", buffer, strlen(buffer));
  	// send(peer->net_fd, buffer, strlen(buffer), 0);
- 	pthread_mutex_unlock(&peer_mutex);
- 	pthread_mutex_unlock(&linkstate_mutex);
+ 	// pthread_mutex_unlock(&peer_mutex);
+ 	// pthread_mutex_unlock(&linkstate_mutex);
  }
 
 /* Print packetHeader information */
