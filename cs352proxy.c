@@ -350,6 +350,7 @@
  	lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	struct timeval current_time;
 
+puts("BAM BAM");
 print_peerList(peer);
 
 /* Create TCP Socket */
