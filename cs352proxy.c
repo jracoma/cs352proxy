@@ -380,6 +380,8 @@
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
 
+
+
  		lsSource->ls = local_info;
  		LL_COUNT(peerHead, peer, lsSource->neighbors);
  		// hdr->type = htons(PACKET_LINKSTATE);
@@ -441,7 +443,8 @@
 
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
- 	printf("PEER:");
+ 	printf("---PEERLIST:\n");
+ 	print_linkState(peer->lsInfo);
  }
 
 /* Print linkState information */
