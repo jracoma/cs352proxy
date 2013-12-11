@@ -389,9 +389,8 @@
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	if (debug) print_linkStatePacket(lsPacket);
- 	puts("found");
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
+ 	if (debug) print_linkStatePacket(lsPacket);
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
