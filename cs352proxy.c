@@ -382,10 +382,10 @@
  	if (debug) print_peerList(peer);
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
-puts("here");
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
+ 	puts("here");
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
 
