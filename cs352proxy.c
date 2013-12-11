@@ -380,8 +380,9 @@
  		pthread_mutex_unlock(&peer_mutex);
  		return NULL;
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	/* Create link state packet */
+ 		add = peer;
  		gettimeofday(&current_time, NULL);
  		strcpy(buffer, add->tapDevice);
  		add->uniqueID = current_time;
