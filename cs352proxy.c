@@ -359,6 +359,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *tmp;
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -401,7 +402,7 @@
  		LL_APPEND(peerHead, peer);
 	}
 
-	LL_FOREACH(peerHead, peer) print_peerList(peer);
+	LL_FOREACH_SAFE(peerHead, peer, tmp) print_peerList(peer);
 
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
