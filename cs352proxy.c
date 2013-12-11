@@ -382,20 +382,19 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	/* Create link state packet */
- 		add = peer;
+ 		tmp = peer;
  		gettimeofday(&current_time, NULL);
- 		strcpy(buffer, add->tapDevice);
- 		add->uniqueID = current_time;
- 		add->linkWeight = 1;
- 		add->net_fd = new_fd;
+ 		strcpy(buffer, tmp->tapDevice);
+ 		tmp->uniqueID = current_time;
+ 		tmp->linkWeight = 1;
+ 		tmp->net_fd = new_fd;
 
  		if (peerHead == NULL) {
  			puts("empty!");
- 			peerHead = add;
+ 			peerHead = tmp;
  			peerHead->next = NULL;
  		} else {
  			puts("not empty!");
- 			tmp = add;
  			tmp->next = NULL;
  			LL_APPEND(peerHead, tmp);
  		}
