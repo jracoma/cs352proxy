@@ -354,7 +354,7 @@
  }
 
 /* Client Mode */
- void connectToPeer(void *temp) {
+ void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
