@@ -237,12 +237,12 @@
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
 
- 			LL_FOREACH(peerHead, peer) {
- 				if (peer->net_fd == new_fd) {
- 					puts("found");
- 				}
- 			}
- 			close(new_fd);
+ 			// LL_FOREACH(peerHead, peer) {
+ 			// 	if (peer->net_fd == new_fd) {
+ 			// 		puts("found");
+ 			// 	}
+ 			// }
+ 			// close(new_fd);
  			pthread_mutex_unlock(&peer_mutex);
  			pthread_mutex_unlock(&linkstate_mutex);
  		} else {
