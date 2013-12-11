@@ -16,7 +16,7 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *head = NULL;
+ struct peerList *peerHead = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
 
@@ -80,7 +80,7 @@
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	// lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
- 	lsPacket->top = head;
+ 	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -189,13 +189,13 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		LL_COUNT(head, current, count);
+ 		LL_COUNT(peerHead, current, count);
  		lsPacket->neighbors = count;
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
  		pthread_mutex_lock(&peer_mutex);
- 		LL_FOREACH(head, current) {
+ 		LL_FOREACH(peerHead, current) {
  			print_peerList(current);
  		}
  		pthread_mutex_unlock(&peer_mutex);
@@ -253,7 +253,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
 
- 			// LL_FOREACH(head, peer) {
+ 			// LL_FOREACH(peerHead, peer) {
  			// 	if (peer->net_fd == new_fd) {
  			// 		puts("found");
  			// 	}
@@ -354,7 +354,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *peer = (struct peerList *)temp, *tmp = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct peerList *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -379,18 +379,17 @@
  	}
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
- 	tmp = peer;
- 	strcpy(buffer, tmp->tapDevice);
- 	tmp->uniqueID = current_time;
- 	tmp->linkWeight = 1;
- 	tmp->net_fd = new_fd;
+ 	strcpy(buffer, peer->tapDevice);
+ 	peer->uniqueID = current_time;
+ 	peer->linkWeight = 1;
+ 	peer->net_fd = new_fd;
 
  	pthread_mutex_lock(&peer_mutex);
- 	LL_APPEND(head, tmp);
+ 	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	LL_COUNT(head, tmp, lsPacket->neighbors);
+ 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
@@ -433,7 +432,7 @@
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
- 	LL_FOREACH(head, peer) {
+ 	LL_FOREACH(peerHead, peer) {
  		// if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
  			// break;
  		// }
@@ -456,14 +455,14 @@
  }
 
 /* Print peerList information */
- void print_peerList(struct peerList *elt) {
+ void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST: ");
- 	print_linkState(elt->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", elt->tapDevice, elt->uniqueID.tv_sec, elt->uniqueID.tv_usec, elt->linkWeight, elt->net_fd);
- 	if (elt->next == NULL) {
+ 	print_linkState(peer->lsInfo);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	if (peer->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
- 		printf("Next: %s:%d\n", inet_ntoa(elt->next->lsInfo->listenIP), elt->next->lsInfo->listenPort);
+ 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
  	}
  }
 
@@ -481,11 +480,11 @@
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
- 	LL_COUNT(head, tmp, count);
+ 	LL_COUNT(peerHead, tmp, count);
  	lsp->neighbors = count;
  	printf("----Neighbors: %d\n", lsp->neighbors);
  	if (count > 0) {
- 		LL_FOREACH(head, tmp) {
+ 		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
  			print_peerList(tmp);
  		}
