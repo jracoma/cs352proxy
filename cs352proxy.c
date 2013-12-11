@@ -466,7 +466,7 @@
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
- 	printf("Neighbors: %d\n", lsp->source->neighbors);
+ 	// printf("Neighbors: %d\n", lsp->source->neighbors);
  	// printf("-----PROXY %d-----\n", i);
  }
 
