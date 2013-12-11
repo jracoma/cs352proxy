@@ -378,9 +378,9 @@
  	pthread_mutex_lock(&peer_mutex);
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
- 	puts("here");
- 	if (debug) print_peerList(peer);
 
+ 	if (debug) print_peerList(peer);
+puts("here");
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
