@@ -591,6 +591,16 @@
  		}
  	};
 
+ 	struct peerList *tmp1 = (struct peerList *)malloc(sizeof(struct peerList));
+ 	LL_APPEND(peerHead, tmp1);
+ 	 	LL_FOREACH(peerHead, tmp) {
+ 		if (tmp->next == NULL) {
+ 			puts("NULL");
+ 		} else {
+ 			puts("NOT");
+ 		}
+ 	};
+
 	/* Parse input file */
  	// if (parseInput(argc, argv)) {
  	// 	perror("parseInput");
