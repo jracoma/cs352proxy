@@ -473,6 +473,7 @@
  	if (count > 0 ) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
+ 			print_peerList(tmp);
  		}
  	}
  }
