@@ -191,11 +191,14 @@
  		print_linkState(local_info);
  		printf("\n\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
+ 		lsp->neighbors = count;
+ 		pthread_mutex_lock(&peer_mutex);
  		LL_FOREACH(peerHead, current) {
  			print_linkState(current->lsInfo);
  		}
+ 		pthread_mutex_unlock(&peer_mutex);
  		printf("Count: %d\n", count);
- 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
+ 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  	}
 
 	/* Close input file */
@@ -352,11 +355,6 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
- 	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
- 	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
-
- 	// lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -385,7 +383,7 @@
  	peer->uniqueID = current_time;
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
- 	// peer->next = NULL;
+
  	pthread_mutex_lock(&peer_mutex);
  	if (debug) puts("ADDING PEER");
  	LL_APPEND(peerHead, peer);
@@ -393,12 +391,10 @@
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
- 	if (debug) print_linkStatePacket(lsPacket);
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
-
 
  	return NULL;
  }

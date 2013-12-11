@@ -41,8 +41,8 @@
 #define PACKET_LINKSTATE 0xABAC
 
 /* Ethernet Frame Header */
-union ethframe
-{
+ union ethframe
+ {
   struct
   {
     struct ethhdr    header;
@@ -80,12 +80,6 @@ struct linkState {
   struct sockaddr tapMAC;
   struct sockaddr ethMAC;
 }__attribute__((packed));
-
-/* Struct for link state source */
-// struct linkStateSource {
-//   struct linkState *ls;
-//   uint16_t neighbors;
-// }__attribute__((packed));
 
 /* Struct for link state packet information */
 struct linkStatePacket {
