@@ -387,6 +387,8 @@
  	LL_COUNT(peerHead, peer, lsSource->neighbors);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
 	lsPacket->source = lsSource;
+	puts("TEST");
+	print_linkState(lsPacket->source);
  		// lsPacket->uniqueID = current_time;
  		// lsPacket->proxy1 = local_info;
  		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
