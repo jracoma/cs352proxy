@@ -466,7 +466,8 @@
  	int i = 0;
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
- 	printf("UID: %ld:%ld | Neighbors: %d\n", lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->source->neighbors);
+ 	print_linkState(lsp->source);
+ 	printf("Neighbors: %d\n", lsp->source->neighbors);
  	// printf("-----PROXY %d-----\n", i);
  }
 
