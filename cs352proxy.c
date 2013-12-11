@@ -126,8 +126,10 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
- 	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	// struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+ 	struct peerList *tmp;
+ 	struct linkState *new_peer = (struct linkState *)malloc(sizeof(struct linkState));
+ 	// current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -174,14 +176,14 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, &current->lsInfo->listenIP);
- 			current->lsInfo->listenPort = port;
- 			strcpy(current->tapDevice, tapDevice);
- 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
- 			pthread_join(connect_thread, NULL);
+ 			inet_aton(host, &new_peer->listenIP);
+ 			// current->lsInfo->listenPort = port;
+ 			// strcpy(current->tapDevice, tapDevice);
+ 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 			// 	perror("connect_thread");
+ 			// 	pthread_exit(NULL);
+ 			// }
+ 			// pthread_join(connect_thread, NULL);
  		}
 
  	}
@@ -484,7 +486,7 @@
  void print_linkStatePacket(struct linkStatePacket *lsp) {
  	int count, i = 1;
  	struct peerList *tmp;
- 	puts("---LINKSTATE PACKET INFORMATION---");
+ 	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
  	LL_COUNT(peerHead, tmp, count);
