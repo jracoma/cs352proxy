@@ -388,14 +388,13 @@
  		tmp->uniqueID = current_time;
  		tmp->linkWeight = 1;
  		tmp->net_fd = new_fd;
-
+ 		tmp->next = NULL;
  		if (peerHead == NULL) {
  			puts("empty!");
  			peerHead = tmp;
  			peerHead->next = NULL;
  		} else {
  			puts("not empty!");
- 			tmp->next = NULL;
  			LL_APPEND(peerHead, tmp);
  		}
 
