@@ -76,7 +76,7 @@
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
- 	// local_info = (struct linkState *)malloc(sizeof(struct linkState));
+ 	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	// lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	// lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	// lsPacket->top = peerHead;
