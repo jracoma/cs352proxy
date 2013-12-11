@@ -344,9 +344,9 @@
  	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
- 	// struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
+ 	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	// struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	// lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	// lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	struct timeval current_time;
 
@@ -385,7 +385,8 @@
 
  	lsSource->ls = local_info;
  	LL_COUNT(peerHead, peer, lsSource->neighbors);
- 		// hdr->type = htons(PACKET_LINKSTATE);
+ 		lsPacket->header->type = htons(PACKET_LINKSTATE);
+		print_packetHeader(lsPacket->header);
  		// lsPacket->header = hdr;
  		// lsPacket->source = lsSource;
  		// lsPacket->uniqueID = current_time;
