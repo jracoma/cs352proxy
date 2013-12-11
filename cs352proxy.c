@@ -165,12 +165,10 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
  				pthread_exit(NULL);
  			}
- 			pthread_mutex_unlock(&peer_mutex);
  			pthread_join(connect_thread, NULL);
  		}
  	}
