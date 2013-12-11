@@ -397,6 +397,7 @@
  			puts("not empty!");
 
  			LL_APPEND(peerHead, tmp);
+ 			puts("append done");
  		}
 
  		pthread_mutex_unlock(&peer_mutex);
