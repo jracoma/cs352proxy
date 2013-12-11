@@ -385,11 +385,8 @@
 
  	lsSource->ls = local_info;
  	LL_COUNT(peerHead, peer, lsSource->neighbors);
- 		lsPacket->header->type = htons(PACKET_LINKSTATE);
- 		puts("HERERERE");
-		print_packetHeader(lsPacket->header);
- 		// lsPacket->header = hdr;
- 		// lsPacket->source = lsSource;
+ 	lsPacket->header->type = htons(PACKET_LINKSTATE);
+	lsPacket->source = lsSource;
  		// lsPacket->uniqueID = current_time;
  		// lsPacket->proxy1 = local_info;
  		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
@@ -402,7 +399,7 @@
  		// if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
-
+	print_linkStatePacket(lsPacket);
  	return NULL;
  }
 
