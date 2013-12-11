@@ -169,8 +169,9 @@
  				perror("connect_thread");
  				pthread_exit(NULL);
  			}
- 			pthread_join(connect_thread, NULL);
+
  		}
+ 		pthread_join(connect_thread, NULL);
  	}
 
  	if (debug) {
