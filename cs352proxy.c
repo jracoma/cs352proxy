@@ -400,6 +400,7 @@
  	} else {
  		puts("not empty!");
  		tmp = peer;
+ 		tmp->next = NULL;
  		LL_APPEND(peerHead, tmp);
 	}
 
