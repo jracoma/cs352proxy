@@ -386,7 +386,10 @@
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
  	peer->next = NULL;
-
+ 	pthread_mutex_lock(&peer_mutex);
+ 	if (debug) puts("ADDING PEER");
+ 	LL_APPEND(peerHead, peer);
+ 	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
@@ -396,10 +399,7 @@
  	puts("NEW PEER: Single link state record sent.");
  	// if (debug) print_linkStatePacket(lsPacket);
 
- 	pthread_mutex_lock(&peer_mutex);
- 	if (debug) puts("ADDING PEER");
- 	LL_APPEND(peerHead, peer);
- 	pthread_mutex_unlock(&peer_mutex);
+
  	return NULL;
  }
 
