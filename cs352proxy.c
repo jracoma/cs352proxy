@@ -126,7 +126,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), tmp;
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
@@ -195,8 +195,8 @@
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
  		pthread_mutex_lock(&peer_mutex);
- 		LL_FOREACH(peerHead, current) {
- 			print_peerList(current);
+ 		LL_FOREACH(peerHead, tmp) {
+ 			print_peerList(tmp);
  		}
  		pthread_mutex_unlock(&peer_mutex);
  	}
