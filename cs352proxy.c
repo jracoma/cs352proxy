@@ -179,7 +179,7 @@
  		printf("\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
- 			print_linkState(peerHead->lsInfo);
+ 			print_linkState(current->lsInfo);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
@@ -478,8 +478,9 @@
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
- 	printf("----Neighbors: %d\n", lsp->neighbors);
  	LL_COUNT(peerHead, tmp, count);
+ 	lsp->neighbors = count;
+	printf("----Neighbors: %d\n", lsp->neighbors);
  	if (count > 0) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
