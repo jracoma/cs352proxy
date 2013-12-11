@@ -354,7 +354,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *tmp, *peer = (struct peerList *)temp;
+ 	struct peerList *peer = (struct peerList *)temp, tmp = (struct peerList *)malloc(sizeof(struct peerList));
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -379,6 +379,7 @@
  	}
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
+ 	tmp = peer;
  	strcpy(buffer, tmp->tapDevice);
  	tmp->uniqueID = current_time;
  	tmp->linkWeight = 1;
