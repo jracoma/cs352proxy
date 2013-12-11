@@ -154,7 +154,14 @@
  		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
- 		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
+ 		else if (!strcmp(next_field, "quitAfter")) {
+ 			quitAfter = atoi(strtok(NULL, " \n"));
+ 			 	/* Set quitAfter sleeper */
+ 			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 				perror("connect thread");
+ 				pthread_exit(NULL);
+ 			}
+ 		}
  		else if (!strcmp(next_field, "peer")) {
  			host = strtok(NULL, " \n");
 
@@ -420,7 +427,7 @@
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
 
-	send(new_fd, buffer, strlen(buffer), 0);
+ 	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
  }
 
@@ -481,7 +488,7 @@
  	print_linkState(lsp->source);
  	LL_COUNT(peerHead, tmp, count);
  	lsp->neighbors = count;
-	printf("----Neighbors: %d\n", lsp->neighbors);
+ 	printf("----Neighbors: %d\n", lsp->neighbors);
  	if (count > 0) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
@@ -562,12 +569,6 @@
  		perror("parseInput");
  		close(tap_fd);
  		return EXIT_FAILURE;
- 	}
-
- 	/* Set quitAfter sleeper */
- 	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 		perror("connect thread");
- 		pthread_exit(NULL);
  	}
 
 	/* Start server path */
