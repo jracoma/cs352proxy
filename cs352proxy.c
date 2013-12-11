@@ -451,7 +451,7 @@
  	if (peer->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
- 		printf("Next: %s\n", inet_ntoa(peer->next->lsInfo->listenIP));
+ 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), ntohs(peer->next->lsInfo->listenPort));
  	}
  }
 
