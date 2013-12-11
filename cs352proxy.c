@@ -382,25 +382,26 @@
  		return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+/* Create link state packet */
+ 		gettimeofday(&current_time, NULL);
+ 		strcpy(buffer, peer->tapDevice);
+ 		peer->uniqueID = current_time;
+ 		peer->linkWeight = 1;
+ 		peer->net_fd = new_fd;
+
+ 		LL_APPEND(peerHead, peer);
+ 		pthread_mutex_unlock(&peer_mutex);
+ 		lsPacket->header->type = htons(PACKET_LINKSTATE);
+ 		lsPacket->source = local_info;
+ 		LL_COUNT(peerHead, peer, lsPacket->neighbors);
+ 		send_singleLinkStatePacket(lsPacket, new_fd);
+ 		puts("NEW PEER: Single link state record sent.");
+ 		if (debug) print_linkStatePacket(lsPacket);
+
+ 		return NULL;
  	}
 
-/* Create link state packet */
- 	gettimeofday(&current_time, NULL);
- 	strcpy(buffer, peer->tapDevice);
- 	peer->uniqueID = current_time;
- 	peer->linkWeight = 1;
- 	peer->net_fd = new_fd;
 
- 	LL_APPEND(peerHead, peer);
- 	pthread_mutex_unlock(&peer_mutex);
- 	lsPacket->header->type = htons(PACKET_LINKSTATE);
- 	lsPacket->source = local_info;
- 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
- 	send_singleLinkStatePacket(lsPacket, new_fd);
- 	puts("NEW PEER: Single link state record sent.");
- 	if (debug) print_linkStatePacket(lsPacket);
-
- 	return NULL;
  }
 
 /* Send linkState */
