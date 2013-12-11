@@ -407,7 +407,7 @@
  		pthread_mutex_unlock(&peer_mutex);
  		lsPacket->header->type = htons(PACKET_LINKSTATE);
  		lsPacket->source = local_info;
- 		LL_COUNT(peerHead, add, lsPacket->neighbors);
+ 		LL_COUNT(peerHead, tmp, lsPacket->neighbors);
  		send_singleLinkStatePacket(lsPacket, new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
