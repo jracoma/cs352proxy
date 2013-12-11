@@ -78,8 +78,8 @@
  	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
- 	// lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	// lsPacket->top = peerHead;
+ 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
