@@ -8,3 +8,5 @@ peer cs352-50.cs.rutgers.edu 55510
 tapDevice tun10
 peer cs352-9.cs.rutgers.edu 5555
 tapDevice tap10
+peer cs352-9.cs.rutgers.edu 55556
+tapDevice tap14
