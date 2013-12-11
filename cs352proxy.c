@@ -380,7 +380,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
-printf("NEW PEER2: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+
  	if (debug) print_peerList(peer);
 
  	lsSource->ls = local_info;
@@ -445,6 +445,7 @@ printf("NEW PEER2: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenI
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
+ 	printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
  	if (peer->next == NULL) {
