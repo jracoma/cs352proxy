@@ -378,7 +378,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
-
+ 	puts("here");
  	if (debug) print_peerList(peer);
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
@@ -387,8 +387,6 @@
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
- 		// pthread_mutex_lock(&linkstate_mutex);
- 		// pthread_mutex_unlock(&linkstate_mutex);
 
  	return NULL;
  }
