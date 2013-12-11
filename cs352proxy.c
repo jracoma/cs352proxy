@@ -397,7 +397,7 @@
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
- 	// if (debug) print_linkStatePacket(lsPacket);
+ 	if (debug) print_linkStatePacket(lsPacket);
 
 
  	return NULL;
