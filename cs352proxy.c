@@ -580,7 +580,7 @@
  // 	}
 
  	struct peerList *tmp;
- 	peerHead = (struct peerList *)malloc(struct peerList);
+ 	peerHead = (struct peerList *)malloc(sizeof(struct peerList));
  	peerHead->net_fd = 1;
  	LL_APPEND(peerHead, tmp);
  	LL_FOREACH(peerHead, tmp) print_peerList(tmp);
