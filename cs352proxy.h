@@ -90,7 +90,7 @@ struct linkState {
 /* Struct for link state packet information */
 struct linkStatePacket {
   struct packetHeader *header;
-  struct linkState *ls;
+  struct linkState *source;
   uint16_t neighbors;
   struct peerList *top;
 }__attribute__((packed));
