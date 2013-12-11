@@ -357,6 +357,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct peerList *add, *tmp = (struct peerList *)malloc(sizeof(struct peerList));
+ 	peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	struct timeval current_time;
 
 /* Create TCP Socket */
