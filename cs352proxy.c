@@ -385,7 +385,7 @@
  	tmp->net_fd = new_fd;
 
  	pthread_mutex_lock(&peer_mutex);
- 	LL_APPEND(head, temp);
+ 	LL_APPEND(head, tmp);
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
