@@ -444,9 +444,11 @@
 
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
+ 	struct in_addr temp;
+ 	struct peerList tmp;
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
- 	// printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | Next: %s\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd, peer->next->lsInfo->listenIP);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
  }
 
 /* Print linkState information */
