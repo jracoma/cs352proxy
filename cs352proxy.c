@@ -385,6 +385,7 @@
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	/* Create link state packet */
  		tmp = peer;
+ 		free(peer);
  		gettimeofday(&current_time, NULL);
  		strcpy(buffer, tmp->tapDevice);
  		tmp->uniqueID = current_time;
