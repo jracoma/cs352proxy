@@ -385,7 +385,6 @@
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
- 	puts("here");
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
 
@@ -404,7 +403,7 @@
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct linkStatePacket *lsp, int new_fd) {
  	char *buffer = malloc(MAXBUFFSIZE);
-
+puts("here");
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
 
