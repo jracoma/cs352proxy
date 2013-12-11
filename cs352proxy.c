@@ -456,14 +456,14 @@
  }
 
 /* Print peerList information */
- void print_peerList(struct peerList *peer) {
+ void print_peerList(struct peerList *elt) {
  	printf("---PEERLIST: ");
- 	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
- 	if (peer->next == NULL) {
+ 	print_linkState(elt->lsInfo);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", elt->tapDevice, elt->uniqueID.tv_sec, elt->uniqueID.tv_usec, elt->linkWeight, elt->net_fd);
+ 	if (elt->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
- 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
+ 		printf("Next: %s:%d\n", inet_ntoa(elt->next->lsInfo->listenIP), elt->next->lsInfo->listenPort);
  	}
  }
 
