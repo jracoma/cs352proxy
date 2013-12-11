@@ -358,7 +358,7 @@
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
+ 	remote_addr.sin_port = ntohs(peer->lsInfo->listenPort);
  	inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &remote_addr.sin_addr);
 
 
