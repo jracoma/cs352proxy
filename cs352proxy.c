@@ -399,7 +399,7 @@
  	} else {
  		puts("not empty!");
  		LL_APPEND(peerHead, peer);
- 		print_peerList(peer);
+ 		LL_FOREACH(peerHead, peer) print_peerList(peer);
 	}
 
  	pthread_mutex_unlock(&peer_mutex);
