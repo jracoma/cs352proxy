@@ -397,6 +397,7 @@
  		peerHead = peer;
  		peerHead->next = NULL;
  	} else {
+ 		puts("not empty!");
  		LL_APPEND(peerHead, peer);
 	}
 
