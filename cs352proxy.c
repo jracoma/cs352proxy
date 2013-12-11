@@ -17,7 +17,7 @@
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peerHead = NULL;
- struct linkState *local_info;
+ struct linkState *local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
@@ -75,7 +75,7 @@
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
- 	local_info = (struct linkState *)malloc(sizeof(struct linkState));
+ 	// local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
