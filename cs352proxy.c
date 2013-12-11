@@ -550,7 +550,7 @@
  	}
 
 	/* Start server path */
- 	server(ntohs(local_info->listenPort));
+ 	server(local_info->listenPort);
 
  	close(tap_fd);
  	pthread_exit(NULL);
