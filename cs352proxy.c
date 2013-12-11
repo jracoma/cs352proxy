@@ -176,7 +176,7 @@
  	}
 
  	if (debug) {
- 		puts("Local Information:");
+ 		puts("\nLocal Information:");
  		print_linkState(local_info);
  		printf("\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
