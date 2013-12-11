@@ -385,8 +385,8 @@
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	puts("AKJD");
  	if (debug) print_linkStatePacket(lsPacket);
+ 	puts("found");
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
