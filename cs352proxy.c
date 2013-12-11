@@ -186,6 +186,9 @@
 
  	}
 
+	/* Start server path */
+ 	server(local_info->listenPort);
+
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
@@ -566,9 +569,6 @@
  		close(tap_fd);
  		return EXIT_FAILURE;
  	}
-
-	/* Start server path */
- 	server(local_info->listenPort);
 
  	close(tap_fd);
  	pthread_exit(NULL);
