@@ -363,6 +363,7 @@
  		exit(1);
  	}
  	puts("Client Mode:");
+ 	pthread_mutex_lock(&peer_mutex);
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
@@ -384,7 +385,7 @@
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
 
- 	pthread_mutex_lock(&peer_mutex);
+
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
