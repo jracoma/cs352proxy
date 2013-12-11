@@ -343,6 +343,7 @@
  	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
+ 	lsPacket->top = peerHead;
  	// struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	// lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
