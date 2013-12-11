@@ -18,7 +18,7 @@
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peerHead = NULL;
  struct linkState *local_info;
- struct linkStatePacket *lsPacket
+ struct linkStatePacket *lsPacket;
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
