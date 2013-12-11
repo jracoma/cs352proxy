@@ -368,7 +368,7 @@
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_exit(NULL);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort));
 
 /* Create link state packet */
  		gettimeofday(&current_time, NULL);
