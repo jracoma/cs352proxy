@@ -74,7 +74,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap10";
+ 	char *dev = "tap14";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Template for local linkStatePacket */
@@ -447,7 +447,7 @@
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
  	if (peer->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
@@ -545,10 +545,10 @@
  	}
 
  	/* Set quitAfter sleeper */
- 	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 		perror("connect thread");
- 		pthread_exit(NULL);
- 	}
+ 	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 	// 	perror("connect thread");
+ 	// 	pthread_exit(NULL);
+ 	// }
 
 	/* Start server path */
  	server(ntohs(local_info->listenPort));
