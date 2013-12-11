@@ -395,18 +395,8 @@
  			peerHead->next = NULL;
  		} else {
  			puts("not empty!");
- 			add = peerHead;
-			while (add->next != NULL) {
-				add = add->next;
-			}
-			add->next = tmp;
-			add = tmp;
- 			// LL_APPEND(peerHead, tmp);
- 		}
 
- 		tmp = peerHead;
- 		while (tmp->next != NULL) {
- 			print_peerList(tmp);
+ 			LL_APPEND(peerHead, tmp);
  		}
 
  		pthread_mutex_unlock(&peer_mutex);
