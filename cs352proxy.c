@@ -386,6 +386,7 @@
  	lsSource->ls = local_info;
  	LL_COUNT(peerHead, peer, lsSource->neighbors);
  		lsPacket->header->type = htons(PACKET_LINKSTATE);
+ 		puts("HERERERE");
 		print_packetHeader(lsPacket->header);
  		// lsPacket->header = hdr;
  		// lsPacket->source = lsSource;
