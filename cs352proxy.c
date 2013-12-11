@@ -75,7 +75,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap14";
+ 	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
@@ -567,10 +567,10 @@
  	}
 
  	/* Set quitAfter sleeper */
- 	// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 	// 	perror("connect thread");
- 	// 	pthread_exit(NULL);
- 	// }
+ 	if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 		perror("connect thread");
+ 		pthread_exit(NULL);
+ 	}
 
 	/* Start server path */
  	server(local_info->listenPort);
