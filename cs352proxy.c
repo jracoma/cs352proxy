@@ -177,7 +177,7 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			connecToPeer(current);
+ 			connectToPeer(current);
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  			// 	perror("connect_thread");
  			// 	pthread_exit(NULL);
