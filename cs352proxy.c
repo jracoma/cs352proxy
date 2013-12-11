@@ -106,7 +106,6 @@
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
- 	free(dev);
  	fclose(f);
 
  	return 0;
@@ -126,7 +125,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList));
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
@@ -178,6 +177,9 @@
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 				free(next_field);
+ 				free(host);
+ 				free(tapDevice);
  				perror("connect_thread");
  			}
  			pthread_join(connect_thread, NULL);
