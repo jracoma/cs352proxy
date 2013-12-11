@@ -399,7 +399,7 @@
 			while (add->next != NULL) {
 				add = add->next;
 			}
-			tmp->next = NULL;
+			add->next = tmp;
 			add = tmp;
  			// LL_APPEND(peerHead, tmp);
  		}
