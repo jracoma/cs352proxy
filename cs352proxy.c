@@ -391,8 +391,7 @@
  		tmp->next = NULL;
  		if (peerHead == NULL) {
  			puts("empty!");
- 			peerHead = tmp;
- 			peerHead->next = NULL;
+ 			LL_APPEND(peerHead, tmp);
  		} else {
  			puts("not empty!");
 
