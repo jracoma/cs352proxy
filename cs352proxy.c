@@ -394,9 +394,11 @@
 
  	if (peerHead == NULL) {
  		puts("empty!");
+ 		peerHead = peer;
+ 		peerHead->next = NULL;
  	} else {
- 	LL_APPEND(peerHead, peer);
-}
+ 		LL_APPEND(peerHead, peer);
+	}
 
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
