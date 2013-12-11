@@ -191,7 +191,7 @@
  		print_linkState(local_info);
  		printf("\n\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
- 		lspPacket->neighbors = count;
+ 		lsPacket->neighbors = count;
  		pthread_mutex_lock(&peer_mutex);
  		LL_FOREACH(peerHead, current) {
  			print_linkState(current->lsInfo);
