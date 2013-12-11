@@ -374,8 +374,9 @@
  		gettimeofday(&current_time, NULL);
  		strcpy(buffer, peer->tapDevice);
  		peer->uniqueID = current_time;
- 		peer->net_fd = new_fd;
  		peer->linkWeight = 1;
+ 		peer->net_fd = new_fd;
+ 		peer->next = NULL;
  		pthread_mutex_lock(&peer_mutex);
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
@@ -444,11 +445,11 @@
 
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
- 	struct in_addr temp;
- 	struct peerList tmp;
  	printf("---PEERLIST:\n");
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	if (peer->next->lsInfo->listenIP == NULL) puts("null");
+
  }
 
 /* Print linkState information */
