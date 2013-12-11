@@ -437,7 +437,7 @@
  	pthread_mutex_lock(&linkstate_mutex);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors */
- 	lsp->header->length = sizeof(lsp) + sizeof(lsp->header) + sizeof(lsp->source);
+ 	lsp->header->length = htons(sizeof(lsp) + sizeof(lsp->header) + sizeof(lsp->source));
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->listenIP), lsp->source->listenPort, (unsigned char)lsp->source->ethMAC.sa_data[0], (unsigned char)lsp->source->ethMAC.sa_data[1], (unsigned char)lsp->source->ethMAC.sa_data[2], (unsigned char)lsp->source->ethMAC.sa_data[3], (unsigned char)lsp->source->ethMAC.sa_data[4], (unsigned char)lsp->source->ethMAC.sa_data[5], lsp->neighbors);
 
  	pthread_mutex_unlock(&peer_mutex);
