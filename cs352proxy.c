@@ -404,9 +404,9 @@
  		LL_APPEND(peerHead, tmp);
 	}
 
-	LL_FOREACH_SAFE(peerHead, add, tmp) {
-		puts("here");
-		print_peerList(add);
+	tmp = peerHead;
+	while (tmp->next != NULL) {
+		print_peerList(tmp);
 	}
 
  	pthread_mutex_unlock(&peer_mutex);
