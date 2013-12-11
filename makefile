@@ -6,8 +6,5 @@ all: cs352proxy.o
 cs352proxy.o: cs352proxy.h
 	$(CC) $(CFLAGS) cs352proxy.c -o cs352proxy
 
-testtap:
-	$(CC) $(CFLAGS) backup.c -o backup
-
 clean:
 	rm -rf *.o cs352proxy
