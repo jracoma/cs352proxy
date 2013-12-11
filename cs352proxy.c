@@ -392,7 +392,12 @@
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
 
+ 	if (peerHead == NULL) {
+ 		puts("empty!");
+ 	} else {
  	LL_APPEND(peerHead, peer);
+}
+
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
