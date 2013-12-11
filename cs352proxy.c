@@ -180,9 +180,9 @@
  	}
 
  	if (debug) {
- 		puts("\nLocal Information:");
+ 		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		printf("\n---Linked List:\n");
+ 		printf("\n\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
  			print_linkState(current->lsInfo);
