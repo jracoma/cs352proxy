@@ -77,7 +77,9 @@
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
- 	lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
+ 	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
+ 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	// lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
  	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
@@ -346,9 +348,7 @@
  	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
  	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
- 	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
- 	// struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+
  	// lsPacket->source = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	struct timeval current_time;
 
