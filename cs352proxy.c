@@ -354,7 +354,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList tmp, *peer = (struct peerList *)temp;
+ 	struct peerList *tmp, *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
 /* Create TCP Socket */
