@@ -177,12 +177,11 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			connectToPeer(current);
- 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 			// 	perror("connect_thread");
- 			// 	pthread_exit(NULL);
- 			// }
- 			// pthread_join(connect_thread, NULL);
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
+ 			pthread_join(connect_thread, NULL);
  		}
 
  	}
@@ -354,7 +353,7 @@
  }
 
 /* Client Mode */
- void connectToPeer(void *temp) {
+ void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
@@ -380,7 +379,6 @@
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
- 		// pthread_exit(NULL);
  		return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
@@ -581,15 +579,20 @@
  // 		return EXIT_FAILURE;
  // 	}
 
-	/* Parse input file */
- 	if (parseInput(argc, argv)) {
- 		perror("parseInput");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
- 	}
+ 	struct peerList *tmp;
+ 	peerHead->net_fd = 1;
+ 	LL_APPEND(peerHead, tmp);
+ 	LL_FOREACH(peerHead, tmp) print_peerList(tmp);
 
- 	close(tap_fd);
- 	pthread_exit(NULL);
+	/* Parse input file */
+ 	// if (parseInput(argc, argv)) {
+ 	// 	perror("parseInput");
+ 	// 	close(tap_fd);
+ 	// 	return EXIT_FAILURE;
+ 	// }
+
+ 	// close(tap_fd);
+ 	// pthread_exit(NULL);
 
  	return 0;
  }
