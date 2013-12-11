@@ -177,11 +177,10 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			connectToPeer(current);
- 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 			// 	perror("connect_thread");
- 			// 	pthread_exit(NULL);
- 			// }
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
  			pthread_join(connect_thread, NULL);
  		}
 
@@ -379,6 +378,7 @@
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
+ 		pthread_exit(NULL);
  		return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
