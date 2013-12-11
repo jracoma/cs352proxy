@@ -446,13 +446,12 @@
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST:\n");
- 	printf("AAAH: %d\n", ntohs(peer->lsInfo->listenPort));
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
  	if (peer->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
- 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), ntohs(peer->next->lsInfo->listenPort));
+ 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
  	}
  }
 
