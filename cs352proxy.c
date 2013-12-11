@@ -368,24 +368,24 @@
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_exit(NULL);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort));
-
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 	}
 /* Create link state packet */
- 		gettimeofday(&current_time, NULL);
- 		strcpy(buffer, peer->tapDevice);
- 		peer->uniqueID = current_time;
- 		peer->linkWeight = 1;
- 		peer->net_fd = new_fd;
- 		peer->next = NULL;
- 		pthread_mutex_lock(&peer_mutex);
- 		LL_APPEND(peerHead, peer);
- 		pthread_mutex_unlock(&peer_mutex);
+ 	gettimeofday(&current_time, NULL);
+ 	strcpy(buffer, peer->tapDevice);
+ 	peer->uniqueID = current_time;
+ 	peer->linkWeight = 1;
+ 	peer->net_fd = new_fd;
+ 	peer->next = NULL;
+ 	pthread_mutex_lock(&peer_mutex);
+ 	LL_APPEND(peerHead, peer);
+ 	pthread_mutex_unlock(&peer_mutex);
 
- 		if (debug) print_peerList(peer);
+ 	if (debug) print_peerList(peer);
 
 
- 		lsSource->ls = local_info;
- 		LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 	lsSource->ls = local_info;
+ 	LL_COUNT(peerHead, peer, lsSource->neighbors);
  		// hdr->type = htons(PACKET_LINKSTATE);
  		// lsPacket->header = hdr;
  		// lsPacket->source = lsSource;
@@ -401,7 +401,7 @@
  		// if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
- 	}
+
  	return NULL;
  }
 
