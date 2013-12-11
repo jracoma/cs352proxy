@@ -79,7 +79,6 @@
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	// lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
  	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
@@ -358,7 +357,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *add = (struct peerList *)temp;
- 	struct peerList *tmp;
+ 	struct peerList *tmp = (struct peerList *)malloc(sizeof(struct peerList));
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -579,37 +578,15 @@
  // 		return EXIT_FAILURE;
  // 	}
 
- 	struct peerList *tmp;
- 	peerHead = (struct peerList *)malloc(sizeof(struct peerList));
- 	peerHead->net_fd = 1;
- 	LL_APPEND(peerHead, tmp);
- 	LL_FOREACH(peerHead, tmp) {
- 		if (tmp->next == NULL) {
- 			puts("NULL");
- 		} else {
- 			puts("NOT");
- 		}
- 	};
-
- 	struct peerList *tmp1 = (struct peerList *)malloc(sizeof(struct peerList));
- 	LL_APPEND(peerHead, tmp1);
- 	 	LL_FOREACH(peerHead, tmp) {
- 		if (tmp->next == NULL) {
- 			puts("NULL");
- 		} else {
- 			puts("NOT");
- 		}
- 	};
-
 	/* Parse input file */
- 	// if (parseInput(argc, argv)) {
- 	// 	perror("parseInput");
- 	// 	close(tap_fd);
- 	// 	return EXIT_FAILURE;
- 	// }
+ 	if (parseInput(argc, argv)) {
+ 		perror("parseInput");
+ 		close(tap_fd);
+ 		return EXIT_FAILURE;
+ 	}
 
- 	// close(tap_fd);
- 	// pthread_exit(NULL);
+ 	close(tap_fd);
+ 	pthread_exit(NULL);
 
  	return 0;
  }
