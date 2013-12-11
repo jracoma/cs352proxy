@@ -192,13 +192,13 @@
  		printf("\n\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		lsPacket->neighbors = count;
+ 		printf("Count: %d\n", count);
+ 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		pthread_mutex_lock(&peer_mutex);
  		LL_FOREACH(peerHead, current) {
  			print_peerList(current);
  		}
  		pthread_mutex_unlock(&peer_mutex);
- 		printf("Count: %d\n", count);
- 		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  	}
 
 	/* Close input file */
