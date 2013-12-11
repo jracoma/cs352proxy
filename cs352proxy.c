@@ -342,7 +342,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
- 	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
+ 	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  	struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	// struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
@@ -383,10 +383,10 @@
 
  	if (debug) print_peerList(peer);
 
- 	lsSource->ls = local_info;
+ 	// lsSource->ls = local_info;
  	LL_COUNT(peerHead, peer, lsSource->neighbors);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
-	lsPacket->source = lsSource;
+	lsPacket->source->ls = local_info;
  		// lsPacket->uniqueID = current_time;
  		// lsPacket->proxy1 = local_info;
  		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
