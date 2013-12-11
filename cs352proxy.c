@@ -406,7 +406,7 @@
 
 	tmp = peerHead;
 	while (tmp->next != NULL) {
-		print_peerList(tmp)
+		print_peerList(tmp);
 	}
 
  	pthread_mutex_unlock(&peer_mutex);
