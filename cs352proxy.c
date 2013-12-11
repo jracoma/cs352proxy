@@ -379,7 +379,7 @@
  	}
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
- 	strcpy(buffer, temp->tapDevice);
+ 	strcpy(buffer, tmp->tapDevice);
  	tmp->uniqueID = current_time;
  	tmp->linkWeight = 1;
  	tmp->net_fd = new_fd;
