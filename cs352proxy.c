@@ -342,7 +342,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
- 	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
+ 	struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
  	// struct linkStatePacket *lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	// struct packetHeader *hdr = (struct packetHeader *)malloc(sizeof(struct packetHeader));
