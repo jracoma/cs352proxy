@@ -382,19 +382,11 @@
  	if (debug) print_peerList(peer);
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
-	lsPacket->source = local_info;
+ 	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
- 		// lsPacket->uniqueID = current_time;
- 		// lsPacket->proxy1 = local_info;
- 		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
- 		// newLS->listenPort = remote_addr.sin_port;
- 		// print_linkState(newLS);
- 		// lsPacket->linkWeight = 1;
- 		// lsPacket->proxy2 = newLS;
- 		// send_linkStatePacket(lsPacket);
- 		// puts("NEW PEER: Single link state record sent.");
- 	puts("here");
- 		if (debug) print_linkStatePacket(lsPacket);
+	send_singleLinkStatePacket(lsPacket);
+	puts("NEW PEER: Single link state record sent.");
+ 	if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
 
@@ -408,6 +400,11 @@
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
  	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	return buffer;
+ }
+
+/* Send single linkStatePacket */
+ void send_singleLinkStatePacket(struct linkStatePacket *lsp) {
+ 	puts("IN!");
  }
 
 /* Send linkStatePacket */
