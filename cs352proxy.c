@@ -16,7 +16,7 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *head = NULL;
+ struct peerList *peerHead = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
 
@@ -80,7 +80,7 @@
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
  	// lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
- 	lsPacket->top = head;
+ 	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -193,13 +193,13 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		LL_COUNT(head, current, count);
+ 		LL_COUNT(peerHead, current, count);
  		lsPacket->neighbors = count;
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
  		pthread_mutex_lock(&peer_mutex);
- 		LL_FOREACH(head, tmp) {
+ 		LL_FOREACH(peerHead, tmp) {
  			print_peerList(tmp);
  		}
  		pthread_mutex_unlock(&peer_mutex);
@@ -257,7 +257,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
 
- 			// LL_FOREACH(head, peer) {
+ 			// LL_FOREACH(peerHead, peer) {
  			// 	if (peer->net_fd == new_fd) {
  			// 		puts("found");
  			// 	}
@@ -393,26 +393,26 @@
  	add->linkWeight = 1;
  	add->net_fd = new_fd;
 
- 	if (head == NULL) {
+ 	if (peerHead == NULL) {
  		puts("empty!");
- 		head = add;
- 		head->next = NULL;
+ 		peerHead = add;
+ 		peerHead->next = NULL;
  	} else {
  		puts("not empty!");
  		tmp = add;
  		tmp->next = NULL;
- 		LL_APPEND(head, tmp);
+ 		LL_APPEND(peerHead, tmp);
 	}
 
-	tmp = head;
+	tmp = peerHead;
 	while (tmp->next != NULL) {
-		print_peerList(tmp);
+		print_peerList(tmp)
 	}
 
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	LL_COUNT(head, add, lsPacket->neighbors);
+ 	LL_COUNT(peerHead, add, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
@@ -455,7 +455,7 @@
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
- 	LL_FOREACH(head, peer) {
+ 	LL_FOREACH(peerHead, peer) {
  		// if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
  			// break;
  		// }
@@ -503,11 +503,11 @@
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
- 	LL_COUNT(head, tmp, count);
+ 	LL_COUNT(peerHead, tmp, count);
  	lsp->neighbors = count;
  	printf("----Neighbors: %d\n", lsp->neighbors);
  	if (count > 0) {
- 		LL_FOREACH(head, tmp) {
+ 		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
  			print_peerList(tmp);
  		}
