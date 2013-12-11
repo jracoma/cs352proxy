@@ -469,7 +469,8 @@
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
  	printf("----Neighbors: %d\n", lsp->neighbors);
- 	if (LL_COUNT(peerHead, tmp, count) > 0 ) {
+ 	LL_COUNT(peerHead, tmp, count);
+ 	if (count > 0 ) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
  		}
