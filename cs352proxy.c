@@ -340,7 +340,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	// struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *peer = (struct peerList *)temp;
  	// struct linkState *newLS = (struct linkState *)malloc(sizeof(struct linkState));
  	// struct linkStateSource *lsSource = (struct linkStateSource *)malloc(sizeof(struct linkStateSource));
  	// lsSource->ls = (struct linkState *)malloc(sizeof(struct linkState));
