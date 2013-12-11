@@ -180,9 +180,6 @@
  				perror("connect_thread");
  			}
  			pthread_join(connect_thread, NULL);
-			free(next_field);
-			free(host);
-			free(tapDevice);
  		}
 
  	}
