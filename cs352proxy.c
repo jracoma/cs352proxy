@@ -178,7 +178,6 @@
  			strcpy(current->tapDevice, tapDevice);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
- 				pthread_exit(NULL);
  			}
  			pthread_join(connect_thread, NULL);
  		}
