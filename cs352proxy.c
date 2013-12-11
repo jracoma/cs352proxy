@@ -416,7 +416,7 @@
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
 
- 	if ()
+ 	// if ()
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
  }
 
