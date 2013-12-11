@@ -354,7 +354,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList tmp, *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -365,31 +365,31 @@
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
+ 	remote_addr.sin_port = htons(peer_mutex->lsInfo->listenPort);
  	inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &remote_addr.sin_addr);
 
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 /* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
- 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(tmp->lsInfo->listenIP), tmp->lsInfo->listenPort);
  		pthread_exit(NULL);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(tmp->lsInfo->listenIP), tmp->lsInfo->listenPort);
  	}
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
- 	strcpy(buffer, peer->tapDevice);
- 	peer->uniqueID = current_time;
- 	peer->linkWeight = 1;
- 	peer->net_fd = new_fd;
+ 	strcpy(buffer, temp->tapDevice);
+ 	tmp->uniqueID = current_time;
+ 	tmp->linkWeight = 1;
+ 	tmp->net_fd = new_fd;
 
  	pthread_mutex_lock(&peer_mutex);
- 	LL_APPEND(head, peer);
+ 	LL_APPEND(head, temp);
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	LL_COUNT(head, peer, lsPacket->neighbors);
+ 	LL_COUNT(head, tmp, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
