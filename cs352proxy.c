@@ -179,7 +179,7 @@
  		printf("\n---Linked List:\n");
  		LL_COUNT(peerHead, current, count);
  		LL_FOREACH(peerHead, current) {
- 			print_linkState(current->lsInfo);
+ 			print_linkState(peerHead->lsInfo);
  		}
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n", linkPeriod, linkTimeout, quitAfter);
