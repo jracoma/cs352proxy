@@ -380,7 +380,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
-printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+printf("NEW PEER2: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	if (debug) print_peerList(peer);
 
  	lsSource->ls = local_info;
