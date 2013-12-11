@@ -215,7 +215,7 @@
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
- 	struct peerList *peer;
+ 	// struct peerList *peer;
 
  	if (debug) puts("create thread for listening");
 
@@ -379,13 +379,13 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	}
+
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
  	strcpy(buffer, peer->tapDevice);
  	peer->uniqueID = current_time;
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
-
 
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
@@ -429,7 +429,7 @@
 
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	// char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer;
 
  	pthread_mutex_lock(&peer_mutex);
