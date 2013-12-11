@@ -194,7 +194,7 @@
  		lsPacket->neighbors = count;
  		pthread_mutex_lock(&peer_mutex);
  		LL_FOREACH(peerHead, current) {
- 			print_linkState(current->lsInfo);
+ 			print_peerList(current);
  		}
  		pthread_mutex_unlock(&peer_mutex);
  		printf("Count: %d\n", count);
