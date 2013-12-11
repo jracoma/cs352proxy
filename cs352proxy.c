@@ -384,8 +384,8 @@
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
-	send_singleLinkStatePacket(lsPacket);
-	puts("NEW PEER: Single link state record sent.");
+ 	send_singleLinkStatePacket(lsPacket);
+ 	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
@@ -464,11 +464,14 @@
 /* Print linkStatePacket information */
  void print_linkStatePacket(struct linkStatePacket *lsp) {
  	int i = 0;
+ 	struct peerList *tmp;
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
  	printf("----Neighbors: %d\n", lsp->neighbors);
- 	// printf("-----PROXY %d-----\n", i);
+ 	LL_FOREACH(peerHead, tmp) {
+ 		printf("-----PROXY %d-----\n", i);
+ 	}
  }
 
 /* Decode linkStatePacket information */
