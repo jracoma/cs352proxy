@@ -381,7 +381,7 @@
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
  		// pthread_exit(NULL);
- 		exit(1);
+ 		return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
  	}
