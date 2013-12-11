@@ -486,9 +486,11 @@
 
 /* Print linkState information */
  void print_linkState(struct linkState *ls) {
- 	char *ethMAC = malloc(sizeof(char));
+ 	char *ethMAC = malloc(MAXBUFFSIZE);
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
+
+ 	free(ethMAC);
  }
 
 /* Print linkStatePacket information */
