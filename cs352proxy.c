@@ -410,7 +410,7 @@
  	pthread_mutex_lock(&linkstate_mutex);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors */
- 	lsp->header->length = sizeof(lsp);
+ 	lsp->header->length = sizeof(lsp) + sizeof(lsp->header) + sizeof(lsp->source);
 
  	printf("test %d\n", lsp->header->length);
 
