@@ -385,7 +385,7 @@
  	peer->uniqueID = current_time;
  	peer->linkWeight = 1;
  	peer->net_fd = new_fd;
- 	peer->next = NULL;
+ 	// peer->next = NULL;
  	pthread_mutex_lock(&peer_mutex);
  	if (debug) puts("ADDING PEER");
  	LL_APPEND(peerHead, peer);
