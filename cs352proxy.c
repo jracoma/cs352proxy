@@ -163,7 +163,7 @@
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
  			inet_aton(host, &current->lsInfo->listenIP);
- 			current->lsInfo->listenPort = port;
+ 			current->lsInfo->listenPort = htons(port);
  			strcpy(current->tapDevice, tapDevice);
  			pthread_mutex_lock(&peer_mutex);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
@@ -361,6 +361,7 @@
  	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
  	inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &remote_addr.sin_addr);
 
+
  	printf("Connecting to: %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 /* Connect to server */
@@ -368,7 +369,7 @@
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_exit(NULL);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), htons(remote_addr.sin_port));
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(remote_addr.sin_addr), peer->lsInfo->listenPort);
  	}
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
