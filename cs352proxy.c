@@ -411,12 +411,12 @@
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors */
  	lsp->header->length = sizeof(lsp) + sizeof(lsp->header) + sizeof(lsp->source);
- 	sprintf(buffer, "0x%x %d", ntohs(lsp->header->type), lsp->header->length);
+ 	sprintf(buffer, "0x%x %d %s %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->listenIP), lsp->source->listenPort);
 
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
 
- 	if (debug) printf("PAYLOAD SENT: %s\n", buffer);
+ 	if (debug) printf("\nPAYLOAD SENT: %s\n\n", buffer);
  }
 
 /* Send linkStatePacket */
