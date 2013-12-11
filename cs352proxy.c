@@ -77,6 +77,7 @@
  	char buffer[MAXLINESIZE];
  	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
+ 	lsPacket->top = (struct peerList *)malloc(sizeof(struct peerList));
  	lsPacket->top = peerHead;
 
 	/* Template for local linkStatePacket */
