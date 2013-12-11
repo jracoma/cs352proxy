@@ -169,7 +169,7 @@
  				perror("connect_thread");
  				pthread_exit(NULL);
  			}
- 			// pthread_join(connect_thread, NULL);
+ 			pthread_join(connect_thread, NULL);
  		}
  	}
 
@@ -395,6 +395,7 @@
 
 /* Send linkState */
  char *send_linkState(struct linkState *ls) {
+ 	puts("test");
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
