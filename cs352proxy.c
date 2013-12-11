@@ -431,7 +431,7 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct linkStatePacket *lsp, int new_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE+1);
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
