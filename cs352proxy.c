@@ -385,11 +385,12 @@
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	puts("AKJD");
+ 	if (debug) print_linkStatePacket(lsPacket);
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
- 	if (debug) print_linkStatePacket(lsPacket);
+ 	// if (debug) print_linkStatePacket(lsPacket);
 
  	return NULL;
  }
@@ -479,7 +480,7 @@
  	print_linkState(lsp->source);
  	printf("----Neighbors: %d\n", lsp->neighbors);
  	LL_COUNT(peerHead, tmp, count);
- 	if (count > 0 ) {
+ 	if (count > 0) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);
  			print_peerList(tmp);
