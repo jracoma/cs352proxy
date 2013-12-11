@@ -399,8 +399,8 @@
  		peerHead->next = NULL;
  	} else {
  		puts("not empty!");
- 		peer->next = NULL;
- 		LL_APPEND(peerHead, peer);
+ 		tmp = peer;
+ 		LL_APPEND(peerHead, tmp);
 	}
 
 	LL_FOREACH_SAFE(peerHead, peer, tmp) print_peerList(peer);
