@@ -177,12 +177,12 @@
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 				free(next_field);
- 				free(host);
- 				free(tapDevice);
  				perror("connect_thread");
  			}
  			pthread_join(connect_thread, NULL);
+			free(next_field);
+			free(host);
+			free(tapDevice);
  		}
 
  	}
@@ -364,6 +364,9 @@
 
 /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+ 		free(buffer);
+ 		free(peer);
+ 		free(tmp);
  		perror("could not create socket");
  		exit(1);
  	}
@@ -385,6 +388,7 @@
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	/* Create link state packet */
  		tmp = peer;
+ 		free(peer);
  		gettimeofday(&current_time, NULL);
  		strcpy(buffer, tmp->tapDevice);
  		tmp->uniqueID = current_time;
