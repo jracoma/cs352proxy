@@ -416,7 +416,6 @@
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
  	}
- 	free(peer);
 
  	return NULL;
  }
