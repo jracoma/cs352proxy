@@ -383,8 +383,6 @@
  	LL_APPEND(peerHead, peer);
  	pthread_mutex_unlock(&peer_mutex);
 
- 	if (debug) print_peerList(peer);
-
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
  	puts("AKJD");
