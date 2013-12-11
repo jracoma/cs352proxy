@@ -463,14 +463,16 @@
 
 /* Print linkStatePacket information */
  void print_linkStatePacket(struct linkStatePacket *lsp) {
- 	int i = 0;
+ 	int count, i = 1;
  	struct peerList *tmp;
  	puts("---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsp->header);
  	print_linkState(lsp->source);
  	printf("----Neighbors: %d\n", lsp->neighbors);
- 	LL_FOREACH(peerHead, tmp) {
- 		printf("-----PROXY %d-----\n", i);
+ 	if (LL_COUNT(peerHead, tmp, count) > 0 ) {
+ 		LL_FOREACH(peerHead, tmp) {
+ 			printf("-----PROXY %d-----\n", i);
+ 		}
  	}
  }
 
