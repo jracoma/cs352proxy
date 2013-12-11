@@ -383,6 +383,7 @@
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
+ 	puts("AKJD");
  	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	puts("here");
  	send_singleLinkStatePacket(lsPacket, new_fd);
