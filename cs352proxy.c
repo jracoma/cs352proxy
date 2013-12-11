@@ -357,7 +357,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	struct peerList *tmp = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct peerList *add, *tmp = (struct peerList *)malloc(sizeof(struct peerList));
  	struct timeval current_time;
 
 /* Create TCP Socket */
@@ -395,7 +395,13 @@
  			peerHead->next = NULL;
  		} else {
  			puts("not empty!");
- 			LL_APPEND(peerHead, tmp);
+ 			add = peerHead;
+			while (add->next != NULL) {
+				add = add->next;
+			}
+			tmp->next = NULL;
+			add = tmp;
+ 			// LL_APPEND(peerHead, tmp);
  		}
 
  		tmp = peerHead;
