@@ -395,7 +395,8 @@
  			peerHead->next = NULL;
  		} else {
  			puts("not empty!");
- 			LL_APPEND(peerHead, tmp);
+
+ 			LL_APPEND2(peerHead, tmp, add);
  			puts("append done");
 
  			LL_FOREACH(peerHead, add) {
