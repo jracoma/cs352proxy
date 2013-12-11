@@ -358,7 +358,7 @@
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *add = (struct peerList *)temp;
  	struct peerList *tmp;
  	struct timeval current_time;
 
@@ -371,48 +371,48 @@
  	pthread_mutex_lock(&peer_mutex);
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
- 	inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &remote_addr.sin_addr);
+ 	remote_addr.sin_port = htons(add->lsInfo->listenPort);
+ 	inet_aton((char *)inet_ntoa(add->lsInfo->listenIP), &remote_addr.sin_addr);
 
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 /* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
- 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
  		// pthread_exit(NULL);
  		return NULL;
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(add->lsInfo->listenIP), add->lsInfo->listenPort);
  	}
 
 /* Create link state packet */
  	gettimeofday(&current_time, NULL);
- 	strcpy(buffer, peer->tapDevice);
- 	peer->uniqueID = current_time;
- 	peer->linkWeight = 1;
- 	peer->net_fd = new_fd;
+ 	strcpy(buffer, add->tapDevice);
+ 	add->uniqueID = current_time;
+ 	add->linkWeight = 1;
+ 	add->net_fd = new_fd;
 
  	if (peerHead == NULL) {
  		puts("empty!");
- 		peerHead = peer;
+ 		peerHead = add;
  		peerHead->next = NULL;
  	} else {
  		puts("not empty!");
- 		tmp = peer;
+ 		tmp = add;
  		tmp->next = NULL;
  		LL_APPEND(peerHead, tmp);
 	}
 
-	LL_FOREACH_SAFE(peerHead, peer, tmp) {
+	LL_FOREACH_SAFE(peerHead, add, tmp) {
 		puts("here");
-		print_peerList(peer);
+		print_peerList(add);
 	}
 
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
  	lsPacket->source = local_info;
- 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
+ 	LL_COUNT(peerHead, add, lsPacket->neighbors);
  	send_singleLinkStatePacket(lsPacket, new_fd);
  	puts("NEW PEER: Single link state record sent.");
  	if (debug) print_linkStatePacket(lsPacket);
