@@ -403,7 +403,10 @@
  		LL_APPEND(peerHead, tmp);
 	}
 
-	LL_FOREACH_SAFE(peerHead, peer, tmp) print_peerList(peer);
+	LL_FOREACH_SAFE(peerHead, peer, tmp) {
+		puts("here");
+		print_peerList(peer);
+	}
 
  	pthread_mutex_unlock(&peer_mutex);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
