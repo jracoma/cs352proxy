@@ -399,6 +399,7 @@
  		// if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
+ 	puts("here");
 	print_linkStatePacket(lsPacket);
  	return NULL;
  }
