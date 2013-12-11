@@ -146,7 +146,7 @@
  		next_field = strtok(line, " \n");
 
  		if (!next_field || !strcmp(next_field, "//")) continue;
- 		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = htons(atoi(strtok(NULL, " \n")));
+ 		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) quitAfter = atoi(strtok(NULL, " \n"));
