@@ -381,7 +381,7 @@
 
  	if (debug) print_peerList(peer);
 
- 	LL_COUNT(peerHead, peer, lsSource->neighbors);
+ 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
 	lsPacket->source = local_info;
 	puts("printing LS");
