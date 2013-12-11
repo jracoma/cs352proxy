@@ -381,11 +381,9 @@
 
  	if (debug) print_peerList(peer);
 
- 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
 	lsPacket->source = local_info;
-	puts("printing LS");
-	print_linkState(lsPacket->source);
+ 	LL_COUNT(peerHead, peer, lsPacket->neighbors);
  		// lsPacket->uniqueID = current_time;
  		// lsPacket->proxy1 = local_info;
  		// inet_aton((char *)inet_ntoa(remote_addr.sin_addr), &newLS->listenIP);
@@ -395,11 +393,11 @@
  		// lsPacket->proxy2 = newLS;
  		// send_linkStatePacket(lsPacket);
  		// puts("NEW PEER: Single link state record sent.");
- 		// if (debug) print_linkStatePacket(lsPacket);
+ 	puts("here");
+ 		if (debug) print_linkStatePacket(lsPacket);
  		// pthread_mutex_lock(&linkstate_mutex);
  		// pthread_mutex_unlock(&linkstate_mutex);
- 	puts("here");
-	print_linkStatePacket(lsPacket);
+
  	return NULL;
  }
 
