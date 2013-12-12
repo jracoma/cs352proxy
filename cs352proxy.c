@@ -522,7 +522,7 @@
 /* Print linkStateRecords */
  void print_linkStateRecords() {
  	struct linkStateRecord *tmp;
- 	puts("\n###Complete linkStateRecords###");
+ 	printf("\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
