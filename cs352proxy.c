@@ -370,7 +370,9 @@
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
- 	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
+ 	int test = (connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr)));
+ 	printf("TEST: %d\n", test);
+ 	if (test < 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		printf("NEWFD: %d\n", new_fd);
  	} else {
