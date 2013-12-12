@@ -105,6 +105,6 @@ void print_peer(struct peerList *peer);
 void print_peerList();
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket();
-// struct linkStatePacket decode_linkStatePacket();
+void add_member(struct peerList *peer);
 void decode_linkStatePacket(char *buffer);
 void *sleeper();

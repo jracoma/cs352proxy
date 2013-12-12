@@ -489,6 +489,19 @@
  	printf("----Neighbors: %d\n", lsPacket->neighbors);
  }
 
+/* Add new member */
+ void add_member(struct peerList *peer) {
+ 	struct peerList *tmp;
+ 	pthread_mutex_lock(&peer_mutex);
+
+
+ 	pthread_mutex_unlock(&peer_mutex);
+ 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 		perror("connect_thread");
+ 		pthread_exit(NULL);
+ 	}
+ }
+
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
@@ -508,20 +521,18 @@
  	inet_aton(next_field, &new_peer->lsInfo->listenIP);
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
-	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
-	next_field = atoi(strtok(NULL, " \n"));
+ 	printf("MAC: %s\n", next_field);
+ 	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+ 	next_field = atoi(strtok(NULL, " \n"));
 
-	if (!(next_field)) {
-		puts("SOLO!");
-		 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
-	} else {
-		puts("NOT SOLO!");
-	}
+ 	if (!(next_field)) {
+ 		puts("SOLO!");
+ 		add_member(new_peer);
+ 	} else {
+ 		puts("NOT SOLO!");
+ 	}
 
-	if (debug) print_peer(new_peer);
+ 	if (debug) print_peer(new_peer);
 
  }
 
