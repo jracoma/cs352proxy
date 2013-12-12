@@ -299,7 +299,7 @@
  		new_peer->net_fd = new_fd;
  		gettimeofday(&current_time, NULL);
  		new_peer->uniqueID = current_time;
- 		inet_aton((char *)inet_ntoa(new_peer->lsInfo->listenIP), &client_addr.sin_addr);
+ 		inet_aton(&client_addr.sin_addr, (char *)inet_ntoa(new_peer->lsInfo->listenIP));
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
  			perror("listen_thread");
