@@ -614,6 +614,8 @@
  	printf("DECODING: %s\n", buffer);
 
  	next_field = strtok(buffer, " \n");
+ 	printf("NEW: %s\n", next_field);
+ 	next_field = strtok(NULL, " \n");
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
  		next_field = ip;
