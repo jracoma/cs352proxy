@@ -408,7 +408,9 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE), *buffer2 = malloc(MAXBUFFSIZE);
+ 	int size;
+ 	uint16_t type;
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -422,7 +424,6 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
-
 
  		/* Receive MAC address info */
  	memset(buffer, 0, MAXBUFFSIZE);
