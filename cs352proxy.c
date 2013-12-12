@@ -177,7 +177,7 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, tmp.lsInfo.listenIP);
+ 			inet_aton(host, tmp->lsInfo->listenIP);
  			// inet_aton(host, &current->lsInfo->listenIP);
  			// current->lsInfo->listenPort = port;
  			// strcpy(current->tapDevice, tapDevice);
