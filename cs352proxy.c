@@ -384,10 +384,10 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
+ 		send_singleLinkStatePacket(new_fd, peer);
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		send_singleLinkStatePacket(new_fd, peer);
  		puts("NEW PEER: Single link state record sent.");
  		pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
