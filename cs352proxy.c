@@ -527,7 +527,7 @@
  	struct linkStateRecord *tmp;
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
- 		print_linkStateRecord();
+ 		print_linkStateRecord(tmp);
  	}
  }
 
