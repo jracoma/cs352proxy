@@ -216,7 +216,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
- 	printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
+ 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(new_fd, buffer, sizeof(buffer), 0);
@@ -262,6 +262,7 @@
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
+ 	struct timeval current_time;
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
@@ -290,18 +291,26 @@
  	}
 
  	/* Wait for connections */
- 	if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
- 		perror("accept");
- 		exit(1);
- 	}
+ 	while (1) {
+ 		if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
+ 			perror("accept");
+ 			exit(1);
+ 		}
 
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  			// 	perror("connect_thread");
  			// 	pthread_exit(NULL);
- 			// }
- 	if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
- 		perror("listen_thread");
- 		exit(1);
+ 			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
+
+ 		new_peer->net_fd = new_fd;
+ 		 		gettimeofday(&current_time, NULL);
+ 		peer->uniqueID = current_time;
+ 		inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &client_addr.sin_addr);
+ 		peer->lsInfo->listenPort = htons(client_addr.sin_port);
+ 		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
+ 			perror("listen_thread");
+ 			exit(1);
+ 		}
  	}
  }
 
@@ -380,8 +389,8 @@
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
  		gettimeofday(&current_time, NULL);
- 		strcpy(buffer, peer->tapDevice);
  		peer->uniqueID = current_time;
+ 		strcpy(buffer, peer->tapDevice);
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
