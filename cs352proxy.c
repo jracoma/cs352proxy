@@ -493,6 +493,7 @@
 
 /* Add new member */
  void add_member(struct peerList *peer) {
+ 	puts("ha");
  	struct peerList *tmp;
  	pthread_mutex_lock(&peer_mutex);
 
