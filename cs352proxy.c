@@ -508,7 +508,7 @@
  void decode_linkStatePacket(char *buffer) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	char *next_field, ip[100], buffer2 = malloc(MAXBUFFSIZE);
+ 	char *next_field, ip[100], ethMAC = malloc(MAXBUFFSIZE);
  	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
@@ -523,22 +523,20 @@
  	inet_aton(next_field, &new_peer->lsInfo->listenIP);
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	printf("MAC: %s\n", next_field);
  	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
  	next_field = atoi(strtok(NULL, " \n"));
 
  	if (!(next_field)) {
  		puts("SOLO!");
- 		sprintf(buffer2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
 
- 		printf("MAC: %s\n", buffer2);
+ 		printf("MAC: %s\n", ethMAC);
  		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
  	}
 
  	if (debug) print_peer(new_peer);
-
  }
 
 
