@@ -123,9 +123,7 @@
 	/* ptr to current input  */
  	char line[MAXLINESIZE+1];
 	/* Variables for peer information */
- 	char *host, *tapDevice;
- 	char ip[100];
- 	int port;
+ 	char *host, *tapDevice, ip[100];
  	struct peerList *current;
 
 	/* Verifies proper syntax command line */
@@ -509,7 +507,14 @@
  	}
  	inet_aton(next_field, &new_peer->lsInfo->listenIP);
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
- 	print_peer(new_peer);
+ 	next_field = strtok(NULL, " \n");
+	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&lnew_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+
+
+
+
+
+	if (debug) print_peer(new_peer);
 
  }
 
