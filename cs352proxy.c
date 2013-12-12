@@ -508,7 +508,7 @@
  void decode_linkStatePacket(char *buffer) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	char *next_field, ip[100], ethMAC = malloc(MAXBUFFSIZE);
+ 	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
