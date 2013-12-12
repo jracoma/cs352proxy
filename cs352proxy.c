@@ -401,6 +401,8 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 		unsigned int num = HASH_COUNT(peers);
+ 		printf("\n\n\nUSERS: %d\n\n", num);
  		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
  		// LL_COUNT(peerHead, tmp, lsPacket->neighbors);
