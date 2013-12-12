@@ -209,23 +209,12 @@
  }
 
 /* Read from socket and write to tap */
- void *handle_listen(int new_fd)
+ void *handle_listen(void *temp)
  {
+ 	struct peerList *peer = (struct peerList *)temp;
  	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
- 	socklen_t addrlen = sizeof(client_addr);
-
-		/* Listens for connection, backlog 10 */
- 	if (listen(sock_fd, BACKLOG) < 0) {
- 		perror("listen");
- 		exit(1);
- 	}
-
- 	if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
- 		perror("accept");
- 		exit(1);
- 	}
 
  	printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
  	while (1) {
@@ -273,6 +262,8 @@
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
+ 	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 		/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
@@ -292,24 +283,23 @@
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
 
-
-
 		/* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
  		exit(1);
  	}
 
+ 	/* Wait for connections */
  	if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
  		perror("accept");
  		exit(1);
  	}
 
- 	printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
-
-		/* Wait for connections on a new thread
-		* net_fd is new fd to be used for read/write */
- 	if (pthread_create(&listen_thread, NULL, handle_listen, NULL) != 0) {
+ 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 			// 	perror("connect_thread");
+ 			// 	pthread_exit(NULL);
+ 			// }
+ 	if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
  		perror("listen_thread");
  		exit(1);
  	}

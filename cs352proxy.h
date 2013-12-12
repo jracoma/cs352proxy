@@ -93,7 +93,7 @@ int allocate_tunnel(char *dev, int flags);
 int getIP(char *host, char *ip);
 int initLocalParams();
 int parseInput(int argc, char *argv[]);
-void *handle_listen();
+void *handle_listen(void *temp);
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
