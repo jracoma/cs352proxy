@@ -424,7 +424,7 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
-
+ 	sleep(2);
  		/* Receive MAC address info */
  	memset(buffer, 0, MAXBUFFSIZE);
  	size = recv(new_fd, buffer, sizeof(buffer), 0);
