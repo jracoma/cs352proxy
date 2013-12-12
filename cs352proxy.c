@@ -437,6 +437,7 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
+ 	free(buffer);
  }
 
 /* Send linkStatePacket */
@@ -485,18 +486,19 @@
  	char *ethMAC = malloc(MAXBUFFSIZE);
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
+ 	free(ethMAC);
  }
 
 /* Print linkStatePacket information */
- void print_linkStatePacket(struct linkStatePacket *lsp) {
+ void print_linkStatePacket() {
  	int count, i = 1;
  	struct peerList *tmp;
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
- 	print_packetHeader(lsp->header);
- 	print_linkState(lsp->source);
+ 	print_packetHeader(lsPacket->header);
+ 	print_linkState(lsPacket->source);
  	LL_COUNT(peerHead, tmp, count);
- 	lsp->neighbors = count;
- 	printf("----Neighbors: %d\n", lsp->neighbors);
+ 	lsPacket->neighbors = count;
+ 	printf("----Neighbors: %d\n", lsPacket->neighbors);
  	if (count > 0) {
  		LL_FOREACH(peerHead, tmp) {
  			printf("-----PROXY %d-----\n", i);

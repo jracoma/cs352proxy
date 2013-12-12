@@ -101,7 +101,7 @@ void connectToPeer(struct peerList *peer);
 // void *connectToPeer(void *temp);
 char *send_linkState(struct linkState *ls);
 void send_singleLinkStatePacket(int new_fd);
-void send_linkStatePacket(struct linkStatePacket *lsp);
+void send_linkStatePacket();
 void print_packetHeader(struct packetHeader *pkt);
 void print_peerList(struct peerList *peer);
 void print_linkState(struct linkState *ls);
