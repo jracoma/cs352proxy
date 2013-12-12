@@ -381,7 +381,7 @@
  		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		create_linkStateRecord(peer->lsInfo, local_info);
+ 		// create_linkStateRecord(peer->lsInfo, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
@@ -410,6 +410,7 @@
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
  	char *buffer = malloc(MAXBUFFSIZE);
+ 	create_linkStateRecord(peer->lsInfo, local_info);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
@@ -422,6 +423,8 @@
  	if (debug) printf("Remote MAC: %s\n", buffer);
 
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
+
+ 	print_linkStateRecords();
 
  	free(buffer);
  }
@@ -459,7 +462,7 @@
 
  	if (debug) print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
-
+ 	HASH_ADD(hh, record, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
 
@@ -517,7 +520,15 @@
  	print_linkState(record->proxy1);
  	printf("Proxy 2: ");
  	print_linkState(record->proxy2);
+ }
 
+/* Print linkStateRecords */
+ void print_linkStateRecords() {
+ 	struct linkStateRecord *tmp;
+
+ 	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
+ 		print_linkStateRecord();
+ 	}
  }
 
 /* Add new member */

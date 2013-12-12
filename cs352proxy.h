@@ -114,6 +114,7 @@ void print_peerList();
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket();
 void print_linkStateRecord(struct linkStateRecord *record);
+void print_linkStateRecords();
 void add_member(struct peerList *peer);
 void decode_linkStatePacket(char *buffer, int net_fd);
 void *sleeper();
