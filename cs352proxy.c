@@ -209,12 +209,11 @@
  }
 
 /* Read from socket and write to tap */
- void *handle_listen()
+ void *handle_listen(int new_fd)
  {
- 	int size, new_fd;
+ 	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
- 	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
 
 		/* Listens for connection, backlog 10 */
@@ -259,7 +258,7 @@
  		} else if (size < 0) {
  			printf("recv error from %d | ERR: %d\n", net_fd, errno);
  			break;
-		} else {
+ 		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
  			close(new_fd);
  			return NULL;
@@ -271,8 +270,9 @@
 /* Server Mode */
  void server(int port)
  {
- 	struct sockaddr_in local_addr;
- 	int optval = 1;
+ 	struct sockaddr_in local_addr, client_addr;
+ 	int optval = 1, new_fd;
+ 	socklen_t addrlen = sizeof(client_addr);
 
 		/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
@@ -291,6 +291,21 @@
  	}
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
+
+
+
+		/* Listens for connection, backlog 10 */
+ 	if (listen(sock_fd, BACKLOG) < 0) {
+ 		perror("listen");
+ 		exit(1);
+ 	}
+
+ 	if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
+ 		perror("accept");
+ 		exit(1);
+ 	}
+
+ 	printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
 
 		/* Wait for connections on a new thread
 		* net_fd is new fd to be used for read/write */
@@ -490,9 +505,9 @@
  	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
-	next_field = strtok(buffer, " \n");
-	next_field = strtok(buffer, " \n");
-	printf("Next: %s\n", next_field);
+ 	next_field = strtok(buffer, " \n");
+ 	next_field = strtok(buffer, " \n");
+ 	printf("Next: %s\n", next_field);
  }
 
 
