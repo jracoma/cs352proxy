@@ -384,15 +384,16 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
- 		pthread_mutex_lock(&peer_mutex);
- 		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		if (debug) {
- 			puts("After Add:\n");
- 			print_peerList();
- 		}
+ 		add_member(peer);
+ 		// pthread_mutex_lock(&peer_mutex);
+ 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 		// if (debug) {
+ 			// puts("After Add:\n");
+ 			// print_peerList();
+ 		// }
  		lsPacket->neighbors = HASH_COUNT(peers);
  		puts("NEW PEER: Single link state record sent.");
- 		pthread_mutex_unlock(&peer_mutex);
+ 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	return NULL;
@@ -495,7 +496,6 @@
  void add_member(struct peerList *peer) {
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
- 	struct timeval current_time;
 
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
@@ -505,70 +505,70 @@
 
  		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
  		else {
- 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
+ 			pthread_mutex_lock(&peer_mutex);
+ 			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 			pthread_mutex_unlock(&peer_mutex);
  		}
  	}
-
  }
+
+}
 
 /* Decode linkStatePacket information */
- void decode_linkStatePacket(char *buffer, int net_fd) {
- 	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
- 	int neighbors;
- 	printf("Received: %s\n", buffer);
+void decode_linkStatePacket(char *buffer, int net_fd) {
+	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
+	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
+	int neighbors;
+	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
- 	next_field = strtok(buffer, " \n");
- 	next_field = strtok(NULL, " \n");
+	next_field = strtok(buffer, " \n");
+	next_field = strtok(NULL, " \n");
 
 	/* Checks for a.b.c.d address, otherwise resolve hostname */
- 	if (inet_addr(next_field) == -1) {
- 		getIP(next_field, ip);
- 		next_field = ip;
- 	}
- 	inet_aton(next_field, &new_peer->lsInfo->listenIP);
- 	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, " \n");
- 	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
- 	next_field = strtok(NULL, " \n");
- 	strcpy(new_peer->tapDevice, next_field);
- 	neighbors = atoi(strtok(NULL, " \n"));
- 	printf("Neighbors: %d\n", neighbors);
- 	if (!(neighbors)) {
- 		puts("SOLO!");
- 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
- 		printf("SENT MAC: %s\n", ethMAC);
- 		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		add_member(new_peer);
- 	} else {
- 		puts("NOT SOLO!");
- 	}
+	if (inet_addr(next_field) == -1) {
+		getIP(next_field, ip);
+		next_field = ip;
+	}
+	inet_aton(next_field, &new_peer->lsInfo->listenIP);
+	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
+	next_field = strtok(NULL, " \n");
+	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+	next_field = strtok(NULL, " \n");
+	strcpy(new_peer->tapDevice, next_field);
+	neighbors = atoi(strtok(NULL, " \n"));
+	printf("Neighbors: %d\n", neighbors);
+	if (!(neighbors)) {
+		puts("SOLO!");
+		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
+		printf("SENT MAC: %s\n", ethMAC);
+		send(net_fd, ethMAC, strlen(ethMAC), 0);
+		add_member(new_peer);
+	} else {
+		puts("NOT SOLO!");
+	}
 
- 	if (debug) {
- 		puts("end of decode_linkStatePacket");
- 		print_peer(new_peer);
- 	}
- }
+	if (debug) {
+		puts("end of decode_linkStatePacket");
+		print_peer(new_peer);
+	}
+}
 
 
 /* Sleeper for quitAfter */
- void *sleeper() {
+void *sleeper() {
  	// sleep(quitAfter);
- 	sleep(30);
- 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
- 	exit(1);
- }
+	sleep(30);
+	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+	exit(1);
+}
 
 /* Main */
- int main (int argc, char *argv[]) {
- 	if (debug) {
- 		puts("DEBUGGING MODE:");
- 	}
+int main (int argc, char *argv[]) {
+	if (debug) {
+		puts("DEBUGGING MODE:");
+	}
 
  // 	int size;
  // 	char if_name[IFNAMSIZ] = "";
@@ -611,17 +611,17 @@
  // 	}
 
 	/* Parse input file */
- 	if (parseInput(argc, argv)) {
- 		perror("parseInput");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
- 	}
+	if (parseInput(argc, argv)) {
+		perror("parseInput");
+		close(tap_fd);
+		return EXIT_FAILURE;
+	}
 
 	/* Start server path */
- 	server(local_info->listenPort);
+	server(local_info->listenPort);
 
- 	close(tap_fd);
- 	pthread_exit(NULL);
+	close(tap_fd);
+	pthread_exit(NULL);
 
- 	return 0;
- }
+	return 0;
+}
