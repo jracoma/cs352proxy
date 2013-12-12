@@ -495,10 +495,7 @@
  void add_member(struct peerList *peer) {
  	puts("ha");
  	struct peerList *tmp;
- 	pthread_mutex_lock(&peer_mutex);
 
-
- 	pthread_mutex_unlock(&peer_mutex);
  	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  		perror("connect_thread");
  		pthread_exit(NULL);
@@ -535,7 +532,7 @@
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		// add_member(new_peer);
+ 		add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
  	}
