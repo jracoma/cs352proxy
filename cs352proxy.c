@@ -496,7 +496,7 @@
 
 
  	pthread_mutex_unlock(&peer_mutex);
- 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  		perror("connect_thread");
  		pthread_exit(NULL);
  	}
