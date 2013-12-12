@@ -392,9 +392,8 @@
  		peer->net_fd = new_fd;
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
- 		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
- 		// LL_COUNT(peerHead, tmp, lsPacket->neighbors);
+		lsPacket->neighbors = HASH_COUNT(peers);
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
@@ -493,13 +492,11 @@
 
 /* Print linkStatePacket information */
  void print_linkStatePacket() {
- 	int count, i = 1;
+ 	int i = 1;
  	struct peerList *tmp;
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
- 	// LL_COUNT(peerHead, tmp, count);
- 	lsPacket->neighbors = count;
  	printf("----Neighbors: %d\n", lsPacket->neighbors);
  	// if (count > 0) {
  	// 	LL_FOREACH(peerHead, tmp) {
