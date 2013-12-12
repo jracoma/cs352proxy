@@ -408,7 +408,7 @@
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
 
- 		// return NULL;
+ 		return NULL;
  	}
 
 
