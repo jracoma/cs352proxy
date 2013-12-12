@@ -534,7 +534,10 @@
  		puts("NOT SOLO!");
  	}
 
- 	if (debug) print_peer(new_peer);
+ 	if (debug) {
+ 		puts("end of decode_linkStatePacket\n");
+ 		print_peer(new_peer);
+ 	}
  }
 
 
