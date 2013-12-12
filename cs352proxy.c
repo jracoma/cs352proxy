@@ -396,10 +396,9 @@
  		peer->net_fd = new_fd;
 
  		LL_APPEND(peerHead, peer);
-
  		pthread_mutex_unlock(&peer_mutex);
- 		puts("found");
  		LL_COUNT(peerHead, tmp, lsPacket->neighbors);
+ 		puts("found");
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
