@@ -109,6 +109,9 @@
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
  	fclose(f);
 
+	lsPacket->header->type = htons(PACKET_LINKSTATE);
+	lsPacket->source = local_info;
+
  	return 0;
  }
 
@@ -393,8 +396,8 @@
  		LL_APPEND(peerHead, peer);
 puts("found");
  		pthread_mutex_unlock(&peer_mutex);
- 		lsPacket->header->type = htons(PACKET_LINKSTATE);
- 		lsPacket->source = local_info;
+ 		// lsPacket->header->type = htons(PACKET_LINKSTATE);
+ 		// lsPacket->source = local_info;
  		LL_COUNT(peerHead, peer, lsPacket->neighbors);
  		send_singleLinkStatePacket(lsPacket, new_fd);
  		puts("NEW PEER: Single link state record sent.");
