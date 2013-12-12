@@ -150,11 +150,7 @@
  		next_field = strtok(line, " \n");
 
  		if (!next_field || !strcmp(next_field, "//")) continue;
- 		else if (!strcmp(next_field, "listenPort")) {
- 			local_info->listenPort = atoi(strtok(NULL, " \n"));
-			/* Start server path */
- 			server(local_info->listenPort);
- 		}
+ 		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
@@ -303,7 +299,7 @@
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
  		new_peer->net_fd = new_fd;
- 		 		gettimeofday(&current_time, NULL);
+ 		gettimeofday(&current_time, NULL);
  		new_peer->uniqueID = current_time;
  		inet_aton((char *)inet_ntoa(new_peer->lsInfo->listenIP), &client_addr.sin_addr);
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
@@ -570,6 +566,9 @@
  		close(tap_fd);
  		return EXIT_FAILURE;
  	}
+
+	/* Start server path */
+ 	server(local_info->listenPort);
 
  	close(tap_fd);
  	pthread_exit(NULL);
