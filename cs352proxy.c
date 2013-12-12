@@ -427,7 +427,7 @@
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	printf("INCOMING PAYLOAD: %s\n", buffer);
 
- 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+ 	// sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
  	free(buffer);
  }
 
