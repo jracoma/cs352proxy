@@ -508,7 +508,7 @@
  void decode_linkStatePacket(char *buffer) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	char *next_field, ip[100];
+ 	char *next_field, ip[100], buffer2 = malloc(MAXBUFFSIZE);
  	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
@@ -529,9 +529,9 @@
 
  	if (!(next_field)) {
  		puts("SOLO!");
- 		sprintf(next_field, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5]);
+ 		sprintf(buffer2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5]);
 
- 		printf("MAC: %s\n", next_field);
+ 		printf("MAC: %s\n", buffer2);
  		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
