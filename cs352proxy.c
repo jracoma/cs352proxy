@@ -182,10 +182,10 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			current->next = NULL;
+ 			// current->next = NULL;
  			connectToPeer(current);
  			free(current->lsInfo);
- 			free(current->next);
+ 			// free(current->next);
  			free(current);
  			current = NULL;
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
@@ -203,15 +203,15 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		LL_COUNT(peerHead, current, count);
+ 		// LL_COUNT(peerHead, current, count);
  		lsPacket->neighbors = count;
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
  		pthread_mutex_lock(&peer_mutex);
- 		LL_FOREACH(peerHead, tmp) {
- 			print_peerList(tmp);
- 		}
+ 		// LL_FOREACH(peerHead, tmp) {
+ 			// print_peerList(tmp);
+ 		// }
  		pthread_mutex_unlock(&peer_mutex);
  	}
 
@@ -401,9 +401,9 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
 
- 		LL_APPEND(peerHead, peer);
+ 		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
- 		LL_COUNT(peerHead, tmp, lsPacket->neighbors);
+ 		// LL_COUNT(peerHead, tmp, lsPacket->neighbors);
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
@@ -449,11 +449,11 @@
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
- 	LL_FOREACH(peerHead, peer) {
+ 	// LL_FOREACH(peerHead, peer) {
  		// if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
  			// break;
  		// }
- 	}
+ 	// }
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | linkWeight */
  	// lsp->header->length = sizeof(lsp);
@@ -476,11 +476,11 @@
  	printf("---PEERLIST: ");
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
- 	if (peer->next == NULL) {
- 		printf("Next: NULL\n");
- 	} else {
- 		printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
- 	}
+ 	// if (peer->next == NULL) {
+ 	// 	printf("Next: NULL\n");
+ 	// } else {
+ 	// 	printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
+ 	// }
  }
 
 /* Print linkState information */
@@ -498,15 +498,15 @@
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
- 	LL_COUNT(peerHead, tmp, count);
+ 	// LL_COUNT(peerHead, tmp, count);
  	lsPacket->neighbors = count;
  	printf("----Neighbors: %d\n", lsPacket->neighbors);
- 	if (count > 0) {
- 		LL_FOREACH(peerHead, tmp) {
- 			printf("-----PROXY %d-----\n", i);
- 			print_peerList(tmp);
- 		}
- 	}
+ 	// if (count > 0) {
+ 	// 	LL_FOREACH(peerHead, tmp) {
+ 	// 		printf("-----PROXY %d-----\n", i);
+ 	// 		print_peerList(tmp);
+ 	// 	}
+ 	// }
  }
 
 /* Decode linkStatePacket information */
