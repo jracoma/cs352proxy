@@ -371,10 +371,9 @@
 
 	/* Connect to server */
  	int test = (connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr)));
- 	printf("TEST: %d\n", test);
  	if (test < 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
- 		printf("errno: %d\n", errno);
+ 		if (debug) printf("errno: %d\n", errno);
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
@@ -592,6 +591,7 @@
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
+ 		sleep(5);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
