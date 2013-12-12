@@ -392,7 +392,7 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
 
- 		// LL_APPEND(peerHead, peer);
+ 		LL_APPEND(peerHead, peer);
 puts("found");
  		pthread_mutex_unlock(&peer_mutex);
 
