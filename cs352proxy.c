@@ -517,8 +517,7 @@
 			break;
 		} else if (tmp->hh.next == NULL) {
 			puts("ADDING NEW");
-			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), tmp);
-			break;
+			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
 		}
  	}
 
