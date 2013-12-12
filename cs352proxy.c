@@ -490,8 +490,10 @@
  	char *next_field;
  	printf("Received: %s\n", buffer);
 
- 		next_field = strtok(buffer, " \n");
- 		printf("Next: %s\n", next_field);
+ 	/* Parse through buffer */
+	next_field = strtok(buffer, " \n");
+	next_field = strtok(buffer, " \n");
+	printf("Next: %s\n", next_field);
  }
 
 
