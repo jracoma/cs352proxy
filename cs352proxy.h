@@ -66,6 +66,7 @@ struct peerList {
   uint32_t linkWeight;
   int net_fd;
   struct peerList *next;
+  UT_hash_handle hh;
 }__attribute__((packed));
 
 /* Struct for data packet information */
