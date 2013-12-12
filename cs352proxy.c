@@ -166,7 +166,7 @@
  			// }
  		}
  		else if (!strcmp(next_field, "peer")) {
- 			current =  = (struct peerList *)malloc(sizeof(struct peerList));
+ 			current = (struct peerList *)malloc(sizeof(struct peerList));
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
