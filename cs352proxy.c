@@ -550,7 +550,6 @@
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
  			HASH_ADD_INT(peers, net_fd, peer);
- 			// HASH_ADD(hh, peers, net_fd, sizeof(struct timeval), peer);
  			break;
  		}
  	}
@@ -558,7 +557,6 @@
  	if (peers == NULL) {
  		puts("EMPTY!");
  		HASH_ADD_INT(peers, net_fd, peer);
- 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -629,8 +627,10 @@
  	new_record->proxy1 = new_linkState;
  	new_record->proxy2 = local_info;
 
- 	puts("\n\n!!!TEST:");
  	print_linkStateRecord(new_record);
+ 	pthread_mutex_lock(&linkstate_mutex);
+ 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	pthread_mutex_unlock(&linkstate_mutex);
  }
 
 /* String to MAC Address */
