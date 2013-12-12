@@ -389,8 +389,9 @@
  		peer->uniqueID = current_time;
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
-puts("found");
+
  		LL_APPEND(peerHead, peer);
+puts("found");
  		pthread_mutex_unlock(&peer_mutex);
  		lsPacket->header->type = htons(PACKET_LINKSTATE);
  		lsPacket->source = local_info;
