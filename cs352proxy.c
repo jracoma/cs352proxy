@@ -213,6 +213,7 @@
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
+ 		printf("BUFFER INCOMING: %s\n", buffer);
  		printf("\nSIZE: %d | ", size);
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
