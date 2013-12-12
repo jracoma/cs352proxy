@@ -512,6 +512,7 @@
  		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
  		else {
  			pthread_mutex_lock(&peer_mutex);
+ 			puts("adding");
  			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  			pthread_mutex_unlock(&peer_mutex);
  		}
