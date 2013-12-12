@@ -262,7 +262,7 @@
 		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
  			close(new_fd);
- 			break;
+ 			return NULL;
  		}
  	}
  	return NULL;
