@@ -422,6 +422,8 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
+
+
  	free(buffer);
  }
 
@@ -527,6 +529,9 @@
 
  	if (!(next_field)) {
  		puts("SOLO!");
+ 		sprintf(next_field, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5]);
+
+ 		printf("MAC: %s\n", next_field);
  		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
