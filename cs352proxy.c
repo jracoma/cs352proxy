@@ -129,7 +129,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
