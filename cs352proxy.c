@@ -386,7 +386,10 @@
  		send_singleLinkStatePacket(new_fd, peer);
  		pthread_mutex_lock(&peer_mutex);
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		print_peerList();
+ 		if (debug) {
+ 			puts("After Add:\n");
+ 			print_peerList();
+ 		}
  		lsPacket->neighbors = HASH_COUNT(peers);
  		puts("NEW PEER: Single link state record sent.");
  		pthread_mutex_unlock(&peer_mutex);
@@ -419,7 +422,7 @@
  	if (debug) printf("Remote MAC: %s\n", buffer);
 
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5]);
- 	puts("\n\n\nTEST\n");
+
  	print_peer(peer);
  	free(buffer);
  }
@@ -485,7 +488,7 @@
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
- 	printf("----Neighbors: %d\n", lsPacket->neighbors);
+ 	printf("----Neighbors: %d", lsPacket->neighbors);
  	print_peerList();
  }
 
@@ -528,7 +531,7 @@
  	if (!(neighbors)) {
  		puts("SOLO!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
- 		printf("MAC: %s\n", ethMAC);
+ 		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		// add_member(new_peer);
  	} else {
