@@ -395,10 +395,9 @@
  		LL_APPEND(peerHead, peer);
 puts("found");
  		pthread_mutex_unlock(&peer_mutex);
- 		lsPacket->header->type = htons(PACKET_LINKSTATE);
- 		lsPacket->source = local_info;
- 		LL_COUNT(peerHead, peer, lsPacket->neighbors);
- 		send_singleLinkStatePacket(lsPacket, new_fd);
+
+ 		LL_COUNT(peerHead, tmp, lsPacket->neighbors);
+ 		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
 
@@ -418,7 +417,7 @@ puts("found");
  }
 
 /* Send single linkStatePacket */
- void send_singleLinkStatePacket(struct linkStatePacket *lsp, int new_fd) {
+ void send_singleLinkStatePacket(int new_fd) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	pthread_mutex_lock(&peer_mutex);
