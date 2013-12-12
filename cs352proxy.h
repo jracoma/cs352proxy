@@ -28,6 +28,7 @@
 #include <linux/if_ether.h>
 #include <net/if_arp.h>
 #include "utlist.h"
+#include "uthash.h"
 
 /* Macro Definitions */
 #define eprintf(...) fprintf(stderr, __VA_ARGS__);

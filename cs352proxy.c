@@ -463,14 +463,14 @@ puts("found");
 
 /* Print packetHeader information */
  void print_packetHeader(struct packetHeader *pkt) {
- 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), ntohs(pkt->length));
+ 	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), pkt->length);
  }
 
 /* Print peerList information */
  void print_peerList(struct peerList *peer) {
  	printf("---PEERLIST: ");
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
  	if (peer->next == NULL) {
  		printf("Next: NULL\n");
  	} else {
