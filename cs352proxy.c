@@ -425,6 +425,7 @@
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
  	sleep(2);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
+ 	printf("INCOMING PAYLOAD: %s\n", buffer);
  	free(buffer);
  }
 
