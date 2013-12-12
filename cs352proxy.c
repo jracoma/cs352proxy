@@ -126,10 +126,9 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	// struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
  	struct peerList *tmp;
- 	struct linkState *new_peer = (struct linkState *)malloc(sizeof(struct linkState));
- 	// current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -176,15 +175,15 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, &new_peer->listenIP);
- 			print_linkState(new_peer);
- 			// current->lsInfo->listenPort = port;
- 			// strcpy(current->tapDevice, tapDevice);
- 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 			// 	perror("connect_thread");
- 			// 	pthread_exit(NULL);
- 			// }
- 			// pthread_join(connect_thread, NULL);
+ 			inet_aton(host, &current->lsInfo->listenIP);
+ 			current->lsInfo->listenPort = port;
+ 			strcpy(current->tapDevice, tapDevice);
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
+ 			free(current);
+ 			pthread_join(connect_thread, NULL);
  		}
 
  	}
@@ -195,7 +194,7 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		LL_COUNT(peerHead, tmp, count);
+ 		LL_COUNT(peerHead, current, count);
  		lsPacket->neighbors = count;
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
