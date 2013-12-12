@@ -409,7 +409,8 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
- 	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer->lsInfo);
+ 	struct linkStateRecord *new_record;
+ 	new_record = create_linkStateRecord(local_info, peer->lsInfo);
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
