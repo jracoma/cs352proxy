@@ -421,7 +421,7 @@
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
 
- 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5]);
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
  	print_peer(peer);
  	free(buffer);
@@ -467,7 +467,7 @@
  void print_peerList() {
  	struct peerList *tmp;
  	unsigned int num = HASH_COUNT(peers), i;
- 	printf("\n\nPEERS: %d\n", num);
+ 	printf("\nPEERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
  		printf("---PEER %d: ", i);
