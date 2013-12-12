@@ -508,7 +508,7 @@
  		next_field = ip;
  	}
  	inet_aton(next_field, &new_peer->lsInfo->listenIP);
-
+ 	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	print_peer(new_peer);
 
  }
