@@ -356,6 +356,7 @@
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd, size;
+ 	uint16_t type;
  	char *buffer = malloc(MAXBUFFSIZE), *buffer2 = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct timeval current_time;
