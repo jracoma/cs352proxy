@@ -616,7 +616,8 @@ void decode_linkStateRecord(char *buffer) {
  		next_field = ip;
  	}
  	inet_aton(next_field, &new_linkState->listenIP);
-	next_field = strtok(NULL, " \n");
+	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
+
 
 	puts("TEST:");
 	print_linkState(new_linkState);
