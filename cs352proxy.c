@@ -477,7 +477,7 @@
 	printf("\n\nUSERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
- 		printf("\n---PEER %d: ", i);
+ 		printf("---PEER %d: ", i);
  		print_peer(tmp);
  	}
  }
