@@ -19,6 +19,7 @@
  struct peerList *peerHead = NULL, *peers = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
+ char *dev = "tap10";
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
@@ -75,7 +76,6 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
@@ -384,7 +384,7 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
-	 	pthread_mutex_lock(&peer_mutex);
+ 		pthread_mutex_lock(&peer_mutex);
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
  		lsPacket->neighbors = HASH_COUNT(peers);
