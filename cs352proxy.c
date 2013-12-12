@@ -127,7 +127,6 @@
  	char ip[100];
  	int port, count;
  	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
- 	struct peerList *tmp;
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
