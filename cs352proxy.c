@@ -495,7 +495,14 @@
  void add_member(struct peerList *peer) {
  	puts("ha");
  	struct peerList *tmp;
+ 	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
+ 	/* Verify MAC address does not already exist */
+ 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 		sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
+ 		printf("ETH1: %s | ETH2: %s", ethMAC1, ethMAC2);
+ 	}
  	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  	// 	perror("connect_thread");
  	// 	pthread_exit(NULL);
