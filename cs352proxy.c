@@ -513,6 +513,10 @@
  		}
  	}
 
+ 	if (peers = NULL) {
+ 		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 	}
+
  	print_peerList();
  }
 
