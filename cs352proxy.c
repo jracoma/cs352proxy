@@ -525,7 +525,7 @@
 /* Print linkStateRecords */
  void print_linkStateRecords() {
  	struct linkStateRecord *tmp;
- 	puts("###Complete linkStateRecords###");
+ 	puts("\n###Complete linkStateRecords###");
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
@@ -572,6 +572,7 @@
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
