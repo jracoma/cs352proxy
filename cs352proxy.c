@@ -427,7 +427,7 @@
 
  		/* Receive MAC address info */
  	memset(buffer, 0, MAXBUFFSIZE);
- 	size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
+ 	size = recv(new_fd, buffer, sizeof(buffer), 0);
  	printf("\nSIZE: %d | ", size);
  	if (size > 0) {
  		if (strlen(buffer) > 0) {
