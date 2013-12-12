@@ -613,8 +613,7 @@
  	char *next_field, ip[100];
  	printf("DECODING: %s\n", buffer);
 
- 	next_field = strtok(buffer, ":\n");
- 	printf("NEW: %s\n", next_field);
+ 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	next_field = strtok(NULL, " \n");
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
