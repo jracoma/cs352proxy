@@ -171,12 +171,11 @@
  				getIP(host, ip);
  				host = ip;
  			}
- 			port = atoi(strtok(NULL, " \n"));
+ 			inet_aton(host, &current->lsInfo->listenIP);
+ 			current->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, &current->lsInfo->listenIP);
- 			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
