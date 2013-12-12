@@ -454,7 +454,8 @@
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
  	new_record->linkWeight = 1;
-
+ 	new_record->proxy1 = proxy1;
+ 	new_record->proxy2 = proxy2;
 
  	if (debug) print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -495,7 +496,7 @@
  void print_linkState(struct linkState *ls) {
  	char *ethMAC = malloc(MAXBUFFSIZE);
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	printf("---LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
+ 	printf("--LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
  	free(ethMAC);
  }
 
@@ -510,7 +511,13 @@
 
 /* Print linkStateRecord information */
  void print_linkStateRecord(struct linkStateRecord *record) {
- 	puts("Print Lsrecord");
+ 	char *print = malloc(MAXBUFFSIZE);
+
+ 	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
+ 	print_linkState(record->proxy1);
+ 	printf("Proxy 2: ")
+ 	print_linkState(record->proxy2);
+
  }
 
 /* Add new member */
