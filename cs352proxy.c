@@ -487,7 +487,7 @@
  void print_peers() {
  	struct peerList *tmp;
 
- 	for (tmp = peers, tmp != NULL; tmp = tmp->hh.next) {
+ 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
  		puts("KADKJSD");
  	}
  }
