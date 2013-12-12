@@ -587,6 +587,7 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
+ 	printf("REMAINING: %s", buffer);
  	printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		puts("SINGLE LINKLIST!");
