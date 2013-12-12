@@ -434,11 +434,6 @@
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
- 	// LL_FOREACH(peerHead, peer) {
- 		// if (lsp->uniqueID.tv_sec == peer->uniqueID.tv_sec && lsp->uniqueID.tv_usec == peer->uniqueID.tv_usec) {
- 			// break;
- 		// }
- 	// }
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | linkWeight */
  	// lsp->header->length = sizeof(lsp);
