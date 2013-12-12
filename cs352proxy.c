@@ -181,11 +181,12 @@
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
  			current->next = NULL;
- 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
- 			pthread_join(connect_thread, NULL);
+ 			connectToPeer(current);
+ 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 			// 	perror("connect_thread");
+ 			// 	pthread_exit(NULL);
+ 			// }
+ 			// pthread_join(connect_thread, NULL);
  		}
 
  	}
@@ -357,7 +358,8 @@
  }
 
 /* Client Mode */
- void *connectToPeer(void *temp) {
+ // void *connectToPeer(void *temp) {
+ void connectToPeer(struct peerList *peer) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
