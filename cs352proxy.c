@@ -504,6 +504,9 @@
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n\n", ethMAC1, ethMAC2);
 
  		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
+ 		else {
+ 			puts("NO MATCH!");
+ 		}
  	}
  	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  	// 	perror("connect_thread");
