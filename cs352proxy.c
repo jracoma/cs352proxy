@@ -182,12 +182,6 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
- 			// current->next = NULL;
- 			// connectToPeer(current);
- 			// free(current->lsInfo);
- 			// // free(current->next);
- 			// free(current);
- 			// current = NULL;
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
  				pthread_exit(NULL);
@@ -203,8 +197,7 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		// LL_COUNT(peerHead, current, count);
- 		lsPacket->neighbors = count;
+ 		lsPacket->neighbors = HASH_COUNT(peers)
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
