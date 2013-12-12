@@ -295,7 +295,7 @@
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
 
- 		puts("!!!Client connected from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+ 		printf("!!!Client connected from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
  		new_peer->net_fd = new_fd;
  		gettimeofday(&current_time, NULL);
  		new_peer->uniqueID = current_time;
