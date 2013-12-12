@@ -384,6 +384,8 @@
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
  		lsPacket->neighbors = HASH_COUNT(peers);
+ 		char *test = "test";
+ 		send(new_fd, test, strlen(test), 0);
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
