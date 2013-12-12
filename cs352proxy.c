@@ -231,8 +231,8 @@
  	printf("Client connected from %s:%d.\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = recv(net_fd, buffer, sizeof(buffer), 0);
- 		if (size > 0) {
+ 		// size = recv(net_fd, buffer, sizeof(buffer), 0);
+ 		if ((size = recv(net_fd, buffer, sizeof(buffer), 0)) > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
  				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
