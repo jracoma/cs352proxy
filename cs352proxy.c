@@ -562,7 +562,6 @@
  	free(next_field);
  	free(ethMAC);
  	free(buffer);
- 	free(buffer2);
  }
 
 
