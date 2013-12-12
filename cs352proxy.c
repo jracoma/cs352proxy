@@ -527,7 +527,7 @@
 
  	if (!(next_field)) {
  		puts("SOLO!");
- 		add_member(new_peer);
+ 		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
  	}
