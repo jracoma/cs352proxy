@@ -430,7 +430,7 @@
 /* Send linkStatePacket */
  void send_linkStatePacket(struct linkStatePacket *lsp) {
  	// char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *peer;
+ 	// struct peerList *peer;
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -485,8 +485,6 @@
 
 /* Print linkStatePacket information */
  void print_linkStatePacket() {
- 	int i = 1;
- 	struct peerList *tmp;
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
