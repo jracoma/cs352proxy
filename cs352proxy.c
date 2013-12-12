@@ -157,10 +157,10 @@
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
  			 	/* Set quitAfter sleeper */
- 			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 				perror("connect thread");
- 				pthread_exit(NULL);
- 			}
+ 			// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 			// 	perror("connect thread");
+ 			// 	pthread_exit(NULL);
+ 			// }
  		}
  		else if (!strcmp(next_field, "peer")) {
  			host = strtok(NULL, " \n");
