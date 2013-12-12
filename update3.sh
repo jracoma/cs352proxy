@@ -2,4 +2,5 @@
 
 make clean
 git pull
-make testtap
+make cs352proxy1
+./cs352proxy1 config3.txt
