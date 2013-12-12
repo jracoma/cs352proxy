@@ -409,8 +409,8 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
+ 	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer->lsInfo);
  	char *buffer = malloc(MAXBUFFSIZE);
- 	create_linkStateRecord(local_info, peer->lsInfo);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
@@ -467,6 +467,8 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
+
+ 	return new_record;
  }
 
 /* Print packetHeader information */
