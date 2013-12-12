@@ -506,20 +506,25 @@
 
  	printf("TOTAL: %d\n", HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
- 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 	tmp = peers;
+ 	while (tmp != NULL) {
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
-
-
-
- 		// if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
- 		// else {
- 		// 	pthread_mutex_lock(&peer_mutex);
- 		// 	puts("adding");
- 		// 	HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		// 	pthread_mutex_unlock(&peer_mutex);
- 		// }
  	}
+ 	// for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 	// 	sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
+ 	// 	printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
+
+
+
+ 	// 	// if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
+ 	// 	// else {
+ 	// 	// 	pthread_mutex_lock(&peer_mutex);
+ 	// 	// 	puts("adding");
+ 	// 	// 	HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 	// 	// 	pthread_mutex_unlock(&peer_mutex);
+ 	// 	// }
+ 	// }
 
  	if (peers == NULL) {
  		puts("EMPTY!");
