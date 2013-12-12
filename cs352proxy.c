@@ -216,9 +216,6 @@
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
  	struct sockaddr_in client_addr;
  	socklen_t addrlen = sizeof(client_addr);
- 	// struct peerList *peer;
-
- 	if (debug) puts("create thread for listening");
 
 		/* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
