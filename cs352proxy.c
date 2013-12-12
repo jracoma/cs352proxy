@@ -183,9 +183,6 @@
  				pthread_exit(NULL);
  			}
  			pthread_join(connect_thread, NULL);
- 			free(current->lsInfo);
- 			free(current->next);
- 			free(current);
  		}
 
  	}
