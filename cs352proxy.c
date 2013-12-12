@@ -588,15 +588,15 @@
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, "\n");
- 	printf("REMAINING: %s", next_field);
  	printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		puts("SINGLE LINKLIST!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		printf("REMAINING: %s", buffer);
  		add_member(new_peer);
+ 		printf("REMAINING: %s", next_field);
+ 		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
@@ -607,7 +607,7 @@
  }
 /* Decode linkStateRecord information */
 void decode_linkStateRecord(char *buffer) {
-
+	printf("DECODING: %s\n", buffer);
 }
 
 /* Sleeper for quitAfter */
