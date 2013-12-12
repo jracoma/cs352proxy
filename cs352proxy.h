@@ -94,7 +94,7 @@ struct linkStateRecord {
   struct linkState *proxy2;
   uint32_t linkWeight;
   UT_hash_handle hh;
-}__attritute__((packed));
+}__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);
 int getIP(char *host, char *ip);
