@@ -129,7 +129,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+ 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), tmp;
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
@@ -177,14 +177,15 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, &current->lsInfo->listenIP);
- 			current->lsInfo->listenPort = port;
- 			strcpy(current->tapDevice, tapDevice);
- 			current->next = NULL;
- 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
+ 			inet_aton(host, tmp.lsInfo->listenIP);
+ 			// inet_aton(host, &current->lsInfo->listenIP);
+ 			// current->lsInfo->listenPort = port;
+ 			// strcpy(current->tapDevice, tapDevice);
+ 			// current->next = NULL;
+ 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 			// 	perror("connect_thread");
+ 			// 	pthread_exit(NULL);
+ 			// }
  			pthread_join(connect_thread, NULL);
  		}
 
@@ -395,8 +396,8 @@
  		LL_APPEND(peerHead, peer);
 puts("found");
  		pthread_mutex_unlock(&peer_mutex);
- 		// lsPacket->header->type = htons(PACKET_LINKSTATE);
- 		// lsPacket->source = local_info;
+ 		lsPacket->header->type = htons(PACKET_LINKSTATE);
+ 		lsPacket->source = local_info;
  		LL_COUNT(peerHead, peer, lsPacket->neighbors);
  		send_singleLinkStatePacket(lsPacket, new_fd);
  		puts("NEW PEER: Single link state record sent.");
@@ -410,7 +411,6 @@ puts("found");
 
 /* Send linkState */
  char *send_linkState(struct linkState *ls) {
- 	puts("test");
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
