@@ -471,7 +471,7 @@
  }
 
 /* Print peerList information */
- void print_peerList(struct peerList *peer) {
+ void print_peer(struct peerList *peer) {
  	printf("---PEERLIST: ");
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
@@ -484,11 +484,11 @@
  }
 
 /* Print peers hash table */
- void print_peers() {
+ void print_peerList() {
  	struct peerList *tmp;
 
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
- 		puts("KADKJSD");
+ 		print_peer(tmp);
  	}
  }
 
