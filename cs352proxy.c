@@ -618,10 +618,16 @@
  	inet_aton(next_field, &new_linkState->listenIP);
  	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
+ 	readMAC(next_field, new_linkState);
+ 	// sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
 
  	puts("\n\n!!!TEST:");
  	print_linkState(new_linkState);
+ }
+
+/* String to MAC Address */
+ void readMAC(char *buffer, struct linkState *new_linkState) {
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
  }
 
 /* Sleeper for quitAfter */

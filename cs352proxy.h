@@ -118,4 +118,5 @@ void print_linkStateRecords();
 void add_member(struct peerList *peer);
 void decode_linkStatePacket(char *buffer, int net_fd);
 void decode_linkStateRecord(char *buffer);
+void readMAC(char *buffer, struct linkState *ls);
 void *sleeper();
