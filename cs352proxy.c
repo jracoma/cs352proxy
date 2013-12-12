@@ -177,12 +177,15 @@
  			inet_aton(host, &current->lsInfo->listenIP);
  			current->lsInfo->listenPort = port;
  			strcpy(current->tapDevice, tapDevice);
+ 			current->next = NULL;
  			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  				perror("connect_thread");
  				pthread_exit(NULL);
  			}
- 			free(current);
  			pthread_join(connect_thread, NULL);
+ 			free(current->lsInfo);
+ 			free(current->next);
+ 			free(current);
  		}
 
  	}
