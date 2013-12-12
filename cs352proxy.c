@@ -364,7 +364,6 @@
  		exit(1);
  	}
  	puts("Client Mode:");
- 	pthread_mutex_lock(&peer_mutex);
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
@@ -385,6 +384,7 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
+	 	pthread_mutex_lock(&peer_mutex);
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
  		lsPacket->neighbors = HASH_COUNT(peers);
