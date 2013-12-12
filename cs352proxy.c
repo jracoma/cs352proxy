@@ -516,7 +516,7 @@
  		}
  	}
 
- 	if (peers = NULL) {
+ 	if (peers == NULL) {
  		puts("EMPTY!");
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  	}
