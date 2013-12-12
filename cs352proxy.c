@@ -423,7 +423,7 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
- 	sleep(2);
+ 	// sleep(1);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	printf("INCOMING PAYLOAD: %s\n", buffer);
