@@ -189,7 +189,7 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		printf("Count: %d\n", lsPacket->neighbors);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
- 		printf("\n\n---Linked List:\n");
+ 		printf("\n---FINAL Linked List after parseInput:\n");
  		pthread_mutex_lock(&peer_mutex);
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
@@ -423,7 +423,6 @@
 
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
- 	print_peer(peer);
  	free(buffer);
  }
 
