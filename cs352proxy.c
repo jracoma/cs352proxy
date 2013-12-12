@@ -215,19 +215,17 @@
  		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
  		if (size > 0) {
- 			// if (strlen(buffer) > 0) {
- 				strncpy(buffer2, buffer, 6);
- 				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 				if (debug) printf("TYPE: %x\n", type);
- 				switch (type) {
- 					case PACKET_LINKSTATE:
- 					strncpy(buffer, buffer+7, sizeof(buffer));
+ 			strncpy(buffer2, buffer, 6);
+ 			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
+ 			if (debug) printf("TYPE: %x\n", type);
+ 			switch (type) {
+ 				case PACKET_LINKSTATE:
+ 				strncpy(buffer, buffer+7, sizeof(buffer));
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
- 					decode_linkStatePacket(buffer, peer->net_fd);
- 					default:
- 					printf("Negative.\n");
- 				// }
+ 				decode_linkStatePacket(buffer, peer->net_fd);
+ 				default:
+ 				printf("Negative.\n");
  			}
  		// // } else if (size == 0) {
  		// 	pthread_mutex_lock(&peer_mutex);
@@ -388,10 +386,10 @@
  		peer->net_fd = new_fd;
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
- 		pthread_mutex_unlock(&peer_mutex);
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		send_singleLinkStatePacket(new_fd);
+ 		send_singleLinkStatePacket(new_fd, peer);
  		puts("NEW PEER: Single link state record sent.");
+ 		pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	return NULL;
@@ -407,7 +405,7 @@
  }
 
 /* Send single linkStatePacket */
- void send_singleLinkStatePacket(int new_fd) {
+ void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	pthread_mutex_lock(&peer_mutex);
@@ -427,7 +425,7 @@
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	printf("INCOMING PAYLOAD: %s\n", buffer);
 
- 	// sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5]);
  	free(buffer);
  }
 
@@ -533,7 +531,7 @@
 
  	if (!(neighbors)) {
  		puts("SOLO!");
- 		sprintf(ethMAC, "0xffff %02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
  		printf("MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		// add_member(new_peer);

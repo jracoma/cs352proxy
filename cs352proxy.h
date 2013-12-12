@@ -99,7 +99,7 @@ void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
 char *send_linkState(struct linkState *ls);
-void send_singleLinkStatePacket(int new_fd);
+void send_singleLinkStatePacket(int new_fd, struct peerList *peer);
 void send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
 void print_peer(struct peerList *peer);
