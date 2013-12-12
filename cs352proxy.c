@@ -402,19 +402,20 @@
  char *send_linkState(struct linkState *ls) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
- 	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+ 	/* Serialize Data - listenIP | listenPort | ethMAC */
+ 	sprintf(buffer, "%s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	return buffer;
  }
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
  	char *buffer = malloc(MAXBUFFSIZE);
- 	create_linkStateRecord(peer->lsInfo, local_info);
+ 	create_linkStateRecord(local_info, peer->lsInfo);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev);
+ 	strcat(buffer, send_linkState(local_info));
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
@@ -475,12 +476,6 @@
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
-
- 	// if (peer->next == NULL) {
- 	// 	printf("Next: NULL\n");
- 	// } else {
- 	// 	printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
- 	// }
  }
 
 /* Print peers hash table */
@@ -514,9 +509,7 @@
 
 /* Print linkStateRecord information */
  void print_linkStateRecord(struct linkStateRecord *record) {
- 	char *print = malloc(MAXBUFFSIZE);
-
- 	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
+	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
  	print_linkState(record->proxy1);
  	printf("Proxy 2: ");
  	print_linkState(record->proxy2);
