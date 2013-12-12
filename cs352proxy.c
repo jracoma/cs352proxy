@@ -16,7 +16,7 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *peerHead = NULL;
+ struct peerList *peers = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
 
@@ -400,7 +400,7 @@
  		peer->uniqueID = current_time;
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
-
+ 		HASH_ADD(hh, peers, uniqueID, sizeof(timeval), peer);
  		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
  		// LL_COUNT(peerHead, tmp, lsPacket->neighbors);
