@@ -177,15 +177,14 @@
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
- 			inet_aton(host, &)
- 			// inet_aton(host, &current->lsInfo->listenIP);
- 			// current->lsInfo->listenPort = port;
- 			// strcpy(current->tapDevice, tapDevice);
- 			// current->next = NULL;
- 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 			// 	perror("connect_thread");
- 			// 	pthread_exit(NULL);
- 			// }
+ 			inet_aton(host, &current->lsInfo->listenIP);
+ 			current->lsInfo->listenPort = port;
+ 			strcpy(current->tapDevice, tapDevice);
+ 			current->next = NULL;
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
  			pthread_join(connect_thread, NULL);
  		}
 
