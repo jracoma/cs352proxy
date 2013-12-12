@@ -486,6 +486,7 @@
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
  	printf("----Neighbors: %d\n", lsPacket->neighbors);
+ 	print_peerList();
  }
 
 /* Add new member */
@@ -535,7 +536,7 @@
  	}
 
  	if (debug) {
- 		puts("end of decode_linkStatePacket\n");
+ 		puts("end of decode_linkStatePacket");
  		print_peer(new_peer);
  	}
  }
