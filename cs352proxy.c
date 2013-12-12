@@ -535,6 +535,7 @@
 
  	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
 
+ 	printf("$$$ADDING MEMBER: %s\n", ethMAC1);
  	printf("TOTAL: %d\n", HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
