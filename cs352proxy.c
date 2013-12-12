@@ -461,7 +461,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+ 	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d\n", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
 
  	// if (peer->next == NULL) {
  	// 	printf("Next: NULL\n");
