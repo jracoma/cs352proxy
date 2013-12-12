@@ -502,6 +502,8 @@
  		sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n\n", ethMAC1, ethMAC2);
+
+ 		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
  	}
  	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  	// 	perror("connect_thread");
