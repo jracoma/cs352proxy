@@ -232,7 +232,7 @@
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(new_fd, buffer, sizeof(buffer), 0);
- 		printf("SIZE: %d\n", size);
+ 		printf("\nSIZE: %d | ", size);
  		if (size > 0) {
  			if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
@@ -484,13 +484,13 @@
  }
 
 /* Decode linkStatePacket information */
-//  struct linkStatePacket decode_linkStatePacket() {
-//  	struct linkStatePacket test;
-//  	puts("HERE!");
-//  	return test;
-//  }
  void decode_linkStatePacket(char *buffer) {
+ 	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	char *next_field;
  	printf("Received: %s\n", buffer);
+
+ 		next_field = strtok(line, " \n");
  }
 
 
