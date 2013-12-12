@@ -380,7 +380,6 @@
  		// gettimeofday(&current_time, NULL);
  		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
- 		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		create_linkStateRecord(peer, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
@@ -454,6 +453,7 @@
  	if (debug) puts("Creating new linkStateRecord:");
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
+ 	new_record->linkWeight = 1;
 
 
  	if (debug) print_linkStateRecord(new_record);
