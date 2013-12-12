@@ -105,7 +105,7 @@
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
- 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
+ 	readMAC(buffer, local_info);
  	fclose(f);
 
  	lsPacket->header->type = htons(PACKET_LINKSTATE);
@@ -355,7 +355,6 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	// struct timeval current_time;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -377,11 +376,8 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
- 		// gettimeofday(&current_time, NULL);
- 		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		// create_linkStateRecord(peer->lsInfo, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
@@ -402,19 +398,21 @@
  char *send_linkState(struct linkState *ls) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | listenIP | listenPort | ethMAC */
- 	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ntohs(ls->listenPort), (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+ 	/* Serialize Data - listenIP | listenPort | ethMAC */
+ 	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ls->listenPort, (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	return buffer;
  }
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
- 	char *buffer = malloc(MAXBUFFSIZE);
- 	create_linkStateRecord(peer->lsInfo, local_info);
+ 	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer->lsInfo);
+ 	char *buffer = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
+ 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 %ld:%ld %d", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
+ 	strcat(buffer, send_linkState(local_info));
+ 	strcat(buffer, send_linkState(peer->lsInfo));
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
@@ -426,6 +424,7 @@
 
  	print_linkStateRecords();
 
+ 	free(temp);
  	free(buffer);
  }
 
@@ -449,7 +448,7 @@
  }
 
 /* Create linkStateRecord */
- void create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2) {
+ struct linkStateRecord *create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2) {
  	struct timeval current_time;
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
 
@@ -464,6 +463,8 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
+
+ 	return new_record;
  }
 
 /* Print packetHeader information */
@@ -475,12 +476,6 @@
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
-
- 	// if (peer->next == NULL) {
- 	// 	printf("Next: NULL\n");
- 	// } else {
- 	// 	printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
- 	// }
  }
 
 /* Print peers hash table */
@@ -514,8 +509,6 @@
 
 /* Print linkStateRecord information */
  void print_linkStateRecord(struct linkStateRecord *record) {
- 	char *print = malloc(MAXBUFFSIZE);
-
  	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
  	print_linkState(record->proxy1);
  	printf("Proxy 2: ");
@@ -525,7 +518,7 @@
 /* Print linkStateRecords */
  void print_linkStateRecords() {
  	struct linkStateRecord *tmp;
- 	puts("\n###Complete linkStateRecords###");
+ 	printf("\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
@@ -553,7 +546,6 @@
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
  			HASH_ADD_INT(peers, net_fd, peer);
- 			// HASH_ADD(hh, peers, net_fd, sizeof(struct timeval), peer);
  			break;
  		}
  	}
@@ -561,7 +553,6 @@
  	if (peers == NULL) {
  		puts("EMPTY!");
  		HASH_ADD_INT(peers, net_fd, peer);
- 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -572,7 +563,6 @@
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
@@ -589,26 +579,63 @@
  	inet_aton(next_field, &new_peer->lsInfo->listenIP);
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+ 	readMAC(next_field, new_peer->lsInfo);
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, "\n");
  	printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		puts("SINGLE LINKLIST!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
  		add_member(new_peer);
+ 		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
 
  	if (debug) {
- 		puts("end of decode_linkStatePacket");
+ 		print_linkStateRecords();
  	}
  }
+/* Decode linkStateRecord information */
+ void decode_linkStateRecord(char *buffer) {
+ 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+ 	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
+ 	char *next_field, ip[100];
+ 	printf("DECODING: %s\n", buffer);
 
+ 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
+ 	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
+ 	new_record->linkWeight = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_linkState->listenIP);
+ 	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, new_linkState);
+ 	new_record->proxy1 = new_linkState;
+ 	new_record->proxy2 = local_info;
+
+ 	print_linkStateRecord(new_record);
+ 	pthread_mutex_lock(&linkstate_mutex);
+ 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	pthread_mutex_unlock(&linkstate_mutex);
+ }
+
+/* String to MAC Address */
+ void readMAC(char *buffer, struct linkState *new_linkState) {
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
+ }
 
 /* Sleeper for quitAfter */
  void *sleeper() {
