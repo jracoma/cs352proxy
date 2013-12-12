@@ -209,7 +209,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
- 	printf("Client connected from %s:%d.\n", peer->lsInfo->listenIP, peer->lsInfo->listenPort);
+ 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	// printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
@@ -294,6 +294,8 @@
  			// 	pthread_exit(NULL);
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
+
+ 		puts("!!!Client connected from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
  		new_peer->net_fd = new_fd;
  		gettimeofday(&current_time, NULL);
  		new_peer->uniqueID = current_time;
