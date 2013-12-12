@@ -518,6 +518,7 @@
 		} else if (tmp->hh.next == NULL) {
 			puts("ADDING NEW");
 			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+			break;
 		}
  	}
 
