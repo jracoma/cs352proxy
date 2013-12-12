@@ -496,10 +496,10 @@
  	puts("ha");
  	struct peerList *tmp;
 
- 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
- 		perror("connect_thread");
- 		pthread_exit(NULL);
- 	}
+ 	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
+ 	// 	perror("connect_thread");
+ 	// 	pthread_exit(NULL);
+ 	// }
  }
 
 /* Decode linkStatePacket information */
