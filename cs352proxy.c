@@ -510,7 +510,7 @@
 
 /* Print linkStateRecord information */
  void print_linkStateRecord(struct linkStateRecord *record) {
-	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
+ 	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
  	print_linkState(record->proxy1);
  	printf("Proxy 2: ");
  	print_linkState(record->proxy2);
@@ -604,24 +604,25 @@
  	}
  }
 /* Decode linkStateRecord information */
-void decode_linkStateRecord(char *buffer) {
-	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
-	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
-	char *next_field, ip[100];
-	printf("DECODING: %s\n", buffer);
+ void decode_linkStateRecord(char *buffer) {
+ 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+ 	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
+ 	char *next_field, ip[100];
+ 	printf("DECODING: %s\n", buffer);
 
-	next_field = strtok(buffer, " \n");
-	if (inet_addr(next_field) == -1) {
+ 	next_field = strtok(buffer, " \n");
+ 	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
  		next_field = ip;
  	}
  	inet_aton(next_field, &new_linkState->listenIP);
-	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
+ 	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
 
-
-	puts("TEST:");
-	print_linkState(new_linkState);
-}
+ 	puts("\n\n!!!TEST:");
+ 	print_linkState(new_linkState);
+ }
 
 /* Sleeper for quitAfter */
  void *sleeper() {
