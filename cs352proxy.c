@@ -470,7 +470,6 @@
 
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
- 	printf("---PEER INFO: ");
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
 
@@ -488,7 +487,7 @@
 	printf("\n\nUSERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
- 		printf("\n---PEER %d---\n", i);
+ 		printf("\n---PEER %d: ", i);
  		print_peer(tmp);
  	}
  }
