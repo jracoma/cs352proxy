@@ -491,6 +491,7 @@
  	printf("Received: %s\n", buffer);
 
  		next_field = strtok(buffer, " \n");
+ 		printf("Next: %s\n", next_field);
  }
 
 
