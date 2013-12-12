@@ -414,14 +414,12 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
- 	// sleep(1);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
- 	printf("INCOMING PAYLOAD: %s\n", buffer);
+ 	if (debug) printf("Remote MAC: %s\n", buffer);
 
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5]);
 
- 	print_peer(peer);
  	free(buffer);
  }
 
