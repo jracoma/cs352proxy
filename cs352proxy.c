@@ -197,7 +197,7 @@
  	if (debug) {
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
- 		lsPacket->neighbors = HASH_COUNT(peers)
+ 		lsPacket->neighbors = HASH_COUNT(peers);
  		printf("Count: %d\n", count);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
