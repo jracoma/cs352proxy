@@ -595,7 +595,6 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		add_member(new_peer);
- 		printf("REMAINING: %s", next_field);
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
