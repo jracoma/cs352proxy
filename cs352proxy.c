@@ -16,7 +16,7 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *peers = NULL;
+ struct peerList *peerHead = NULL, *peers = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
 
