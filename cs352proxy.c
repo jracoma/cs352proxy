@@ -130,7 +130,7 @@
  	char ip[100];
  	int port, count;
  	struct peerList *current, *tmp;
- 	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -167,6 +167,7 @@
  		}
  		else if (!strcmp(next_field, "peer")) {
  			current = (struct peerList *)malloc(sizeof(struct peerList));
+ 			current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
@@ -183,6 +184,8 @@
  			strcpy(current->tapDevice, tapDevice);
  			current->next = NULL;
  			connectToPeer(current);
+ 			free(current->lsInfo);
+ 			free(current->next);
  			free(current);
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  			// 	perror("connect_thread");
