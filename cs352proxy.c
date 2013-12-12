@@ -490,7 +490,7 @@
  	char *next_field;
  	printf("Received: %s\n", buffer);
 
- 		next_field = strtok(line, " \n");
+ 		next_field = strtok(buffer, " \n");
  }
 
 
