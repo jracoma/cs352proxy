@@ -357,7 +357,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	struct timeval current_time;
+ 	// struct timeval current_time;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -379,8 +379,8 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
- 		gettimeofday(&current_time, NULL);
- 		peer->uniqueID = current_time;
+ 		// gettimeofday(&current_time, NULL);
+ 		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
@@ -498,6 +498,9 @@
  	puts("\n\nADDING MEMBER:\n\n");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
+ 	struct timeval current_time;
+ 	 		gettimeofday(&current_time, NULL);
+ 		peer->uniqueID = current_time;
 
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
