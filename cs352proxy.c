@@ -410,7 +410,7 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE), ip[100];
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -500,9 +500,17 @@
 
  	/* Parse through buffer */
  	next_field = strtok(buffer, " \n");
- 	printf("Next: %s\n", next_field);
  	next_field = strtok(NULL, " \n");
- 	printf("Next: %s\n", next_field);
+
+	/* Checks for a.b.c.d address, otherwise resolve hostname */
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_peer->lsInfo->listenIP);
+
+ 	print_peer(new_peer);
+
  }
 
 
