@@ -610,8 +610,9 @@ void decode_linkStateRecord(char *buffer) {
 	printf("DECODING: %s\n", buffer);
 
 	next_field = strtok(buffer, " \n");
-	next_field = strtok(NULL, " \n");
 	printf("NEXT FIELD: %s", next_field);
+	next_field = strtok(NULL, " \n");
+
 }
 
 /* Sleeper for quitAfter */
