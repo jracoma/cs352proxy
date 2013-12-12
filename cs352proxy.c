@@ -259,12 +259,11 @@
  		} else if (size < 0) {
  			printf("recv error from %d | ERR: %d\n", net_fd, errno);
  			break;
+		} else {
+ 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
+ 			close(new_fd);
+ 			break;
  		}
- 		// } else {
- 		// 	printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
- 		// 	close(new_fd);
- 		// 	break;
- 		// }
  	}
  	return NULL;
  }
