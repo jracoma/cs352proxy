@@ -383,8 +383,8 @@
 /* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
- 		pthread_mutex_unlock(&peer_mutex);
- 		return NULL;
+ 		// pthread_mutex_unlock(&peer_mutex);
+ 		// return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 /* Create link state packet */
@@ -405,7 +405,7 @@
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket(lsPacket);
 
- 		return NULL;
+ 		// return NULL;
  	}
 
 
