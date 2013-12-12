@@ -364,6 +364,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	// struct peerList *peer = (struct peerList *)temp, *tmp;
+ 	struct peerList *tmp;
  	struct timeval current_time;
 
 /* Create TCP Socket */
