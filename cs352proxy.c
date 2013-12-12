@@ -225,6 +225,10 @@
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
  					decode_linkStatePacket(buffer, peer->net_fd);
+ 					case PACKET_ETHADDR:
+ 					strncpy(buffer, buffer+7, sizeof(buffer));
+ 					printf("Received message: %d bytes\n", size);
+ 					printf("Received: %s\n", buffer);
  					default:
  					printf("Negative.\n");
  				}
@@ -408,9 +412,7 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE), *buffer2 = malloc(MAXBUFFSIZE);
- 	int size;
- 	uint16_t type;
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -424,26 +426,6 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
- 	sleep(2);
- 		/* Receive MAC address info */
- 	memset(buffer, 0, MAXBUFFSIZE);
- 	size = recv(new_fd, buffer, sizeof(buffer), 0);
- 	printf("\nSIZE1: %d | ", size);
- 	if (size > 0) {
- 		if (strlen(buffer) > 0) {
- 			strncpy(buffer2, buffer, 6);
- 			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 			printf("TYPE1: %x\n", type);
- 			switch (type) {
- 				case PACKET_ETHADDR:
- 				strncpy(buffer, buffer+7, sizeof(buffer));
- 				printf("Received message: %d bytes\n", size);
- 				printf("Received: %s\n", buffer);
- 				default:
- 				printf("Negative1.\n");
- 			}
- 		}
- 	}
 
  	free(buffer);
  }
