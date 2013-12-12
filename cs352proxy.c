@@ -428,19 +428,19 @@
  		/* Receive MAC address info */
  	memset(buffer, 0, MAXBUFFSIZE);
  	size = recv(new_fd, buffer, sizeof(buffer), 0);
- 	printf("\nSIZE: %d | ", size);
+ 	printf("\nSIZE1: %d | ", size);
  	if (size > 0) {
  		if (strlen(buffer) > 0) {
  			strncpy(buffer2, buffer, 6);
  			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 			printf("TYPE: %x\n", type);
+ 			printf("TYPE1: %x\n", type);
  			switch (type) {
  				case PACKET_ETHADDR:
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				printf("Received message: %d bytes\n", size);
  				printf("Received: %s\n", buffer);
  				default:
- 				printf("Negative.\n");
+ 				printf("Negative1.\n");
  			}
  		}
  	}
@@ -550,7 +550,7 @@
 
  	if (!(neighbors)) {
  		puts("SOLO!");
- 		sprintf(ethMAC, "0xFFFF %02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC, "0xffff %02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
  		printf("MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		// add_member(new_peer);
