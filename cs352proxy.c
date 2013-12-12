@@ -566,7 +566,6 @@
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
@@ -606,7 +605,13 @@
  }
 /* Decode linkStateRecord information */
 void decode_linkStateRecord(char *buffer) {
+	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+	char *next_field, ip[100];
 	printf("DECODING: %s\n", buffer);
+
+	next_field = strtok(buffer, " \n");
+	next_field = strtok(NULL, " \n");
+	printf("NEXT FIELD: %s", next_field);
 }
 
 /* Sleeper for quitAfter */
