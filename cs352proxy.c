@@ -17,7 +17,7 @@
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peers = NULL;
- struct linkStateRecords *records = NULL;
+ struct linkStateRecord *records = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
  char *dev = "tap10";
