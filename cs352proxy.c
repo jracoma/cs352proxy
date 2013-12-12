@@ -583,7 +583,6 @@
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_peer->lsInfo);
- 	// sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
@@ -620,10 +619,11 @@
  	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_linkState);
- 	// sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
+ 	new_record->proxy1 = new_linkState;
+ 	new_record->proxy2 = local_info;
 
  	puts("\n\n!!!TEST:");
- 	print_linkState(new_linkState);
+ 	print_linkStateRecord(new_record);
  }
 
 /* String to MAC Address */
