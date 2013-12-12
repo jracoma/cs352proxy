@@ -109,8 +109,8 @@
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&local_info->ethMAC.sa_data[0], (unsigned char *)&local_info->ethMAC.sa_data[1], (unsigned char *)&local_info->ethMAC.sa_data[2], (unsigned char *)&local_info->ethMAC.sa_data[3], (unsigned char *)&local_info->ethMAC.sa_data[4], (unsigned char *)&local_info->ethMAC.sa_data[5]);
  	fclose(f);
 
-	lsPacket->header->type = htons(PACKET_LINKSTATE);
-	lsPacket->source = local_info;
+ 	lsPacket->header->type = htons(PACKET_LINKSTATE);
+ 	lsPacket->source = local_info;
 
  	return 0;
  }
@@ -391,7 +391,6 @@
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
- 		// return NULL;
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 /* Create link state packet */
@@ -410,11 +409,8 @@
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
-
- 		return NULL;
  	}
-
-
+ 	return NULL;
  }
 
 /* Send linkState */
