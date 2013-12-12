@@ -413,7 +413,7 @@
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5]);
 
  	send(new_fd, buffer, strlen(buffer), 0);
- 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
+ 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
@@ -490,10 +490,7 @@
 /* Add new member */
  void add_member(struct peerList *peer) {
  	struct peerList *tmp;
- 	pthread_mutex_lock(&peer_mutex);
 
-
- 	pthread_mutex_unlock(&peer_mutex);
  	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  		perror("connect_thread");
  		pthread_exit(NULL);
@@ -528,7 +525,7 @@
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
  		printf("MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		// add_member(new_peer);
+ 		add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
  	}
