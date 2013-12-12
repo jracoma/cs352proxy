@@ -498,6 +498,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	puts("\nADDING MEMBER:\n");
  	struct peerList *tmp;
+ 	int found = 0;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
  	struct timeval current_time;
  	gettimeofday(&current_time, NULL);
@@ -506,26 +507,19 @@
 
  	printf("TOTAL: %d\n", HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
- 	tmp = peers;
- 	while (tmp != NULL) {
+ 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
- 		tmp = tmp->hh.next;
+
+		if (!strcmp(ethMAC1, ethMAC2)) {
+			puts("MATCH!");
+			found = 1;
+			break;
+		} else if (tmp->hh.next == NULL) {
+			puts("ADDING NEW");
+			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), tmp);
+		}
  	}
- 	// for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
- 	// 	sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
- 	// 	printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
-
-
-
- 	// 	// if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
- 	// 	// else {
- 	// 	// 	pthread_mutex_lock(&peer_mutex);
- 	// 	// 	puts("adding");
- 	// 	// 	HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 	// 	// 	pthread_mutex_unlock(&peer_mutex);
- 	// 	// }
- 	// }
 
  	if (peers == NULL) {
  		puts("EMPTY!");
