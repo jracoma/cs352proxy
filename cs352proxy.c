@@ -561,7 +561,6 @@
  	if (debug) print_peer(new_peer);
  	free(next_field);
  	free(ethMAC);
- 	free(buffer);
  }
 
 
