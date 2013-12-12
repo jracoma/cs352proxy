@@ -419,7 +419,8 @@
  	if (debug) printf("Remote MAC: %s\n", buffer);
 
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], &peer->tapDevice);
-
+ 	puts("\n\n\nTEST\n");
+ 	print_peer(peer);
  	free(buffer);
  }
 
