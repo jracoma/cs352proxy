@@ -606,13 +606,20 @@
 /* Decode linkStateRecord information */
 void decode_linkStateRecord(char *buffer) {
 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
 	char *next_field, ip[100];
 	printf("DECODING: %s\n", buffer);
 
 	next_field = strtok(buffer, " \n");
-	printf("NEXT FIELD: %s", next_field);
+	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_linkState->listenIP);
 	next_field = strtok(NULL, " \n");
 
+	puts("TEST:");
+	print_linkState(new_linkState);
 }
 
 /* Sleeper for quitAfter */
