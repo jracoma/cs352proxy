@@ -16,7 +16,8 @@
 
 /* Local Parameters */
  int linkPeriod, linkTimeout, quitAfter;
- struct peerList *peerHead = NULL, *peers = NULL;
+ struct peerList *peers = NULL;
+ struct linkStateRecords *records = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
  char *dev = "tap10";
@@ -384,6 +385,7 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
+ 		create_linkStateRecord(peer, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
@@ -413,7 +415,7 @@
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors*/
+ 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev);
 
@@ -444,6 +446,16 @@
  	// printf("SENT: %s | Length: %d\n", buffer, strlen(buffer));
  	// send(peer->net_fd, buffer, strlen(buffer), 0);
  	pthread_mutex_unlock(&peer_mutex);
+ 	pthread_mutex_unlock(&linkstate_mutex);
+ }
+
+/* Create linkStateRecord */
+ void create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2) {
+ 	struct timeval current_time;
+ 	if (debug) puts("Creating new linkStateRecord:");
+
+ 	pthread_mutex_lock(&linkstate_mutex);
+
  	pthread_mutex_unlock(&linkstate_mutex);
  }
 
@@ -498,7 +510,6 @@
  	pthread_mutex_lock(&peer_mutex);
  	puts("\nADDING MEMBER:\n");
  	struct peerList *tmp;
- 	int found = 0;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
  	struct timeval current_time;
  	gettimeofday(&current_time, NULL);
@@ -513,7 +524,6 @@
 
 		if (!strcmp(ethMAC1, ethMAC2)) {
 			puts("MATCH!");
-			found = 1;
 			break;
 		} else if (tmp->hh.next == NULL) {
 			puts("ADDING NEW");

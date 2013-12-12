@@ -63,8 +63,6 @@ struct packetHeader {
 struct peerList {
   struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
-  struct timeval uniqueID;
-  uint32_t linkWeight;
   int net_fd;
   UT_hash_handle hh;
 }__attribute__((packed));
@@ -79,7 +77,6 @@ struct dataPacket {
 struct linkState {
   struct in_addr listenIP;
   uint16_t listenPort;
-  struct sockaddr tapMAC;
   struct sockaddr ethMAC;
 }__attribute__((packed));
 
@@ -89,6 +86,15 @@ struct linkStatePacket {
   struct linkState *source;
   uint16_t neighbors;
 }__attribute__((packed));
+
+/* Struct for link state record information */
+struct linkStateRecord {
+  struct timeval uniqueID;
+  struct linkState *proxy1;
+  struct linkState *proxy2;
+  uint32_t linkWeight;
+  UT_hash_handle hh;
+}__attritute__((packed));
 
 int allocate_tunnel(char *dev, int flags);
 int getIP(char *host, char *ip);
@@ -101,6 +107,7 @@ void *connectToPeer(void *temp);
 char *send_linkState(struct linkState *ls);
 void send_singleLinkStatePacket(int new_fd, struct peerList *peer);
 void send_linkStatePacket(struct linkStatePacket *lsp);
+void create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2);
 void print_packetHeader(struct packetHeader *pkt);
 void print_peer(struct peerList *peer);
 void print_peerList();
