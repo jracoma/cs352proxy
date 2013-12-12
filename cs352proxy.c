@@ -248,7 +248,7 @@
  			printf("recv error from %d | ERR: %d\n", net_fd, errno);
  			break;
  		} else {
- 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
+ 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  			close(new_fd);
  			return NULL;
  		}
