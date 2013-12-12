@@ -213,13 +213,12 @@
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
- 		printf("BUFFER INCOMING: %s\n", buffer);
- 		printf("\nSIZE: %d | ", size);
+ 		if (debug) printf("\nSIZE: %d | ", size);
  		if (size > 0) {
- 			if (strlen(buffer) > 0) {
+ 			// if (strlen(buffer) > 0) {
  				strncpy(buffer2, buffer, 6);
  				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 				printf("TYPE: %x\n", type);
+ 				if (debug) printf("TYPE: %x\n", type);
  				switch (type) {
  					case PACKET_LINKSTATE:
  					strncpy(buffer, buffer+7, sizeof(buffer));
@@ -228,7 +227,7 @@
  					decode_linkStatePacket(buffer, peer->net_fd);
  					default:
  					printf("Negative.\n");
- 				}
+ 				// }
  			}
  		// // } else if (size == 0) {
  		// 	pthread_mutex_lock(&peer_mutex);
@@ -427,6 +426,8 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	printf("INCOMING PAYLOAD: %s\n", buffer);
+
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
  	free(buffer);
  }
 
