@@ -226,10 +226,6 @@
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
  					decode_linkStatePacket(buffer, peer->net_fd);
- 					case PACKET_ETHADDR:
- 					strncpy(buffer, buffer+7, sizeof(buffer));
- 					printf("Received message: %d bytes\n", size);
- 					printf("Received: %s\n", buffer);
  					default:
  					printf("Negative.\n");
  				}
@@ -427,7 +423,8 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
-
+ 	sleep(2);
+ 	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	free(buffer);
  }
 
