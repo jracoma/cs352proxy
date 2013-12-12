@@ -604,6 +604,7 @@
 
  	if (debug) {
  		puts("end of decode_linkStatePacket");
+ 		print_linkStateRecords();
  	}
  }
 /* Decode linkStateRecord information */
