@@ -468,7 +468,7 @@
  	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
 
- 	return *new_record;
+ 	return new_record;
  }
 
 /* Print packetHeader information */
