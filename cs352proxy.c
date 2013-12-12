@@ -494,6 +494,7 @@
 
 /* Add new member */
  void add_member(struct peerList *peer) {
+ 	puts("\n\nADDING MEMBER:\n\n");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 

@@ -384,15 +384,16 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
- 		pthread_mutex_lock(&peer_mutex);
- 		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		if (debug) {
- 			puts("After Add:\n");
- 			print_peerList();
- 		}
+ 		add_member(peer);
+ 		// pthread_mutex_lock(&peer_mutex);
+ 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 		// if (debug) {
+ 			// puts("After Add:\n");
+ 			// print_peerList();
+ 		// }
  		lsPacket->neighbors = HASH_COUNT(peers);
  		puts("NEW PEER: Single link state record sent.");
- 		pthread_mutex_unlock(&peer_mutex);
+ 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	return NULL;
@@ -493,7 +494,7 @@
 
 /* Add new member */
  void add_member(struct peerList *peer) {
- 	puts("ha");
+ 	puts("\n\nADDING MEMBER:\n\n");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
@@ -502,11 +503,14 @@
  		sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n\n", ethMAC1, ethMAC2);
+
+ 		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
+ 		else {
+ 			pthread_mutex_lock(&peer_mutex);
+ 			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 			pthread_mutex_unlock(&peer_mutex);
+ 		}
  	}
- 	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
- 	// 	perror("connect_thread");
- 	// 	pthread_exit(NULL);
- 	// }
  }
 
 /* Decode linkStatePacket information */
