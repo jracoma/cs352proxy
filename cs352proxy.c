@@ -128,7 +128,7 @@
 	/* Variables for peer information */
  	char *host, *tapDevice;
  	char ip[100];
- 	int port, count;
+ 	int port;
  	struct peerList *current, *tmp;
 
 
@@ -198,7 +198,7 @@
  		puts("\n\n\nLocal Information:");
  		print_linkState(local_info);
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		printf("Count: %d\n", count);
+ 		printf("Count: %d\n", lsPacket->neighbors);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n---Linked List:\n");
  		pthread_mutex_lock(&peer_mutex);
