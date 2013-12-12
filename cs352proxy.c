@@ -493,9 +493,9 @@
 
 /* Add new member */
  void add_member(struct peerList *peer) {
- 	puts("ha");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
+ 	struct timeval current_time;
 
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
@@ -505,13 +505,13 @@
 
  		if (!strcmp(ethMAC1, ethMAC2)) puts("MATCH!");
  		else {
- 			puts("NO MATCH!");
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
  		}
  	}
- 	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
- 	// 	perror("connect_thread");
- 	// 	pthread_exit(NULL);
- 	// }
+
  }
 
 /* Decode linkStatePacket information */
