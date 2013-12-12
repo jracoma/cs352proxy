@@ -355,7 +355,6 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
- 	// struct timeval current_time;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -377,11 +376,8 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
- 		// gettimeofday(&current_time, NULL);
- 		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		// create_linkStateRecord(peer->lsInfo, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
@@ -595,13 +591,16 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		add_member(new_peer);
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
 
  	if (debug) {
- 		puts("end of decode_linkStatePacket");
  		print_linkStateRecords();
  	}
  }
