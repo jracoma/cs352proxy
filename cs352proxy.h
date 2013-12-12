@@ -104,6 +104,7 @@ void send_singleLinkStatePacket(int new_fd);
 void send_linkStatePacket(struct linkStatePacket *lsp);
 void print_packetHeader(struct packetHeader *pkt);
 void print_peerList(struct peerList *peer);
+void print_peers();
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket();
 struct linkStatePacket decode_linkStatePacket();

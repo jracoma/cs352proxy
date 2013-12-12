@@ -403,6 +403,7 @@
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		unsigned int num = HASH_COUNT(peers);
  		printf("\n\n\nUSERS: %d\n\n", num);
+ 		print_peers();
  		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
  		// LL_COUNT(peerHead, tmp, lsPacket->neighbors);
@@ -478,11 +479,21 @@
  	printf("---PEERLIST: ");
  	print_linkState(peer->lsInfo);
  	printf("----Tap: %s | UID: %ld:%ld | LinkWeight: %d | NET_FD: %d | ", peer->tapDevice, peer->uniqueID.tv_sec, peer->uniqueID.tv_usec, peer->linkWeight, peer->net_fd);
+
  	// if (peer->next == NULL) {
  	// 	printf("Next: NULL\n");
  	// } else {
  	// 	printf("Next: %s:%d\n", inet_ntoa(peer->next->lsInfo->listenIP), peer->next->lsInfo->listenPort);
  	// }
+ }
+
+/* Print peers hash table */
+ void print_peers() {
+ 	struct peerList *tmp;
+
+ 	for (tmp = peers, s != NULL; s = s->hh.next) {
+ 		puts("KADKJSD");
+ 	}
  }
 
 /* Print linkState information */
