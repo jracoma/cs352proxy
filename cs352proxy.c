@@ -513,13 +513,13 @@
 
 	if (!(next_field)) {
 		puts("SOLO!");
+		 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
 	} else {
 		puts("NOT SOLO!");
 	}
-
-
-
-
 
 	if (debug) print_peer(new_peer);
 
