@@ -19,7 +19,7 @@
  struct peerList *peerHead = NULL, *peers = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
- char *dev = "tap11";
+ char *dev = "tap14";
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
@@ -501,7 +501,7 @@
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
  		sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
- 		printf("ETH1: %s | ETH2: %s", ethMAC1, ethMAC2);
+ 		printf("***COMPARING: ETH1: %s | ETH2: %s\n\n", ethMAC1, ethMAC2);
  	}
  	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
  	// 	perror("connect_thread");
@@ -533,7 +533,7 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
-
+ 	printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		puts("SOLO!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
