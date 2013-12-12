@@ -224,7 +224,7 @@
  					strncpy(buffer, buffer+7, sizeof(buffer));
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
- 					decode_linkStatePacket(buffer, peer->net_fd, peer);
+ 					decode_linkStatePacket(buffer, peer->net_fd);
  					default:
  					printf("Negative.\n");
  				}
@@ -526,7 +526,7 @@
  }
 
 /* Decode linkStatePacket information */
- void decode_linkStatePacket(char *buffer, int net_fd, struct peerList *peer) {
+ void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE), *buffer = malloc(MAXBUFFSIZE), *buffer2 = malloc(MAXBUFFSIZE);
