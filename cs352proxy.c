@@ -474,7 +474,7 @@
  void print_peerList() {
  	struct peerList *tmp;
 	unsigned int num = HASH_COUNT(peers), i;
-	printf("\n\nUSERS: %d\n", num);
+	printf("\n\nPEERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
  		printf("---PEER %d: ", i);
@@ -498,12 +498,6 @@
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
  	printf("----Neighbors: %d\n", lsPacket->neighbors);
- 	// if (count > 0) {
- 	// 	LL_FOREACH(peerHead, tmp) {
- 	// 		printf("-----PROXY %d-----\n", i);
- 	// 		print_peerList(tmp);
- 	// 	}
- 	// }
  }
 
 /* Decode linkStatePacket information */
