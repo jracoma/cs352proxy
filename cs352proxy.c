@@ -115,7 +115,6 @@
  	return 0;
  }
 
-
 /* Parse through input file */
  int parseInput(int argc, char *argv[]) {
  	FILE *input_file;
@@ -130,7 +129,6 @@
  	char ip[100];
  	int port;
  	struct peerList *current;
-
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -154,7 +152,11 @@
  		next_field = strtok(line, " \n");
 
  		if (!next_field || !strcmp(next_field, "//")) continue;
- 		else if (!strcmp(next_field, "listenPort")) local_info->listenPort = atoi(strtok(NULL, " \n"));
+ 		else if (!strcmp(next_field, "listenPort")) {
+ 			local_info->listenPort = atoi(strtok(NULL, " \n"));
+			/* Start server path */
+ 			server(local_info->listenPort);
+ 		}
  		else if (!strcmp(next_field, "linkPeriod")) linkPeriod = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
@@ -188,11 +190,7 @@
  			}
  			pthread_join(connect_thread, NULL);
  		}
-
  	}
-
-	/* Start server path */
- 	server(local_info->listenPort);
 
  	if (debug) {
  		puts("\n\n\nLocal Information:");
@@ -247,9 +245,9 @@
  				switch (type) {
  					case PACKET_LINKSTATE:
  					strncpy(buffer, buffer+7, sizeof(buffer));
- 					printf("Received message: %d bytes\n", size);
- 					printf("Received: %s\n", buffer);
- 					decode_linkStatePacket();
+ 					// printf("Received message: %d bytes\n", size);
+ 					// printf("Received: %s\n", buffer);
+ 					decode_linkStatePacket(buffer);
  					default:
  					printf("Negative.\n");
  				}
@@ -258,12 +256,8 @@
  			pthread_mutex_lock(&peer_mutex);
  			pthread_mutex_lock(&linkstate_mutex);
 
- 			// LL_FOREACH(peerHead, peer) {
- 			// 	if (peer->net_fd == new_fd) {
- 			// 		puts("found");
- 			// 	}
- 			// }
- 			// close(new_fd);
+ 			/* Stuff about orderly shutdown */
+
  			pthread_mutex_unlock(&peer_mutex);
  			pthread_mutex_unlock(&linkstate_mutex);
  		} else {
@@ -271,9 +265,7 @@
  			close(new_fd);
  			break;
  		}
-
  	}
-
  	return NULL;
  }
 
@@ -362,7 +354,7 @@
  	struct peerList *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
-/* Create TCP Socket */
+	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
  		exit(1);
@@ -376,13 +368,13 @@
 
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
-/* Connect to server */
+	/* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) != 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		pthread_mutex_unlock(&peer_mutex);
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
-/* Create link state packet */
+		/* Create single link state packet */
  		gettimeofday(&current_time, NULL);
  		strcpy(buffer, peer->tapDevice);
  		peer->uniqueID = current_time;
@@ -391,7 +383,7 @@
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
-		lsPacket->neighbors = HASH_COUNT(peers);
+ 		lsPacket->neighbors = HASH_COUNT(peers);
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
@@ -466,8 +458,8 @@
 /* Print peers hash table */
  void print_peerList() {
  	struct peerList *tmp;
-	unsigned int num = HASH_COUNT(peers), i;
-	printf("\n\nPEERS: %d\n", num);
+ 	unsigned int num = HASH_COUNT(peers), i;
+ 	printf("\n\nPEERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
  		printf("---PEER %d: ", i);
@@ -492,11 +484,15 @@
  }
 
 /* Decode linkStatePacket information */
- struct linkStatePacket decode_linkStatePacket() {
- 	struct linkStatePacket test;
- 	puts("HERE!");
- 	return test;
+//  struct linkStatePacket decode_linkStatePacket() {
+//  	struct linkStatePacket test;
+//  	puts("HERE!");
+//  	return test;
+//  }
+ void decode_linkStatePacket(char *buffer) {
+ 	printf("Received: %s\n", buffer);
  }
+
 
 /* Sleeper for quitAfter */
  void *sleeper() {
@@ -511,12 +507,6 @@
  	if (debug) {
  		puts("DEBUGGING MODE:");
  	}
-
- // 	struct timeval test;
- // 	gettimeofday(&test, NULL);
- // 	if (debug) {
- // 		printf("Time of Day: %ld:%ld\n", test.tv_sec, test.tv_usec);
- // 	}
 
  // 	int size;
  // 	char if_name[IFNAMSIZ] = "";

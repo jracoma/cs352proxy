@@ -87,7 +87,6 @@ struct linkStatePacket {
   struct packetHeader *header;
   struct linkState *source;
   uint16_t neighbors;
-  struct peerList *top;
 }__attribute__((packed));
 
 int allocate_tunnel(char *dev, int flags);
@@ -106,5 +105,6 @@ void print_peer(struct peerList *peer);
 void print_peerList();
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket();
-struct linkStatePacket decode_linkStatePacket();
+// struct linkStatePacket decode_linkStatePacket();
+void decode_linkStatePacket(char *buffer);
 void *sleeper();
