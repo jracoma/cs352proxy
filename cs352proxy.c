@@ -533,14 +533,16 @@
  			break;
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
- 			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 			HASH_ADD_INT(hh, net_fd, peer);
+ 			// HASH_ADD(hh, peers, net_fd, sizeof(struct timeval), peer);
  			break;
  		}
  	}
 
  	if (peers == NULL) {
  		puts("EMPTY!");
- 		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 		HASH_ADD_INT(hh, net_fd, peer);
+ 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
