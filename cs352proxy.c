@@ -410,7 +410,7 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd) {
- 	char *buffer = malloc(MAXBUFFSIZE), ip[100];
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
@@ -495,7 +495,7 @@
  void decode_linkStatePacket(char *buffer) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
- 	char *next_field;
+ 	char *next_field, ip[100];
  	printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
