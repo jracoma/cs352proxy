@@ -424,8 +424,8 @@ puts("found");
  	pthread_mutex_lock(&linkstate_mutex);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors */
- 	lsp->header->length = sizeof(lsp) + sizeof(lsp->header) + sizeof(lsp->source);
- 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->listenIP), lsp->source->listenPort, (unsigned char)lsp->source->ethMAC.sa_data[0], (unsigned char)lsp->source->ethMAC.sa_data[1], (unsigned char)lsp->source->ethMAC.sa_data[2], (unsigned char)lsp->source->ethMAC.sa_data[3], (unsigned char)lsp->source->ethMAC.sa_data[4], (unsigned char)lsp->source->ethMAC.sa_data[5], lsp->neighbors);
+ 	lsp->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %d", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], lsPacket->neighbors);
 
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
