@@ -511,6 +511,8 @@
  			pthread_mutex_unlock(&peer_mutex);
  		}
  	}
+
+ 	print_peerList();
  }
 
 /* Decode linkStatePacket information */
