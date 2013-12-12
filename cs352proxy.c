@@ -502,7 +502,7 @@
  	/* Parse through buffer */
  	next_field = strtok(buffer, " \n");
  	printf("Next: %s\n", next_field);
- 	next_field = strtok(buffer, " \n");
+ 	next_field = strtok(NULL, " \n");
  	printf("Next: %s\n", next_field);
  }
 
