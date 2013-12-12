@@ -587,7 +587,7 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, " \n");
+ 	next_field = strtok(NULL, "\n");
  	printf("REMAINING: %s", next_field);
  	printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
