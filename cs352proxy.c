@@ -247,22 +247,23 @@
  					printf("Negative.\n");
  				}
  			}
- 		} else if (size == 0) {
- 			pthread_mutex_lock(&peer_mutex);
- 			pthread_mutex_lock(&linkstate_mutex);
-
- 			/* Stuff about orderly shutdown */
-
- 			pthread_mutex_unlock(&peer_mutex);
- 			pthread_mutex_unlock(&linkstate_mutex);
- 		} else if (size < 0) {
- 			printf("recv error from %d", net_fd);
- 			break;
- 		} else {
- 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
- 			close(new_fd);
- 			break;
  		}
+ 		// // } else if (size == 0) {
+ 		// 	pthread_mutex_lock(&peer_mutex);
+ 		// 	pthread_mutex_lock(&linkstate_mutex);
+
+ 		// 	/* Stuff about orderly shutdown */
+
+ 		// 	pthread_mutex_unlock(&peer_mutex);
+ 		// 	pthread_mutex_unlock(&linkstate_mutex);
+ 		// } else if (size < 0) {
+ 		// 	printf("recv error from %d", net_fd);
+ 		// 	break;
+ 		// } else {
+ 		// 	printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(client_addr.sin_addr), htons(client_addr.sin_port));
+ 		// 	close(new_fd);
+ 		// 	break;
+ 		// }
  	}
  	return NULL;
  }
