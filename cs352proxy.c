@@ -257,7 +257,7 @@
  		// 	pthread_mutex_unlock(&peer_mutex);
  		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", net_fd, ERRNO);
+ 			printf("recv error from %d | ERR: %d\n", net_fd, errno);
  			break;
  		}
  		// } else {
