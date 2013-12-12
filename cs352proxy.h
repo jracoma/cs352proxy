@@ -40,6 +40,7 @@
 #define PACKET_LEAVE 0xAB01
 #define PACKET_QUIT 0xAB12
 #define PACKET_LINKSTATE 0xABAC
+#define PACKET_ETHADDR 0xFFFF
 
 /* Ethernet Frame Header */
  union ethframe
@@ -106,5 +107,5 @@ void print_peerList();
 void print_linkState(struct linkState *ls);
 void print_linkStatePacket();
 void add_member(struct peerList *peer);
-void decode_linkStatePacket(char *buffer);
+void decode_linkStatePacket(char *buffer, int net_fd);
 void *sleeper();

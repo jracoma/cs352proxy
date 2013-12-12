@@ -224,7 +224,7 @@
  					strncpy(buffer, buffer+7, sizeof(buffer));
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
- 					decode_linkStatePacket(buffer);
+ 					decode_linkStatePacket(buffer, peer->net_fd);
  					default:
  					printf("Negative.\n");
  				}
@@ -505,7 +505,7 @@
  }
 
 /* Decode linkStatePacket information */
- void decode_linkStatePacket(char *buffer) {
+ void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
@@ -530,8 +530,8 @@
  	if (!(neighbors)) {
  		puts("SOLO!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
-
  		printf("MAC: %s\n", ethMAC);
+ 		send(net_fd, ethMAC, strlen(ethMAC),0);
  		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
