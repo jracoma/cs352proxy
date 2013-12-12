@@ -355,8 +355,8 @@
 /* Client Mode */
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
- 	int new_fd;
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	int new_fd, size;
+ 	char *buffer = malloc(MAXBUFFSIZE), *buffer2 = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
@@ -392,6 +392,25 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
+
+ 		/* Receive MAC address info */
+ 		memset(buffer, 0, MAXBUFFSIZE);
+ 		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
+ 		printf("\nSIZE: %d | ", size);
+ 		if (size > 0) {
+ 			if (strlen(buffer) > 0) {
+ 				strncpy(buffer2, buffer, 6);
+ 				type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
+ 				printf("TYPE: %x\n", type);
+ 				switch (type) {
+ 					case PACKET_ETHADDR:
+ 					strncpy(buffer, buffer+7, sizeof(buffer));
+ 					printf("Received message: %d bytes\n", size);
+ 					printf("Received: %s\n", buffer);
+ 					default:
+ 					printf("Negative.\n");
+ 				}
+ 			}
  		if (debug) print_linkStatePacket();
  	}
  	return NULL;
@@ -422,7 +441,6 @@
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
-
 
  	free(buffer);
  }
@@ -529,9 +547,9 @@
 
  	if (!(neighbors)) {
  		puts("SOLO!");
- 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC, "0xFFFF %02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
  		printf("MAC: %s\n", ethMAC);
- 		send(net_fd, ethMAC, strlen(ethMAC),0);
+ 		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		// add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
