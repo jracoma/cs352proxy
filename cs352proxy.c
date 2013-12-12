@@ -129,7 +129,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port;
- 	struct peerList *current, *tmp;
+ 	struct peerList *current;
 
 
 	/* Verifies proper syntax command line */
@@ -356,12 +356,10 @@
 
 /* Client Mode */
  void *connectToPeer(void *temp) {
- // void connectToPeer(struct peerList *peer) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
- 	struct peerList *peer = (struct peerList *)temp, *tmp;
- 	// struct peerList *tmp;
+ 	struct peerList *peer = (struct peerList *)temp;
  	struct timeval current_time;
 
 /* Create TCP Socket */

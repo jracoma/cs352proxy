@@ -97,7 +97,6 @@ int parseInput(int argc, char *argv[]);
 void *handle_listen();
 void server(int port);
 void *handle_tap();
-// void connectToPeer(struct peerList *peer);
 void *connectToPeer(void *temp);
 char *send_linkState(struct linkState *ls);
 void send_singleLinkStatePacket(int new_fd);
