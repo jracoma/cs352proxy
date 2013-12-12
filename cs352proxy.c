@@ -177,6 +177,7 @@
  			next_field = strtok(line, " \n");
  			tapDevice = strtok(NULL, " \n");
  			inet_aton(host, &new_peer->listenIP);
+ 			print_linkState(new_peer);
  			// current->lsInfo->listenPort = port;
  			// strcpy(current->tapDevice, tapDevice);
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
