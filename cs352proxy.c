@@ -515,7 +515,7 @@
 
  	printf("\n@@@linkStateRecord: %ld:%ld | linkWeight: %d\nProxy 1: ", record->uniqueID.tv_sec, record->uniqueID.tv_usec, record->linkWeight);
  	print_linkState(record->proxy1);
- 	printf("Proxy 2: ")
+ 	printf("Proxy 2: ");
  	print_linkState(record->proxy2);
 
  }
