@@ -255,7 +255,6 @@
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
- 	struct timeval current_time;
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
@@ -296,8 +295,6 @@
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
  		new_peer->net_fd = new_fd;
- 		gettimeofday(&current_time, NULL);
- 		new_peer->uniqueID = current_time;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
@@ -452,8 +449,14 @@
 /* Create linkStateRecord */
  void create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2) {
  	struct timeval current_time;
- 	if (debug) puts("Creating new linkStateRecord:");
+ 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
 
+ 	if (debug) puts("Creating new linkStateRecord:");
+ 	gettimeofday(&current_time, NULL);
+ 	new_record->uniqueID = current_time;
+
+
+ 	if (debug) print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
 
  	pthread_mutex_unlock(&linkstate_mutex);
@@ -505,6 +508,11 @@
  	print_peerList();
  }
 
+/* Print linkStateRecord information */
+ void print_linkStateRecord(struct linkStateRecord *record) {
+ 	puts("Print Lsrecord");
+ }
+
 /* Add new member */
  void add_member(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
@@ -522,14 +530,14 @@
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
 
-		if (!strcmp(ethMAC1, ethMAC2)) {
-			puts("MATCH!");
-			break;
-		} else if (tmp->hh.next == NULL) {
-			puts("ADDING NEW");
-			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
-			break;
-		}
+ 		if (!strcmp(ethMAC1, ethMAC2)) {
+ 			puts("MATCH!");
+ 			break;
+ 		} else if (tmp->hh.next == NULL) {
+ 			puts("ADDING NEW");
+ 			HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
+ 			break;
+ 		}
  	}
 
  	if (peers == NULL) {
