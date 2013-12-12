@@ -2,5 +2,5 @@
 
 make clean
 git pull
-make
-./cs352proxy config3.txt
+make cs352proxy1
+./cs352proxy1 config3.txt

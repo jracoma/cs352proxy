@@ -19,6 +19,7 @@
  struct peerList *peerHead = NULL, *peers = NULL;
  struct linkState *local_info;
  struct linkStatePacket *lsPacket;
+ char *dev = "tap11";
 
 /* Threads to handle socket and tap */
  pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
@@ -75,7 +76,6 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	char *dev = "tap10";
  	local_info = (struct linkState *)malloc(sizeof(struct linkState));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
@@ -154,10 +154,10 @@
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
  			 	/* Set quitAfter sleeper */
- 			// if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
- 			// 	perror("connect thread");
- 			// 	pthread_exit(NULL);
- 			// }
+ 			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
+ 				perror("connect thread");
+ 				pthread_exit(NULL);
+ 			}
  		}
  		else if (!strcmp(next_field, "peer")) {
  			current = (struct peerList *)malloc(sizeof(struct peerList));
@@ -189,7 +189,7 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		printf("Count: %d\n", lsPacket->neighbors);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
- 		printf("\n\n---Linked List:\n");
+ 		printf("\n---FINAL Linked List after parseInput:\n");
  		pthread_mutex_lock(&peer_mutex);
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
@@ -364,7 +364,6 @@
  		exit(1);
  	}
  	puts("Client Mode:");
- 	pthread_mutex_lock(&peer_mutex);
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
@@ -385,8 +384,12 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
+ 		pthread_mutex_lock(&peer_mutex);
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		print_peerList();
+ 		if (debug) {
+ 			puts("After Add:\n");
+ 			print_peerList();
+ 		}
  		lsPacket->neighbors = HASH_COUNT(peers);
  		puts("NEW PEER: Single link state record sent.");
  		pthread_mutex_unlock(&peer_mutex);
@@ -408,20 +411,18 @@
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors */
+ 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors*/
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5]);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev);
 
  	send(new_fd, buffer, strlen(buffer), 0);
- 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n\n", buffer, new_fd);
- 	// sleep(1);
+ 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
- 	printf("INCOMING PAYLOAD: %s\n", buffer);
+ 	if (debug) printf("Remote MAC: %s\n", buffer);
 
- 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5]);
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
- 	print_peer(peer);
  	free(buffer);
  }
 
@@ -465,7 +466,7 @@
  void print_peerList() {
  	struct peerList *tmp;
  	unsigned int num = HASH_COUNT(peers), i;
- 	printf("\n\nPEERS: %d\n", num);
+ 	printf("\nPEERS: %d\n", num);
 
  	for (tmp = peers, i = 1; tmp != NULL; tmp = tmp->hh.next, i++) {
  		printf("---PEER %d: ", i);
@@ -486,20 +487,26 @@
  	puts("\n\n---LINKSTATE PACKET INFORMATION---");
  	print_packetHeader(lsPacket->header);
  	print_linkState(lsPacket->source);
- 	printf("----Neighbors: %d\n", lsPacket->neighbors);
+ 	printf("----Neighbors: %d", lsPacket->neighbors);
+ 	print_peerList();
  }
 
 /* Add new member */
  void add_member(struct peerList *peer) {
+ 	puts("ha");
  	struct peerList *tmp;
- 	pthread_mutex_lock(&peer_mutex);
+ 	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
-
- 	pthread_mutex_unlock(&peer_mutex);
- 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
- 		perror("connect_thread");
- 		pthread_exit(NULL);
+ 	/* Verify MAC address does not already exist */
+ 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 		sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
+ 		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
+ 		printf("ETH1: %s | ETH2: %s", ethMAC1, ethMAC2);
  	}
+ 	// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)tmp) != 0) {
+ 	// 	perror("connect_thread");
+ 	// 	pthread_exit(NULL);
+ 	// }
  }
 
 /* Decode linkStatePacket information */
@@ -523,19 +530,24 @@
  	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	sscanf(next_field ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&new_peer->lsInfo->ethMAC.sa_data[5]);
+ 	next_field = strtok(NULL, " \n");
+ 	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
 
  	if (!(neighbors)) {
  		puts("SOLO!");
- 		sprintf(ethMAC, "AA:%02x:%02x:%02x:%02x:%02x", (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5]);
- 		printf("MAC: %s\n", ethMAC);
+ 		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
+ 		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		// add_member(new_peer);
+ 		add_member(new_peer);
  	} else {
  		puts("NOT SOLO!");
  	}
 
- 	if (debug) print_peer(new_peer);
+ 	if (debug) {
+ 		puts("end of decode_linkStatePacket");
+ 		print_peer(new_peer);
+ 	}
  }
 
 
