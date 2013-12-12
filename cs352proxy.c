@@ -381,7 +381,7 @@
  		// peer->uniqueID = current_time;
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		create_linkStateRecord(peer, local_info);
+ 		create_linkStateRecord(peer->lsInfo, local_info);
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
