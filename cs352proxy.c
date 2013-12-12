@@ -129,7 +129,7 @@
  	char *host, *tapDevice;
  	char ip[100];
  	int port, count;
- 	struct peerList *current = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+ 	struct peerList *current, *tmp;
  	current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
 
 	/* Verifies proper syntax command line */
@@ -166,6 +166,7 @@
  			// }
  		}
  		else if (!strcmp(next_field, "peer")) {
+ 			current =  = (struct peerList *)malloc(sizeof(struct peerList));
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
@@ -182,6 +183,7 @@
  			strcpy(current->tapDevice, tapDevice);
  			current->next = NULL;
  			connectToPeer(current);
+ 			free(current);
  			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
  			// 	perror("connect_thread");
  			// 	pthread_exit(NULL);
@@ -398,7 +400,6 @@
  		LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
  		LL_COUNT(peerHead, tmp, lsPacket->neighbors);
- 		puts("found");
  		send_singleLinkStatePacket(new_fd);
  		puts("NEW PEER: Single link state record sent.");
  		if (debug) print_linkStatePacket();
