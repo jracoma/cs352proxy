@@ -400,8 +400,6 @@
  		peer->linkWeight = 1;
  		peer->net_fd = new_fd;
  		HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		unsigned int num = HASH_COUNT(peers);
- 		printf("\n\n\nUSERS: %d\n\n", num);
  		print_peerList();
  		// LL_APPEND(peerHead, peer);
  		pthread_mutex_unlock(&peer_mutex);
@@ -486,8 +484,11 @@
 /* Print peers hash table */
  void print_peerList() {
  	struct peerList *tmp;
+	unsigned int num = HASH_COUNT(peers), i;
+	printf("\n\nUSERS: %d\n", num);
 
- 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 	for (tmp = peers, i = 0; tmp != NULL; tmp = tmp->hh.next, i++) {
+ 		printf("---PEER %d---\n", i);
  		print_peer(tmp);
  	}
  }
