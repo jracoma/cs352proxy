@@ -578,8 +578,8 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2, *buf3, *buf4;
 
-	buf1 = send_peerList(record->proxy1);
-	buf2 = send_peerList(record->proxy2);
+ 	buf1 = send_peerList(record->proxy1);
+ 	buf2 = send_peerList(record->proxy2);
  	if (debug) printf("ATTEMPTING TO ADD RECORD:\n%s | %s\n", buf1, buf2);
 
  	if (records == NULL) {
@@ -587,19 +587,18 @@
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
- 			// memset(buf1, 0, MAXBUFFSIZE);
- 			// memset(buf2, 0, MAXBUFFSIZE);
-	buf3 = send_peerList(s->proxy1);
-	buf4 = send_peerList(s->proxy2);
-			printf("CHECKING:\n%s | %s\n", buf3, buf4);
-			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
-				puts("EXISTS!");
-			} else {
-				puts("NEW!!");
-			}
+ 			buf3 = send_peerList(s->proxy1);
+ 			buf4 = send_peerList(s->proxy2);
+ 			printf("CHECKING:\n%s | %s\n", buf3, buf4);
+ 			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
+ 				pthread_mutex_unlock(&linkstate_mutex);
+ 				return 0;
+ 				puts("EXISTS!");
+ 			}
  		}
  	}
 
+ 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
 
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
