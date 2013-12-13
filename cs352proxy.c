@@ -580,7 +580,7 @@
 
  	buf1 = send_peerList(record->proxy1);
  	buf2 = send_peerList(record->proxy2);
- 	if (debug) printf("ATTEMPTING TO ADD RECORD:\n%s | %s\n", buf1, buf2);
+ 	if (debug) printf("TOTAL: %d | ATTEMPTING TO ADD RECORD:\n%s | %s\n", HASH_COUNT(records), buf1, buf2);
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
@@ -594,6 +594,8 @@
  				pthread_mutex_unlock(&linkstate_mutex);
  				puts("EXISTS!");
  				return 0;
+ 			} else if (s->hh.next == NULL) {
+ 				puts("ADDADD");
  			}
  		}
  	}
