@@ -498,7 +498,7 @@
  void print_linkState(struct linkState *ls) {
  	char *ethMAC = malloc(MAXBUFFSIZE);
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	printf("--LINKSTATE: listenIP: %s:%d | MAC: %s ", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
+ 	printf("--LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
  	free(ethMAC);
  }
 
@@ -522,7 +522,7 @@
 /* Print linkStateRecords */
  void print_linkStateRecords() {
  	struct linkStateRecord *tmp;
- 	printf("\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
+ 	printf("\n\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
@@ -544,7 +544,7 @@
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
 
  		if (!strcmp(ethMAC1, ethMAC2)) {
- 			puts("MATCH!");
+ 			puts("ALREADY IN PEERLIST!");
  			break;
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
@@ -598,7 +598,6 @@
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
- 		add_member(new_peer);
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
