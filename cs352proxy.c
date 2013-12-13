@@ -542,15 +542,11 @@
  	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
  	printf("CHECKING:%s\n", buf2);
- 	if (!strcmp(buf1, buf2)) {
- 		puts("LOCAL MACHINE INFO");
+ 	if (!strcmp(buf1, buf2) || !peer->net_fd) {
+ 		puts("LOCAL MACHINE INFO OR NET_FD = 0");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
- 	} else if (!peer->net_fd) {
- 		puts("NO NET_FD");
- 		pthread_mutex_unlock(&peer_mutex);
- 		return 0;
-  } else if (peers == NULL) {
+ 	} else if (peers == NULL) {
  		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
