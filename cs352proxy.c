@@ -300,7 +300,7 @@
  		new_peer->net_fd = new_fd;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
- 		if (!add_member(new_peer)) {
+ 		if (add_member(new_peer)) {
  			if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
  				perror("listen_thread");
  				exit(1);
