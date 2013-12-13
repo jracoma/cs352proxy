@@ -350,7 +350,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer)) return NULL;
+ 	if (!add_peer(peer) && peer->net_fd) return NULL;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -454,6 +454,7 @@
  	new_record->proxy2 = proxy2;
  	// add_peer(proxy1);
  	// add_peer(proxy2);
+ 	printf("inside createLSR: %d | %d\n", proxy1->net_fd, proxy2->net_fd);
  	if (add_peer(proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
@@ -461,7 +462,6 @@
  		}
  	}
  	if (add_peer(proxy2)) {
-
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -540,10 +540,10 @@
 
  	buf1 = send_peerList(peer);
  	buf2 = send_peerList(local_info);
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
  	printf("CHECKING:%s\n", buf2);
  	if (!strcmp(buf1, buf2)) {
- 		puts("LOCAL MACHINE INFO OR NET_FD = 0");
+ 		puts("LOCAL MACHINE INFO");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
