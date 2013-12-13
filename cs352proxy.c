@@ -211,7 +211,7 @@
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
+ 		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
  		if (size > 0) {
  			strncpy(buffer2, buffer, 6);
@@ -222,7 +222,7 @@
  				strncpy(buffer, buffer+7, sizeof(buffer));
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
- 				decode_linkStatePacket(buffer, peer->net_fd);
+ 				decode_linkStatePacket(buffer, peer->in_fd);
  				default:
  				printf("Negative.\n");
  			}
@@ -235,11 +235,11 @@
  		// 	pthread_mutex_unlock(&peer_mutex);
  		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", peer->net_fd, errno);
+ 			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
  			break;
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
- 			close(peer->net_fd);
+ 			close(peer->in_fd);
  			remove_peer(peer);
  			return NULL;
  		}
@@ -288,7 +288,7 @@
  			exit(1);
  		}
 
- 		new_peer->net_fd = new_fd;
+ 		new_peer->in_fd = new_fd;
  		new_peer->listenIP = client_addr.sin_addr;
  		new_peer->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
