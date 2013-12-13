@@ -448,7 +448,7 @@
  	struct timeval current_time;
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
 
- 	if (debug) puts("Creating new linkStateRecord:");
+ 	if (debug) printf("\nCreating new linkStateRecord:");
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
  	new_record->linkWeight = 1;
@@ -458,11 +458,10 @@
  	if (debug) print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
  	puts("here1");
- 	// if (add_record(new_record)) {
- 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
- 	// }
+	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
 
+ 	print_linkStateRecords();
  	return new_record;
  }
 
