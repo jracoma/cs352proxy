@@ -446,12 +446,14 @@
  	new_record->proxy2 = proxy2;
  	/* Verify peer isn't in the list, connect if it ins't */
  	if (add_peer(proxy1)) {
+ 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (add_peer(proxy2)) {
+ 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
