@@ -511,6 +511,8 @@
  	struct linkStateRecord *tmp;
  	printf("\n\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
+ 	if (records == NULL) return;
+
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
  	}
