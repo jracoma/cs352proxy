@@ -584,6 +584,7 @@
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
+ 			puts("UNF");
  			print_linkStateRecord(record);
  		}
  	}
