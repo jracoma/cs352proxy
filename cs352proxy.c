@@ -419,7 +419,6 @@
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
  	add_peer(peer);
- 	print_peerList();
  	print_linkStateRecords();
 
 
