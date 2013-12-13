@@ -595,7 +595,7 @@
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	// new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
@@ -609,10 +609,10 @@
  		getIP(next_field, ip);
  		next_field = ip;
  	}
- 	inet_aton(next_field, &new_peer->lsInfo->listenIP);
- 	new_peer->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
+ 	inet_aton(next_field, &new_peer->listenIP);
+ 	new_peer->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	readMAC(next_field, new_peer->lsInfo);
+ 	readMAC(next_field, new_peer);
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
