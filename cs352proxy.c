@@ -77,7 +77,7 @@
  int initLocalParams() {
  	struct ifreq ifr;
  	char buffer[MAXLINESIZE];
- 	local_info = (struct linkState *)malloc(sizeof(struct linkState));
+ 	local_info = (struct peerList *)malloc(sizeof(struct peerList));
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
 
