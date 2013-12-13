@@ -350,6 +350,8 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
+ 	if (!add_peer(peer)) return NULL;
+
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -368,6 +370,7 @@
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->listenIP), peer->listenPort);
  		if (debug) printf("errno: %d\n", errno);
+ 		remove_peer(peer);
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
@@ -387,7 +390,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - listenIP | listenPort | ethMAC */
- 	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ls->listenPort, (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
+ 	sprintf(buffer, "%s %d %02x:%02x:%02x:%02x:%02x:%02x ", inet_ntoa(ls->listenIP), ls->listenPort, (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	return buffer;
  }
 
@@ -398,7 +401,7 @@
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 %ld:%ld %d", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 %ld:%ld %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
  	strcat(buffer, send_peerList(local_info));
  	strcat(buffer, send_peerList(peer));
 
@@ -406,7 +409,7 @@
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
- 	if (debug) printf("Remote MAC: %s\n", buffer);
+ 	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
@@ -452,12 +455,14 @@
  	// add_peer(proxy1);
  	// add_peer(proxy2);
  	if (add_peer(proxy1)) {
+ 		puts("Attempting proxy1");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (add_peer(proxy2)) {
+ 		puts("Attempting proxy2");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -524,7 +529,6 @@
  	if (records == NULL) return;
 
  	HASH_ITER(hh, records, s, tmp) {
- 		puts("uno");
  		print_linkStateRecord(s);
  	}
  }
@@ -539,13 +543,12 @@
  	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
  	printf("CHECKING:%s\n", buf2);
- 	if (!strcmp(buf1, buf2)) {
- 		puts("LOCAL MACHINE INFO");
+ 	if (!strcmp(buf1, buf2) || !peer->net_fd) {
+ 		puts("LOCAL MACHINE INFO OR NET_FD = 0");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
- 	}
- 	if (peers == NULL) {
- 		puts("EMPTY PEERLIST");
+ 	} else if (peers == NULL) {
+ 		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		HASH_ITER(hh, peers, s, tmp) {

@@ -455,13 +455,14 @@
  	// add_peer(proxy1);
  	// add_peer(proxy2);
  	if (add_peer(proxy1)) {
+ 		puts("Attempting proxy1");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (add_peer(proxy2)) {
-
+ 		puts("Attempting proxy2");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
