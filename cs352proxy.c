@@ -743,6 +743,7 @@
  void *sleeper() {
  	sleep(quitAfter);
  	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+ 	printf("LOCAL INFO LEAVING: %s", send_peerList(local_info));
  	exit(1);
  }
 

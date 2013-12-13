@@ -76,11 +76,10 @@ struct dataPacket {
   char data[MAXBUFFSIZE];
 }__attribute__((packed));
 
-/* Struct for link state */
-struct linkState {
-  struct in_addr listenIP;
-  uint16_t listenPort;
-  struct sockaddr ethMAC;
+/* Struct for leave packet */
+struct leavePacket {
+  struct packetHeader *header;
+  struct peerList *peer;
 }__attribute__((packed));
 
 /* Struct for link state packet information */
