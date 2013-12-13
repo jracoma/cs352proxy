@@ -457,7 +457,9 @@
 
  	if (debug) print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
- 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	if (add_record(new_record)) {
+ 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	}
  	pthread_mutex_unlock(&linkstate_mutex);
 
  	return new_record;
@@ -645,7 +647,9 @@
 
  	print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
- 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	if (add_record(new_record)) {
+ 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	}
  	pthread_mutex_unlock(&linkstate_mutex);
  }
 
