@@ -375,6 +375,7 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
+ 		puts("test1");
  		send_singleLinkStatePacket(new_fd, peer);
 
  		lsPacket->neighbors = HASH_COUNT(peers);
@@ -396,6 +397,7 @@
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
+ 	puts("test2");
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer->lsInfo);
  	char *buffer = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
 
