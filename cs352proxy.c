@@ -375,7 +375,7 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		send_singleLinkStatePacket(new_fd, peer);
+ 		send_singleLinkStatePacket(peer);
 
  		lsPacket->neighbors = HASH_COUNT(peers);
  		// pthread_mutex_unlock(&peer_mutex);
@@ -386,7 +386,7 @@
  }
 
 /* Send linkState */
- char *send_linkState(struct peerList *ls) {
+ char *send_peerList(struct peerList *ls) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - listenIP | listenPort | ethMAC */
@@ -395,15 +395,15 @@
  }
 
 /* Send single linkStatePacket */
- void send_singleLinkStatePacket(int new_fd, struct peerList *peer) {
+ void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
  	char *buffer = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 %ld:%ld %d", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
- 	strcat(buffer, send_linkState(local_info));
- 	strcat(buffer, send_linkState(peer));
+ 	strcat(buffer, send_peerList(local_info));
+ 	strcat(buffer, send_peerList(peer));
 
  	send(new_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
@@ -421,7 +421,7 @@
  }
 
 /* Send linkStatePacket */
- void send_linkStatePacket(struct linkStatePacket *lsp) {
+ void send_peerListPacket(struct linkStatePacket *lsp) {
  	// char *buffer = malloc(MAXBUFFSIZE);
  	// struct peerList *peer;
 
@@ -584,7 +584,7 @@
  	printf("ATTEMPTING TO ADD RECORD\n");
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
- 		buf1 = send_linkState(record->proxy1);
+ 		buf1 = send_peerList(record->proxy1);
  		printf("test: %s\n", buf1);
  	}
 
