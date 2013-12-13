@@ -592,6 +592,11 @@
 	buf3 = send_peerList(s->proxy1);
 	buf4 = send_peerList(s->proxy2);
 			printf("CHECKING:\n%s | %s\n", buf3, buf4);
+			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
+				puts("EXISTS!");
+			} else {
+				puts("NEW!!");
+			}
  		}
  	}
 
