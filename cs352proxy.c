@@ -555,6 +555,8 @@
  	struct peerList *tmp, *s;
  	char *buf1, *buf2;
 
+ 	print_peerList();
+
  	buf1 = send_peerList(peer);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd);
 
