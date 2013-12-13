@@ -213,9 +213,11 @@
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
+ 				break;
  				case PACKET_LEAVE:
  				strncpy(buffer, buffer+10, sizeof(buffer));
  				decode_leavePacket(buffer);
+ 				break;
  				default:
  				printf("Negative.\n");
  			}
@@ -597,19 +599,28 @@
  		puts("EMPTY PEERLIST");
  		return 1;
  	} else {
- 		HASH_ITER(hh, peers, s, tmp) {
- 			buf2 = send_peerList(s);
- 			printf("CHECKING:%s\n", buf2);
- 			if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
- 				puts("REMOVED PEER");
- 				remove_record(s);
- 				HASH_DEL(peers, s);
- 				pthread_mutex_unlock(&peer_mutex);
- 				return 1;
- 			} else if (s->hh.next == NULL) {
- 				puts("PEER NOT FOUND");
- 			}
+ 		if ((tmp = find_peer(peer)) == NULL) {
+ 			puts("PEER NOT FOUND");
+ 		} else {
+ 			puts("REMOVED PEER");
+ 			remove_record(tmp);
+ 			HASH_DEL(peers, tmp);
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			return 1;
  		}
+ 		// HASH_ITER(hh, peers, s, tmp) {
+ 		// 	buf2 = send_peerList(s);
+ 		// 	printf("CHECKING:%s\n", buf2);
+ 		// 	if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
+ 		// 		puts("REMOVED PEER");
+ 		// 		remove_record(s);
+ 		// 		HASH_DEL(peers, s);
+ 		// 		pthread_mutex_unlock(&peer_mutex);
+ 		// 		return 1;
+ 		// 	} else if (s->hh.next == NULL) {
+ 		// 		puts("PEER NOT FOUND");
+ 		// 	}
+ 		// }
  	}
 
 
