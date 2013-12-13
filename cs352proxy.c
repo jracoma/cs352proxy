@@ -574,8 +574,8 @@
 
 /* Add new record */
  int add_record(struct linkStateRecord *record) {
- 	struct linkStateRecord *tmp, *s;
  	pthread_mutex_lock(&linkstate_mutex);
+ 	struct linkStateRecord *tmp, *s;
  	char *buf1, *buf2, *buf3, *buf4;
 
  	buf1 = send_peerList(record->proxy1);
@@ -592,14 +592,13 @@
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				pthread_mutex_unlock(&linkstate_mutex);
- 				return 0;
  				puts("EXISTS!");
+ 				return 0;
  			}
  		}
  	}
 
  	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
-
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
