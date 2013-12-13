@@ -568,7 +568,6 @@
  				pthread_mutex_unlock(&peer_mutex);
  				return 1;
  			} else if (s->hh.next == NULL) {
- 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  				puts("PEER NOT FOUND");
  			}
  		}
