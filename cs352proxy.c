@@ -443,6 +443,7 @@
  struct linkStateRecord *create_linkStateRecord(struct linkState *proxy1, struct linkState *proxy2) {
  	struct timeval current_time;
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+ 	memset(new_record, 0, sizeof(struct linkStateRecord));
 
  	if (debug) printf("\nCreating new linkStateRecord:");
  	gettimeofday(&current_time, NULL);
