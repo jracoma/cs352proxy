@@ -586,7 +586,7 @@
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
  			puts("UNF");
- 			print_linkStateRecord(record);
+ 			print_linkStateRecord(s);
  		}
  	}
 
