@@ -458,6 +458,7 @@
  		}
  	}
  	if (add_peer(proxy2)) {
+
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -545,8 +546,9 @@
  		return 0;
  	}
  	if (peers == NULL) {
- 		puts("EMPTY PEERLIST");
+ 		puts("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 		print_peerList(peer);
  	} else {
  		HASH_ITER(hh, peers, s, tmp) {
  			buf2 = send_peerList(s);
