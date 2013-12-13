@@ -531,7 +531,7 @@
  	// 	return 0;
  	// }
 
- 	HASH_FIND_INT(peers, peer->net_fd, tmp);
+ 	HASH_FIND_INT(peers, &peer->net_fd, tmp);
  	if (tmp == NULL) {
  		HASH_ADD_INT(peers, peer->net_fd, peer);
  	} else {
