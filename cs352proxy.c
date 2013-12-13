@@ -454,6 +454,7 @@
  	new_record->proxy2 = proxy2;
  	// add_peer(proxy1);
  	// add_peer(proxy2);
+ 	printf("inside createLSR: %d | %d\n", proxy1->net_fd, proxy2->net_fd);
  	if (add_peer(proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
@@ -461,7 +462,6 @@
  		}
  	}
  	if (add_peer(proxy2)) {
-
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
