@@ -730,7 +730,7 @@
  	inet_aton(next_field, &new_peerList->listenIP);
  	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	printf("2: %s\n", next_field)
+ 	printf("2: %s\n", next_field);
  	readMAC(next_field, new_peerList);
 
  	printf("PEER LEAVING: %s\n", send_peerList(new_peerList));
