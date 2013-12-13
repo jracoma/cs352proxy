@@ -469,7 +469,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	sprintf(buffer, "0x%x 20 %s", ntohs(PACKET_LEAVE), send_peerList(peer));
- 	printf("LEAVING AND SENDING: %s\n");
+ 	printf("LEAVING AND SENDING: %s\n", buffer);
  }
 
 /* Print packetHeader information */
