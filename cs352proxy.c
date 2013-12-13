@@ -646,7 +646,7 @@
  	print_linkStateRecord(new_record);
 
  	if (add_record(new_record)) {
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
