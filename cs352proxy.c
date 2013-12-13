@@ -350,6 +350,8 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
+ 	if (!add_peer(peer)) return NULL;
+
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -406,7 +408,7 @@
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
- 	if (debug) printf("Remote MAC: %s\n", buffer);
+ 	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
@@ -525,7 +527,6 @@
  	if (records == NULL) return;
 
  	HASH_ITER(hh, records, s, tmp) {
- 		puts("uno");
  		print_linkStateRecord(s);
  	}
  }
