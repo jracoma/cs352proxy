@@ -238,7 +238,7 @@
  		// 	pthread_mutex_unlock(&peer_mutex);
  		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", in_fd, errno);
+ 			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
  			break;
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
