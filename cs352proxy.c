@@ -214,7 +214,7 @@
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
  				case PACKET_LEAVE:
- 				strncpy(buffer, buffer+7, sizeof(buffer));
+ 				strncpy(buffer, buffer+10, sizeof(buffer));
  				decode_leavePacket(buffer);
  				default:
  				printf("Negative.\n");
