@@ -636,7 +636,7 @@
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
  		printf("CHECK: %s\n", buf2);
- 		if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
+ 		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd)) {
  			if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
  			return s;
  		}
