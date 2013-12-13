@@ -658,7 +658,7 @@
  }
 
 /* Decode linkStatePacket information */
- void decode_linkStatePacket(char *buffer, int net_fd) {
+ void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
@@ -686,21 +686,21 @@
  		puts("SINGLE LINKLIST!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
- 		send(net_fd, ethMAC, strlen(ethMAC), 0);
+ 		send(in_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(2);
- 		decode_singleLinkStateRecord(next_field);
+ 		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		puts("NOT SOLO!");
  	}
  }
 
 /* Decode linkStateRecord information */
- void decode_singleLinkStateRecord(char *buffer) {
+ void decode_singleLinkStateRecord(char *buffer, int in_fd) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
  	printf("\nDECODING: %s\n", buffer);
-
+ 	new_peerList->in_fd = in_fd;
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
  	new_record->linkWeight = atoi(strtok(NULL, " \n"));
