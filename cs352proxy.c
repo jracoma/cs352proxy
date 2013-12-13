@@ -530,6 +530,8 @@ if (!(add_member(peer))) return NULL;
 
  	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
 
+ 	if (!strcmp(ethMAC1,"00:00:00:00:00:00")) return 0;
+
  	printf("$$$ATTEMPTING TO ADD MEMBER: %s | CURRENT MEMBERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
