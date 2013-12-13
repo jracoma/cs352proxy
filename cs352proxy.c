@@ -559,7 +559,6 @@
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
  			puts("PEER FOUND!");
- 			if (!(tmp->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
  			pthread_mutex_unlock(&peer_mutex);
  			return 0;
  		}
@@ -638,6 +637,10 @@
  		buf2 = send_peerList(s);
  		printf("CHECK: %s\n", buf2);
  		if (!strcmp(buf1, buf2)) return s;
+ 		else if {
+ 			(!(tmp->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 			return s;
+ 		}
  	}
 
  	return tmp;
@@ -715,6 +718,8 @@
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
  	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
+
+
  }
 
 /* Decode linkStatePacket information */
