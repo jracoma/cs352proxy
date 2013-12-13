@@ -568,6 +568,8 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2;
 
+ 	printf("ATTEMPTING TO ADD RECORD\n");
+
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		buf1 = send_linkState(record->proxy1);
  		printf("test: %s\n", buf1);
