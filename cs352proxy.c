@@ -540,10 +540,10 @@
 
  	buf1 = send_peerList(peer);
  	buf2 = send_peerList(local_info);
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
  	printf("CHECKING:%s\n", buf2);
  	if (!strcmp(buf1, buf2)) {
- 		puts("LOCAL MACHINE INFO OR NET_FD = 0");
+ 		puts("LOCAL MACHINE INFO");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
