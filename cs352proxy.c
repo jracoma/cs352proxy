@@ -540,9 +540,8 @@
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp, *s;
- 	char *buf1, *buf2;
+ 	char *buf1 = send_peerList(peer), *buf2;
 
- 	buf1 = send_peerList(peer);
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	printf("CHECKING:%s\n", buf2);
@@ -578,11 +577,10 @@
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp, *s;
- 	char *buf1, *buf2;
+ 	char *buf1 = send_peerList(peer), *buf2;
 
  	print_peerList();
 
- 	buf1 = send_peerList(peer);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
 
  	if (peers == NULL) {
@@ -613,10 +611,8 @@
  int add_record(struct linkStateRecord *record) {
  	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
- 	char *buf1, *buf2, *buf3, *buf4;
+ 	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
- 	buf1 = send_peerList(record->proxy1);
- 	buf2 = send_peerList(record->proxy2);
  	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy1->in_fd);
 
  	puts("Checking proxy1 membership...");
@@ -663,9 +659,16 @@
 
 /* Remove peer from records */
 int remove_record(struct peerList *peer) {
-	char *buffer = send_peerList(peer);
+	struct linkStateRecord *tmp, *s;
+	char *buf1 = send_peerList(peer), *buf2;
 
 	printf("Removing: %s\n", buffer);
+	HASH_ITER(hh, records, s, tmp) {
+		buf2 = send_peerList(s);
+		if (!strcmp(buf1, buf2)) {
+			puts("delete!");
+		}
+	}
 
 	return 1;
 }
