@@ -63,7 +63,7 @@ struct packetHeader {
 struct peerList {
   char tapDevice[MAXBUFFSIZE];
   int net_fd;
-    struct in_addr listenIP;
+  struct in_addr listenIP;
   uint16_t listenPort;
   struct sockaddr ethMAC;
   UT_hash_handle hh;
