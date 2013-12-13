@@ -242,6 +242,7 @@
  			close(peer->in_fd);
  			remove_peer(peer);
  			print_peerList();
+ 			print_linkStateRecords();
  			return NULL;
  		}
  	}
@@ -658,6 +659,15 @@
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
+
+/* Remove peer from records */
+int remove_record(struct peerList *peer) {
+	char *buffer = send_peerList(peer);
+
+	printf("Removing: %s\n");
+
+	return 1;
+}
 
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
