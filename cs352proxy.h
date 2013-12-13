@@ -120,6 +120,7 @@ void print_linkStateRecord(struct linkStateRecord *record);
 void print_linkStateRecords();
 int add_peer(struct peerList *peer);
 int remove_peer(struct peerList *peer);
+struct peerList *find_peer(struct peerList *peer);
 int add_record(struct linkStateRecord *record);
 int remove_record(struct peerList *peer);
 void decode_leavePacket(char *buffer);

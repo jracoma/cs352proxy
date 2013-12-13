@@ -92,15 +92,6 @@
  	}
  	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
-	/* Obtain local MAC ID for tap10 */
-	//  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
-	//  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
-	//    perror("ioctl(SIOCGIFHWADDR)");
-	//    return EXIT_FAILURE;
-	//  }
-
-	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
-
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
@@ -153,7 +144,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
- 			 	/* Set quitAfter sleeper */
+		 	/* Set quitAfter sleeper */
  			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
@@ -208,6 +199,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
+ 	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
@@ -220,9 +212,10 @@
  			switch (type) {
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
- 					// printf("Received message: %d bytes\n", size);
- 					// printf("Received: %s\n", buffer);
  				decode_linkStatePacket(buffer, peer->in_fd);
+ 				case PACKET_LEAVE:
+ 				strncpy(buffer, buffer+10, sizeof(buffer));
+ 				decode_leavePacket(buffer);
  				default:
  				printf("Negative.\n");
  			}
@@ -257,15 +250,14 @@
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	// new_peer = (struct linkState *)malloc(sizeof(struct linkState));
 
-		/* Allows reuse of socket if not closed properly */
+	/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
  		perror("setsockopt");
  		exit(1);
  	}
 
-		/* Bind socket */
+	/* Bind socket */
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -277,7 +269,7 @@
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
 
-		/* Listens for connection, backlog 10 */
+	/* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
  		exit(1);
@@ -352,10 +344,8 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) {
- 		puts("bahumbug");
- 		return NULL;
-}
+ 	if (!add_peer(peer) && peer->net_fd) return NULL;
+
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -409,16 +399,17 @@
  	strcat(buffer, send_peerList(local_info));
  	strcat(buffer, send_peerList(peer));
 
+ 	/* Send linkStatePacket */
  	send(peer->net_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
+ 	/* Receive MAC Address and tapDevice */
  	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
  	/* Moving inside create linkStateRecord */
- 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
@@ -456,16 +447,16 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
- 	// add_peer(proxy1);
- 	// add_peer(proxy2);
- 	printf("inside createLSR: %d/%d | %d/%d\n", proxy1->net_fd, proxy1->in_fd, proxy2->net_fd, proxy2->in_fd);
+ 	/* Verify peer isn't in the list, connect if it ins't */
  	if (add_peer(proxy1)) {
+ 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (add_peer(proxy2)) {
+ 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -474,6 +465,15 @@
  	add_record(new_record);
 
  	return new_record;
+ }
+
+/* Sends leavePacket */
+ void send_leavePacket(struct peerList *leaving, struct peerList *sendto) {
+ 	char *buffer = malloc(MAXBUFFSIZE);
+
+ 	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(leaving));
+ 	printf("LEAVING AND SENDING: %s\n", buffer);
+ 	send(sendto->net_fd, buffer, strlen(buffer), 0);
  }
 
 /* Print packetHeader information */
@@ -642,6 +642,8 @@
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				puts("EXISTS!");
+ 				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
@@ -658,21 +660,26 @@
  }
 
 /* Remove peer from records */
-int remove_record(struct peerList *peer) {
-	struct linkStateRecord *tmp, *s;
-	char *buf1 = send_peerList(peer), *buf2, *buf3;
+ int remove_record(struct peerList *peer) {
+ 	struct linkStateRecord *tmp, *s;
+ 	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
-	printf("Removing: %s\n", buf1);
-	HASH_ITER(hh, records, s, tmp) {
-		buf2 = send_peerList(s->proxy1);
-		buf3 = send_peerList(s->proxy2);
-		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
-			HASH_DEL(records, s);
-		}
-	}
+ 	printf("Removing: %s\n", buf1);
+ 	HASH_ITER(hh, records, s, tmp) {
+ 		buf2 = send_peerList(s->proxy1);
+ 		buf3 = send_peerList(s->proxy2);
+ 		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
+ 			HASH_DEL(records, s);
+ 		}
+ 	}
 
-	return 1;
-}
+ 	return 1;
+ }
+
+/* Decode leavePacket */
+ void decode_leavePacket(char *buffer) {
+ 	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
+ }
 
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
@@ -752,10 +759,26 @@ int remove_record(struct peerList *peer) {
 
 /* Sleeper for quitAfter */
  void *sleeper() {
- 	// sleep(quitAfter);
- 	sleep(30);
+ 	struct peerList *s, *tmp;
+
+ 	sleep(quitAfter);
  	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+ 	print_peerList();
+ 	print_linkStateRecords();
+
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(local_info, s);
+ 	}
  	exit(1);
+ }
+
+/* Compare uniqueIDs */
+ int compare_uniqueID(struct timeval a, struct timeval b) {
+ 	if (a.tv_sec > b.tv_sec) return 1;
+ 	else if (a.tv_sec < b.tv_sec) return 0;
+ 	else if (a.tv_usec > b.tv_usec) return 1;
+ 	else if (a.tv_usec < b.tv_usec) return 0;
+ 	return 0;
  }
 
 /* Main */
@@ -803,8 +826,7 @@ int remove_record(struct peerList *peer) {
  // 		perror("socket_thread");
  // 		return EXIT_FAILURE;
  // 	}
-
-	/* Parse input file */
+ 	/* Parse input file */
  	if (parseInput(argc, argv)) {
  		perror("parseInput");
  		close(tap_fd);
