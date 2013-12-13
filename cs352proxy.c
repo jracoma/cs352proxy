@@ -380,20 +380,12 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		if (add_member(peer)) {
- 			send_singleLinkStatePacket(new_fd, peer);
- 		} else {
- 			return NULL;
- 		}
- 		// pthread_mutex_lock(&peer_mutex);
- 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		// if (debug) {
- 			// puts("After Add:\n");
- 			// print_peerList();
+ 		// if (add_member(peer)) {
+ 		// 	send_singleLinkStatePacket(new_fd, peer);
+ 		// } else {
+ 		// 	return NULL;
  		// }
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		puts("NEW PEER: Single link state record sent.");
- 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
@@ -425,7 +417,7 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
-
+ 	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
  	print_linkStateRecords();
@@ -597,11 +589,13 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(5);
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
- 			perror("connect_thread");
- 			pthread_exit(NULL);
+ 		if (add_member(new_peer)) {
+ 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 				perror("connect_thread");
+ 				pthread_exit(NULL);
+ 			}
+ 			decode_linkStateRecord(next_field);
  		}
- 		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
