@@ -362,6 +362,12 @@
  		exit(1);
  	}
 
+		/* Allows reuse of socket if not closed properly */
+ 	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
+ 		perror("setsockopt");
+ 		exit(1);
+ 	}
+
 		/* Bind socket */
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
