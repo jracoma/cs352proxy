@@ -613,7 +613,7 @@
 
  	buf1 = send_peerList(record->proxy1);
  	buf2 = send_peerList(record->proxy2);
- 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n - %d%s | %s - %d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, buf2, record->proxy2->net_fd);
+ 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d | %s - %d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, buf2, record->proxy2->net_fd);
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
