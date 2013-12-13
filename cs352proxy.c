@@ -616,7 +616,7 @@
  	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d | %s - %d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, buf2, record->proxy2->net_fd);
 
  	if (!(record->proxy1) || add_peer(record->proxy1)) {
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
