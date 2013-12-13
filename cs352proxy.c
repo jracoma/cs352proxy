@@ -594,6 +594,7 @@
  			printf("CHECKING:%s\n", buf2);
  			if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
  				puts("REMOVED PEER");
+ 				remove_record(s);
  				HASH_DEL(peers, s);
  				pthread_mutex_unlock(&peer_mutex);
  				return 1;
@@ -664,7 +665,7 @@
 int remove_record(struct peerList *peer) {
 	char *buffer = send_peerList(peer);
 
-	printf("Removing: %s\n");
+	printf("Removing: %s\n", buffer);
 
 	return 1;
 }
