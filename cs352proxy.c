@@ -246,6 +246,7 @@
  			return NULL;
  		}
  	}
+ 	if (debug) puts("Leaving handle_listen");
  	return NULL;
  }
 
@@ -393,6 +394,7 @@
  		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
+ 	if (debug) puts("Leaving connectToPeer");
  	return NULL;
  }
 
