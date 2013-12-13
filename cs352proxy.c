@@ -446,7 +446,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
- 	if (debug) printf("\nCreating new linkStateRecord:\n");
+ 	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
  	new_record->linkWeight = 1;
@@ -455,14 +455,13 @@
  	// add_peer(proxy1);
  	// add_peer(proxy2);
  	if (add_peer(proxy1)) {
- 		puts("Attempting proxy1");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (add_peer(proxy2)) {
- 		puts("Attempting proxy2");
+
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -543,7 +542,7 @@
  	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
  	printf("CHECKING:%s\n", buf2);
- 	if (!strcmp(buf1, buf2) || !peer->net_fd) {
+ 	if (!strcmp(buf1, buf2)) {
  		puts("LOCAL MACHINE INFO OR NET_FD = 0");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
