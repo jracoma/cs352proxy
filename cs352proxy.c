@@ -211,8 +211,8 @@
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
  	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
- 	// printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	while (1) {
+ 		puts("in while");
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
@@ -289,11 +289,6 @@
  			perror("accept");
  			exit(1);
  		}
-
- 			// if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)current) != 0) {
- 			// 	perror("connect_thread");
- 			// 	pthread_exit(NULL);
- 			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
  		new_peer->net_fd = new_fd;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
@@ -421,7 +416,6 @@
  	add_peer(peer);
  	print_linkStateRecords();
 
-
  	free(temp);
  	free(buffer);
  }
@@ -535,7 +529,7 @@
  	// 	return 0;
  	// }
 
- 	printf("$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
+ 	printf("\n$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
  	if (peers == NULL) {
  		puts("EMPTY!");
