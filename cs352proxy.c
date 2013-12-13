@@ -592,14 +592,10 @@
 	buf3 = send_peerList(s->proxy1);
 	buf4 = send_peerList(s->proxy2);
 			printf("CHECKING:\n%s | %s\n", buf3, buf4);
- 			print_linkStateRecord(s);
  		}
  	}
 
- 	free(buf1);
- 	free(buf2);
- 	free(buf3);
- 	free(buf4);
+
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
