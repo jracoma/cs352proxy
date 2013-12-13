@@ -113,7 +113,7 @@ struct linkStateRecord *create_linkStateRecord(struct peerList *proxy1, struct p
 void print_packetHeader(struct packetHeader *pkt);
 void print_peer(struct peerList *peer);
 void print_peerList();
-void print_linkState(struct linkState *ls);
+void print_linkState(struct peerList *ls);
 void print_linkStatePacket();
 void print_linkStateRecord(struct linkStateRecord *record);
 void print_linkStateRecords();
