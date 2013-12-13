@@ -590,6 +590,7 @@
  		puts("poop");
  	}
 
+ 	puts("OUT");
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
