@@ -668,8 +668,8 @@
  }
 
 /* String to MAC Address */
- void readMAC(char *buffer, struct linkState *new_linkState) {
- 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&new_linkState->ethMAC.sa_data[0], (unsigned char *)&new_linkState->ethMAC.sa_data[1], (unsigned char *)&new_linkState->ethMAC.sa_data[2], (unsigned char *)&new_linkState->ethMAC.sa_data[3], (unsigned char *)&new_linkState->ethMAC.sa_data[4], (unsigned char *)&new_linkState->ethMAC.sa_data[5]);
+ void readMAC(char *buffer, struct peerList *pl) {
+ 	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", (unsigned char *)&pl->ethMAC.sa_data[0], (unsigned char *)&pl->ethMAC.sa_data[1], (unsigned char *)&pl->ethMAC.sa_data[2], (unsigned char *)&pl->ethMAC.sa_data[3], (unsigned char *)&pl->ethMAC.sa_data[4], (unsigned char *)&pl->ethMAC.sa_data[5]);
  }
 
 /* Sleeper for quitAfter */
