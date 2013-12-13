@@ -628,6 +628,7 @@
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				puts("EXISTS!");
+ 				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID);
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
@@ -745,13 +746,13 @@
  }
 
 /* Compare uniqueIDs */
-int compare_uniqueID(struct timeval a, struct timeval b) {
-	if (a.tv_sec > b.tv_sec) return 1;
-	else if (a.tv_sec < b.tv_sec) return 0;
-	else if (a.tv_usec > b.tv_usec) return 1;
-	else if (a.tv_usec < b.tv_usec) return 0;
-	return 0;
-}
+ int compare_uniqueID(struct timeval a, struct timeval b) {
+ 	if (a.tv_sec > b.tv_sec) return 1;
+ 	else if (a.tv_sec < b.tv_sec) return 0;
+ 	else if (a.tv_usec > b.tv_usec) return 1;
+ 	else if (a.tv_usec < b.tv_usec) return 0;
+ 	return 0;
+ }
 
 /* Main */
  int main (int argc, char *argv[]) {
@@ -798,15 +799,7 @@ int compare_uniqueID(struct timeval a, struct timeval b) {
  // 		perror("socket_thread");
  // 		return EXIT_FAILURE;
  // 	}
-
- 	struct timeval a, b;
- 	gettimeofday(&a, NULL);
- 	sleep(1);
- 	gettimeofday(&b, NULL);
-
- 	printf("%ld:%ld VS %ld:%ld --- %d", a.tv_sec, a.tv_usec, b.tv_sec, b.tv_usec, compare_uniqueID(b, a));
-
-	/* Parse input file */
+ 	/* Parse input file */
  	if (parseInput(argc, argv)) {
  		perror("parseInput");
  		close(tap_fd);
