@@ -241,6 +241,7 @@
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->in_fd);
  			remove_peer(peer);
+ 			print_peerList();
  			return NULL;
  		}
  	}
