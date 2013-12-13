@@ -555,7 +555,14 @@
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
  			puts("Not Found!");
+ 			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 		} else {
+ 			puts("PEER FOUND!");
+ 			if (!(tmp->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			return 0;
  		}
+
 
  		// HASH_ITER(hh, peers, s, tmp) {
  		// 	buf2 = send_peerList(s);
