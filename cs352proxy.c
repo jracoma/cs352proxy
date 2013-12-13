@@ -361,17 +361,17 @@
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
- 	remote_addr.sin_port = htons(peer->lsInfo->listenPort);
- 	inet_aton((char *)inet_ntoa(peer->lsInfo->listenIP), &remote_addr.sin_addr);
+ 	remote_addr.sin_port = htons(peer->listenPort);
+ 	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
- 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->listenIP), peer->listenPort);
  		if (debug) printf("errno: %d\n", errno);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
