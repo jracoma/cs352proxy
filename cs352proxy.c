@@ -590,6 +590,7 @@
  		puts("poop");
  	}
 
+ 	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
@@ -664,7 +665,6 @@
 
  	print_linkStateRecord(new_record);
  	add_record(new_record);
- 	print_linkStateRecords();
  	// pthread_mutex_lock(&linkstate_mutex);
  	// 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	// pthread_mutex_unlock(&linkstate_mutex);
