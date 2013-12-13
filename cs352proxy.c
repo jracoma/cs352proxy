@@ -662,7 +662,7 @@ int remove_record(struct peerList *peer) {
 	struct linkStateRecord *tmp, *s;
 	char *buf1 = send_peerList(peer), *buf2;
 
-	printf("Removing: %s\n", buffer);
+	printf("Removing: %s\n", buf1);
 	HASH_ITER(hh, records, s, tmp) {
 		buf2 = send_peerList(s);
 		if (!strcmp(buf1, buf2)) {
