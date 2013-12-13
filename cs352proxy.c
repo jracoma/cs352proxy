@@ -524,7 +524,7 @@
  	struct peerList *tmp, *p;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
- 	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
+ 	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->ethMAC.sa_data[0], (unsigned char)peer->ethMAC.sa_data[1], (unsigned char)peer->ethMAC.sa_data[2], (unsigned char)peer->ethMAC.sa_data[3], (unsigned char)peer->ethMAC.sa_data[4], (unsigned char)peer->ethMAC.sa_data[5]);
 
  	// if (!strcmp(ethMAC1,"00:00:00:00:00:00")) {
  	// 	pthread_mutex_unlock(&peer_mutex);
