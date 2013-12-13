@@ -453,8 +453,7 @@
  	new_record->proxy2 = proxy2;
 
  	pthread_mutex_lock(&linkstate_mutex);
- 	puts("test");
- 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
+ 	HASH_ADD(hh, records, ethMAC, sizeof(struct sockaddr), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
 
  	return new_record;
