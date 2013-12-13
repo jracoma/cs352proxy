@@ -556,7 +556,7 @@
  	char *buf1, *buf2;
 
  	buf1 = send_peerList(peer);
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd);
 
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
