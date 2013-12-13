@@ -637,7 +637,7 @@
  		buf2 = send_peerList(s);
  		printf("CHECK: %s\n", buf2);
  		if (!strcmp(buf1, buf2)) return s;
- 		else if (!(tmp->in_fd) && (peer->in_fd)) {
+ 		else if (!(s->in_fd) && (peer->in_fd)) {
  			s->in_fd = peer->in_fd;
  			return s;
  		}
