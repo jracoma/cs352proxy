@@ -464,6 +464,14 @@
  	return new_record;
  }
 
+/* Sends leavePacket */
+ void send_leavePacket(struct peerList *peer) {
+ 	char *buffer = malloc(MAXBUFFSIZE);
+
+ 	sprintf(buffer, "0x%x 20 %s", ntohs(PACKET_LEAVE), send_peerList(peer));
+ 	printf("LEAVING AND SENDING: %s\n");
+ }
+
 /* Print packetHeader information */
  void print_packetHeader(struct packetHeader *pkt) {
  	printf("---PACKETHEADER: Type: 0x%x | Length: %d\n", ntohs(pkt->type), pkt->length);
@@ -746,7 +754,7 @@
  	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
  	print_peerList();
  	print_linkStateRecords();
- 	printf("LOCAL INFO LEAVING: %s\n", send_peerList(local_info));
+ 	send_leavePacket(local_info);
  	exit(1);
  }
 

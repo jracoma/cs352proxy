@@ -110,6 +110,7 @@ char *send_peerList(struct peerList *ls);
 void send_singleLinkStatePacket(struct peerList *peer);
 void send_linkStatePacket(struct linkStatePacket *lsp);
 struct linkStateRecord *create_linkStateRecord(struct peerList *proxy1, struct peerList *proxy2);
+void send_leavePacket(struct peerList *peer);
 void print_packetHeader(struct packetHeader *pkt);
 void print_peer(struct peerList *peer);
 void print_peerList();
