@@ -61,7 +61,7 @@ struct packetHeader {
 
 /* Struct for peer list */
 struct peerList {
-  struct linkState lsInfo;
+  struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
   int net_fd;
   UT_hash_handle hh;
