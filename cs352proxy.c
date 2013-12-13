@@ -622,7 +622,7 @@
  		// }
  	}
 
-
+ 	print_peerList();
  	pthread_mutex_unlock(&peer_mutex);
  	return 0;
  }
