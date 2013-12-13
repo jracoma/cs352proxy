@@ -288,7 +288,7 @@
  			exit(1);
  		}
 
- 		new_peer->in_fd = new_fd;
+ 		new_peer->net_fd = new_fd;
  		new_peer->listenIP = client_addr.sin_addr;
  		new_peer->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
