@@ -449,12 +449,7 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
-
- 	// pthread_mutex_lock(&linkstate_mutex);
- 	puts("here");
- 	// HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	add_record(new_record);
- 	// pthread_mutex_unlock(&linkstate_mutex);
 
  	return new_record;
  }
@@ -578,7 +573,7 @@
 
 /* Add new record */
  int add_record(struct linkStateRecord *record) {
- 	struct linkStateRecord *tmp;
+ 	struct linkStateRecord *tmp, *s;
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2;
 
@@ -588,7 +583,9 @@
  		puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
- 		puts("poop");
+ 		HASH_ITER(hh, records, s, tmp) {
+ 			print_linkStateRecord(record);
+ 		}
  	}
 
  	print_linkStateRecords();
