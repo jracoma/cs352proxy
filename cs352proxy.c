@@ -542,7 +542,7 @@
 
  	buf1 = send_peerList(peer);
  	buf2 = send_peerList(local_info);
- 	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	printf("CHECKING:%s\n", buf2);
  	if (!strcmp(buf1, buf2)) {
  		puts("LOCAL MACHINE INFO");
