@@ -595,6 +595,7 @@
  				puts("EXISTS!");
  				return 0;
  			} else if (s->hh.next == NULL) {
+ 				HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  				puts("ADDADD");
  			}
  		}
