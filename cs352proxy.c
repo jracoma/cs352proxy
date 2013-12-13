@@ -418,7 +418,7 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
- 	add_member(peer);
+ 	add_peer(peer);
  	print_peerList();
  	print_linkStateRecords();
 
@@ -524,7 +524,7 @@
  }
 
 /* Add new member */
- int add_member(struct peerList *peer) {
+ int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
@@ -536,7 +536,7 @@
  	// 	return 0;
  	// }
 
- 	printf("$$$ATTEMPTING TO ADD MEMBER: %s | CURRENT MEMBERS: %d\n", ethMAC1, HASH_COUNT(peers));
+ 	printf("$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
  	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
  		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
