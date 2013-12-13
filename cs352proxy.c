@@ -351,30 +351,14 @@
 
 /* Client Mode */
  void *connectToPeer(void *temp) {
- 	struct sockaddr_in remote_addr, local_addr;
- 	int new_fd, optval = 1;
+ 	struct sockaddr_in remote_addr;
+ 	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
- 		exit(1);
- 	}
-
-		/* Allows reuse of socket if not closed properly */
- 	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
- 		perror("setsockopt");
- 		exit(1);
- 	}
-
-		/* Bind socket */
- 	memset((char *)&local_addr, 0, sizeof(local_addr));
- 	local_addr.sin_family = AF_INET;
- 	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
- 	local_addr.sin_port = htons(local_info->listenPort);
- 	if (bind(new_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
- 		perror("bind");
  		exit(1);
  	}
 
