@@ -641,7 +641,7 @@
 /* Decode linkStateRecord information */
  void decode_linkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
- 	struct peerList *new_peerList = (struct linkState *)malloc(sizeof(struct linkState));
+ 	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
  	printf("\nDECODING: %s\n", buffer);
 
