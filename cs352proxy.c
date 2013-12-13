@@ -620,6 +620,7 @@
  		print_linkStateRecords();
  	}
  }
+
 /* Decode linkStateRecord information */
  void decode_linkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
