@@ -546,7 +546,7 @@
  		return 0;
  	}
  	if (peers == NULL) {
- 		puts("EMPTY PEERLIST: ADDING %s\n", buf1);
+ 		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		print_peerList(peer);
  	} else {
