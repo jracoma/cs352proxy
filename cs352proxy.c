@@ -295,8 +295,6 @@
  			// 	pthread_exit(NULL);
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
-
-
  		new_peer->net_fd = new_fd;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
@@ -531,10 +529,10 @@
 
  	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
 
- 	if (!strcmp(ethMAC1,"00:00:00:00:00:00")) {
- 		pthread_mutex_unlock(&peer_mutex);
- 		return 0;
- 	}
+ 	// if (!strcmp(ethMAC1,"00:00:00:00:00:00")) {
+ 	// 	pthread_mutex_unlock(&peer_mutex);
+ 	// 	return 0;
+ 	// }
 
  	printf("$$$ATTEMPTING TO ADD MEMBER: %s | CURRENT MEMBERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
