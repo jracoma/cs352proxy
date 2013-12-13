@@ -106,7 +106,7 @@ void *handle_listen(void *temp);
 void server(int port);
 void *handle_tap();
 void *connectToPeer(void *temp);
-char *send_linkState(struct linkState *ls);
+char *send_linkState(struct peerList *ls);
 void send_singleLinkStatePacket(int new_fd, struct peerList *peer);
 void send_linkStatePacket(struct linkStatePacket *lsp);
 struct linkStateRecord *create_linkStateRecord(struct peerList *proxy1, struct peerList *proxy2);
