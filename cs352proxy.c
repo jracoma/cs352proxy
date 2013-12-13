@@ -504,12 +504,12 @@
 
 /* Print linkStateRecords */
  void print_linkStateRecords() {
- 	struct linkStateRecord *tmp;
+ 	struct linkStateRecord *tmp, *s;
  	printf("\n\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
  	if (records == NULL) return;
 
- 	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
+	HASH_ITER(hh, records, s, tmp) {
  		puts("uno");
  		print_linkStateRecord(tmp);
  	}
