@@ -482,7 +482,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer);
- 	printf("--Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
+ 	printf("--Tap: %s | NET_FD: %d | IN_FD: %d\n", peer->tapDevice, peer->net_fd, peer->in_fd);
  }
 
 /* Print peers hash table */
