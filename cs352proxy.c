@@ -542,8 +542,6 @@
  	struct peerList *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2;
 
- 	struct peerList *test = find_peer(peer);
-
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	printf("CHECKING:%s\n", buf2);
@@ -555,19 +553,23 @@
  		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
- 		HASH_ITER(hh, peers, s, tmp) {
- 			buf2 = send_peerList(s);
- 			printf("CHECKING:%s\n", buf2);
- 			if (!strcmp(buf1, buf2)) {
- 				puts("EXISTS!");
- 				if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
- 				pthread_mutex_unlock(&peer_mutex);
- 				return 0;
- 			} else if (s->hh.next == NULL) {
- 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
- 				puts("PEER ADDED");
- 			}
+ 		if ((tmp = find_peer(peer)) == NULL) {
+ 			puts("Not Found!");
  		}
+
+ 		// HASH_ITER(hh, peers, s, tmp) {
+ 		// 	buf2 = send_peerList(s);
+ 		// 	printf("CHECKING:%s\n", buf2);
+ 		// 	if (!strcmp(buf1, buf2)) {
+ 		// 		puts("EXISTS!");
+ 		// 		if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 		// 		pthread_mutex_unlock(&peer_mutex);
+ 		// 		return 0;
+ 		// 	} else if (s->hh.next == NULL) {
+ 		// 		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 		// 		puts("PEER ADDED");
+ 		// 	}
+ 		// }
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -618,6 +620,7 @@
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
  		printf("CHECK: %s\n", buf2);
+ 		if (!strcmp(buf1, buf2)) return s;
  	}
 
  	return tmp;
