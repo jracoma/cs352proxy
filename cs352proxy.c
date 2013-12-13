@@ -465,12 +465,12 @@
  }
 
 /* Sends leavePacket */
- void send_leavePacket(struct peerList *peer) {
+ void send_leavePacket(struct peerList *leaving, struct peerList *sendto) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(peer));
+ 	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(leaving));
  	printf("LEAVING AND SENDING: %s\n", buffer);
- 	send(peer->net_fd, buffer, strlen(buffer), 0);
+ 	send(sendto->net_fd, buffer, strlen(buffer), 0);
  }
 
 /* Print packetHeader information */
@@ -751,11 +751,16 @@
 
 /* Sleeper for quitAfter */
  void *sleeper() {
+ 	struct peerList *s, *tmp;
+
  	sleep(quitAfter);
  	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
  	print_peerList();
  	print_linkStateRecords();
- 	send_leavePacket(local_info);
+
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(local_info, s);
+ 	}
  	exit(1);
  }
 
