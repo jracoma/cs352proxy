@@ -511,7 +511,7 @@
 
 	HASH_ITER(hh, records, s, tmp) {
  		puts("uno");
- 		print_linkStateRecord(tmp);
+ 		print_linkStateRecord(s);
  	}
  }
 
