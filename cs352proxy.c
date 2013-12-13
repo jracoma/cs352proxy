@@ -443,7 +443,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
- 	if (debug) printf("\nCreating new linkStateRecord:");
+ 	if (debug) printf("\nCreating new linkStateRecord:\n");
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
  	new_record->linkWeight = 1;
@@ -510,6 +510,7 @@
  	if (records == NULL) return;
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
+ 		puts("uno");
  		print_linkStateRecord(tmp);
  	}
  }
