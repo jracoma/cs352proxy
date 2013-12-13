@@ -628,7 +628,7 @@
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				puts("EXISTS!");
- 				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID);
+ 				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
