@@ -380,12 +380,14 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		// if (add_member(peer)) {
- 		// 	send_singleLinkStatePacket(new_fd, peer);
- 		// } else {
- 		// 	return NULL;
- 		// }
+ 		if (add_member(peer)) {
+ 			send_singleLinkStatePacket(new_fd, peer);
+ 		} else {
+ 			return NULL;
+ 		}
+
  		lsPacket->neighbors = HASH_COUNT(peers);
+ 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
@@ -589,13 +591,11 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(5);
- 		if (add_member(new_peer)) {
- 			if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
- 				perror("connect_thread");
- 				pthread_exit(NULL);
- 			}
- 			decode_linkStateRecord(next_field);
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
  		}
+ 		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
