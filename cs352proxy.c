@@ -721,10 +721,6 @@
 	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
  	printf("\nDECODING: %s\n", buffer);
- 	new_peerList->in_fd = in_fd;
- 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
- 	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
- 	new_record->linkWeight = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
