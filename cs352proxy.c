@@ -406,7 +406,7 @@
  	strcat(buffer, send_peerList(peer));
 
  	send(peer->net_fd, buffer, strlen(buffer), 0);
- 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
+ 	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
