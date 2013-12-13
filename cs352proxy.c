@@ -212,7 +212,6 @@
 
  	printf("Client connected from %s:%d.\n", inet_ntoa(peer->listenIP), peer->listenPort);
  	while (1) {
- 		puts("in while");
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
@@ -661,7 +660,6 @@
 
  	print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
- 	puts("here");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
