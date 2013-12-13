@@ -560,6 +560,19 @@
  	return 1;
  }
 
+/* Add new record */
+ int add_record(struct linkStateRecord *record) {
+ 	struct linkStateRecord *tmp;
+ 	pthread_mutex_lock(&linkstate_mutex);
+
+ 	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
+ 		printf("test: %s\n", send_linkState(record->proxy1));
+ 	}
+
+ 	pthread_mutex_unlock(&linkstate_mutex);
+ 	return 1;
+ }
+
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
