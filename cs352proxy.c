@@ -531,29 +531,40 @@
  	// 	return 0;
  	// }
 
- 	printf("\n$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
- 	/* Verify MAC address does not already exist */
- 	if (peers == NULL) {
- 		puts("EMPTY!");
- 		HASH_ADD_INT(peers, net_fd, peer);
+ 	HASH_FIND_INT(peers, peer->net_fd, tmp);
+ 	if (tmp == NULL) {
+ 		HASH_ADD_INT(peers, peer->net_fd, peer);
  	} else {
- 		for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
- 			sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
- 			printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
-
- 			if (!strcmp(ethMAC1, ethMAC2)) {
- 				puts("ALREADY IN PEERLIST!");
- 				free(ethMAC1);
- 				free(ethMAC2);
- 				pthread_mutex_unlock(&peer_mutex);
- 				return 0;
- 			} else if (tmp->hh.next == NULL) {
- 				puts("ADDING NEW");
- 				HASH_ADD_INT(peers, net_fd, peer);
- 				break;
- 			}
- 		}
+ 		puts("ALREADY EXISTS!!");
+ 		free(ethMAC1);
+ 	free(ethMAC2);
+ 	pthread_mutex_unlock(&peer_mutex);
+ 	return 0;
  	}
+
+ 	// printf("\n$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
+ 	// /* Verify MAC address does not already exist */
+ 	// if (peers == NULL) {
+ 	// 	puts("EMPTY!");
+ 	// 	HASH_ADD_INT(peers, net_fd, peer);
+ 	// } else {
+ 	// 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
+ 	// 		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
+ 	// 		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
+
+ 	// 		if (!strcmp(ethMAC1, ethMAC2)) {
+ 	// 			puts("ALREADY IN PEERLIST!");
+ 	// 			free(ethMAC1);
+ 	// 			free(ethMAC2);
+ 	// 			pthread_mutex_unlock(&peer_mutex);
+ 	// 			return 0;
+ 	// 		} else if (tmp->hh.next == NULL) {
+ 	// 			puts("ADDING NEW");
+ 	// 			HASH_ADD_INT(peers, net_fd, peer);
+ 	// 			break;
+ 	// 		}
+ 	// 	}
+ 	// }
 
  	free(ethMAC1);
  	free(ethMAC2);
