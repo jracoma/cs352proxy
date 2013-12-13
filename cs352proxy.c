@@ -208,7 +208,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
- 	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
+ 	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
