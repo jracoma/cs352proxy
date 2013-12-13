@@ -526,7 +526,7 @@
  	buf1 = send_peerList(peer);
  	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
-
+printf("CHECKING:%s\n", buf2);
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
