@@ -622,6 +622,13 @@
  		}
  	}
 
+ 	if (!(record->proxy2) || add_peer(record->proxy2)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
