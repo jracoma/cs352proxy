@@ -590,7 +590,7 @@
  		HASH_ITER(hh, peers, s, tmp) {
  			buf2 = send_peerList(s);
  			printf("CHECKING:%s\n", buf2);
- 			if (!strcmp(buf1, buf2)) {
+ 			if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
  				puts("REMOVED PEER");
  				HASH_DEL(peers, s);
  				pthread_mutex_unlock(&peer_mutex);
