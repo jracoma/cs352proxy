@@ -550,6 +550,7 @@
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp, *s;
+ 	char *buf1, *buf2;
 
  	buf1 = send_peerList(peer);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s\n", HASH_COUNT(peers), buf1);
