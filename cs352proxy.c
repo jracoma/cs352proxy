@@ -451,6 +451,7 @@
  	new_record->proxy2 = proxy2;
 
  	pthread_mutex_lock(&linkstate_mutex);
+ 	puts("here");
  	// HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	add_record(new_record);
  	pthread_mutex_unlock(&linkstate_mutex);
