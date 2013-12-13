@@ -524,12 +524,18 @@
  	char *buf1, *buf2;
 
  	buf1 = send_peerList(peer);
+ 	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
 
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
+ 		if (!strcmp(buf1, buf2)) {
+ 			puts("LOCAL MACHINE INFO");
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			return 0;
+ 		}
  		HASH_ITER(hh, peers, s, tmp) {
  			buf2 = send_peerList(s);
  			printf("CHECKING:%s\n", buf2);
