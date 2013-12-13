@@ -353,9 +353,9 @@
  	struct peerList *peer = (struct peerList *)temp;
 
  	if (!add_peer(peer) && peer->net_fd) {
- 		puts("bahumbug");
+ 		puts("KAS::AFAF:KLSDF");
  		return NULL;
-}
+ 	}
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -658,21 +658,21 @@
  }
 
 /* Remove peer from records */
-int remove_record(struct peerList *peer) {
-	struct linkStateRecord *tmp, *s;
-	char *buf1 = send_peerList(peer), *buf2, *buf3;
+ int remove_record(struct peerList *peer) {
+ 	struct linkStateRecord *tmp, *s;
+ 	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
-	printf("Removing: %s\n", buf1);
-	HASH_ITER(hh, records, s, tmp) {
-		buf2 = send_peerList(s->proxy1);
-		buf3 = send_peerList(s->proxy2);
-		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
-			HASH_DEL(records, s);
-		}
-	}
+ 	printf("Removing: %s\n", buf1);
+ 	HASH_ITER(hh, records, s, tmp) {
+ 		buf2 = send_peerList(s->proxy1);
+ 		buf3 = send_peerList(s->proxy2);
+ 		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
+ 			HASH_DEL(records, s);
+ 		}
+ 	}
 
-	return 1;
-}
+ 	return 1;
+ }
 
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
