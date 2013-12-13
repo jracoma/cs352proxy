@@ -410,7 +410,8 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
- 	add_peer(peer);
+ 	/* Moving inside create linkStateRecord */
+ 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
@@ -448,6 +449,8 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
+ 	add_peer(proxy1);
+ 	add_peer(proxy2);
  	add_record(new_record);
 
  	return new_record;
@@ -644,7 +647,7 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(2);
- 		decode_linkStateRecord(next_field);
+ 		decode_singleLinkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
@@ -655,7 +658,7 @@
  }
 
 /* Decode linkStateRecord information */
- void decode_linkStateRecord(char *buffer) {
+ void decode_singleLinkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
