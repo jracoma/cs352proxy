@@ -660,7 +660,7 @@
  			buf4 = send_peerList(s->proxy2);
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
- 				puts("EXISTS!");
+ 				puts("RECORD EXISTS!");
  				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
  				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
