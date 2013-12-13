@@ -548,6 +548,9 @@
 
  			if (!strcmp(ethMAC1, ethMAC2)) {
  				puts("ALREADY IN PEERLIST!");
+ 				free(ethMAC1);
+ 				free(ethMAC2);
+ 				pthread_mutex_unlock(&peer_mutex);
  				return 0;
  			} else if (tmp->hh.next == NULL) {
  				puts("ADDING NEW");
@@ -557,6 +560,8 @@
  		}
  	}
 
+ 	free(ethMAC1);
+ 	free(ethMAC2);
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
