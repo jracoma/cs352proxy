@@ -678,7 +678,7 @@
 
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
- 	puts("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
+ 	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
  }
 
 /* Decode linkStatePacket information */
