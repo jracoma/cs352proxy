@@ -213,9 +213,11 @@
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
+ 				break;
  				case PACKET_LEAVE:
  				strncpy(buffer, buffer+10, sizeof(buffer));
  				decode_leavePacket(buffer);
+ 				break;
  				default:
  				printf("Negative.\n");
  			}
@@ -544,7 +546,6 @@
 
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
- 	printf("CHECKING:%s\n", buf2);
  	if (!strcmp(buf1, buf2)) {
  		puts("LOCAL MACHINE INFO");
  		pthread_mutex_unlock(&peer_mutex);
@@ -553,19 +554,29 @@
  		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
- 		HASH_ITER(hh, peers, s, tmp) {
- 			buf2 = send_peerList(s);
- 			printf("CHECKING:%s\n", buf2);
- 			if (!strcmp(buf1, buf2)) {
- 				puts("EXISTS!");
- 				if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
- 				pthread_mutex_unlock(&peer_mutex);
- 				return 0;
- 			} else if (s->hh.next == NULL) {
- 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
- 				puts("PEER ADDED");
- 			}
+ 		if ((tmp = find_peer(peer)) == NULL) {
+ 			puts("Not Found!");
+ 			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 		} else {
+ 			puts("PEER FOUND!");
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			return 0;
  		}
+
+
+ 		// HASH_ITER(hh, peers, s, tmp) {
+ 		// 	buf2 = send_peerList(s);
+ 		// 	printf("CHECKING:%s\n", buf2);
+ 		// 	if (!strcmp(buf1, buf2)) {
+ 		// 		puts("EXISTS!");
+ 		// 		if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 		// 		pthread_mutex_unlock(&peer_mutex);
+ 		// 		return 0;
+ 		// 	} else if (s->hh.next == NULL) {
+ 		// 		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 		// 		puts("PEER ADDED");
+ 		// 	}
+ 		// }
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -587,24 +598,51 @@
  		puts("EMPTY PEERLIST");
  		return 1;
  	} else {
- 		HASH_ITER(hh, peers, s, tmp) {
- 			buf2 = send_peerList(s);
- 			printf("CHECKING:%s\n", buf2);
- 			if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
- 				puts("REMOVED PEER");
- 				remove_record(s);
- 				HASH_DEL(peers, s);
- 				pthread_mutex_unlock(&peer_mutex);
- 				return 1;
- 			} else if (s->hh.next == NULL) {
- 				puts("PEER NOT FOUND");
- 			}
+ 		if ((tmp = find_peer(peer)) == NULL) {
+ 			puts("PEER NOT FOUND");
+ 		} else {
+ 			puts("REMOVED PEER");
+ 			remove_record(tmp);
+ 			HASH_DEL(peers, tmp);
+ 			pthread_mutex_unlock(&peer_mutex);
+ 			return 1;
  		}
+ 		// HASH_ITER(hh, peers, s, tmp) {
+ 		// 	buf2 = send_peerList(s);
+ 		// 	printf("CHECKING:%s\n", buf2);
+ 		// 	if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
+ 		// 		puts("REMOVED PEER");
+ 		// 		remove_record(s);
+ 		// 		HASH_DEL(peers, s);
+ 		// 		pthread_mutex_unlock(&peer_mutex);
+ 		// 		return 1;
+ 		// 	} else if (s->hh.next == NULL) {
+ 		// 		puts("PEER NOT FOUND");
+ 		// 	}
+ 		// }
  	}
 
 
  	pthread_mutex_unlock(&peer_mutex);
  	return 0;
+ }
+
+/* Find specified peer */
+ struct peerList *find_peer(struct peerList *peer) {
+ 	struct peerList *tmp, *s;
+ 	char *buf1 = send_peerList(peer), *buf2;
+
+ 	printf("LOOKING FOR: %s\n", buf1);
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		buf2 = send_peerList(s);
+ 		printf("CHECK: %s\n", buf2);
+ 		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd)) {
+ 			if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 			return s;
+ 		}
+ 	}
+
+ 	return tmp;
  }
 
 /* Add new record */
@@ -615,7 +653,7 @@
 
  	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy1->in_fd);
 
- 	puts("Checking proxy1 membership...");
+ 	printf("\nChecking proxy1 membership...");
  	if (!(record->proxy1) || add_peer(record->proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
@@ -623,7 +661,7 @@
  		}
  	}
 
- 	puts("Checking proxy2 membership...");
+ 	printf("\nChecking proxy2 membership...");
  	if (!(record->proxy2) || add_peer(record->proxy2)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
@@ -641,7 +679,7 @@
  			buf4 = send_peerList(s->proxy2);
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
- 				puts("EXISTS!");
+ 				puts("RECORD EXISTS!");
  				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
  				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
@@ -679,6 +717,26 @@
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
  	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
+
+	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
+ 	char *next_field, ip[100];
+ 	printf("\nDECODING: %s\n", buffer);
+ 	next_field = strtok(buffer, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &leaving->listenIP);
+ 	leaving->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, leaving);
+
+ 	printf("PEER LEAVING: %s\n", send_peerList(leaving));
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(leaving, s);
+ 	}
+ 	remove_peer(leaving);
+ 	remove_record(leaving);
  }
 
 /* Decode linkStatePacket information */
@@ -742,14 +800,6 @@
 
  	print_linkStateRecord(new_record);
  	add_record(new_record);
-
- 	/* Moving inside add_record */
- 	// if (add_record(new_record)) {
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
  }
 
 /* String to MAC Address */
