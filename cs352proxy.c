@@ -598,7 +598,7 @@
  		}
  	}
 
- 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
+ 	// HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
