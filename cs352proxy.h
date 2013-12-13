@@ -85,7 +85,7 @@ struct linkState {
 /* Struct for link state packet information */
 struct linkStatePacket {
   struct packetHeader *header;
-  struct linkState *source;
+  struct peerList *source;
   uint16_t neighbors;
 }__attribute__((packed));
 
