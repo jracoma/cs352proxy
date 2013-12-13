@@ -557,6 +557,7 @@
  			printf("CHECKING:%s\n", buf2);
  			if (!strcmp(buf1, buf2)) {
  				puts("EXISTS!");
+ 				if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
  				pthread_mutex_unlock(&peer_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
