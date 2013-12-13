@@ -357,6 +357,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
+if (!(add_member(peer))) return NULL;
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -380,11 +381,7 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		if (add_member(peer)) {
  			send_singleLinkStatePacket(new_fd, peer);
- 		} else {
- 			return NULL;
- 		}
 
  		lsPacket->neighbors = HASH_COUNT(peers);
  		// pthread_mutex_unlock(&peer_mutex);
