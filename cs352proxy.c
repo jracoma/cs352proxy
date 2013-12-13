@@ -631,6 +631,7 @@
  		}
  	}
 
+ 	puts("Now to the adding the record...");
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
@@ -690,10 +691,6 @@
  		decode_singleLinkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
- 	}
-
- 	if (debug) {
- 		print_linkStateRecords();
  	}
  }
 

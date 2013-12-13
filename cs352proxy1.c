@@ -350,8 +350,10 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) return NULL;
-
+ 	if (!add_peer(peer) && peer->net_fd) {
+ 		puts("bahumbug");
+ 		return NULL;
+}
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -611,8 +613,25 @@
 
  	buf1 = send_peerList(record->proxy1);
  	buf2 = send_peerList(record->proxy2);
- 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s | %s\n", HASH_COUNT(records), buf1, buf2);
+ 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d | %s - %d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, buf2, record->proxy2->net_fd);
 
+ 	puts("Checking proxy1 membership...");
+ 	if (!(record->proxy1) || add_peer(record->proxy1)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+
+ 	puts("Checking proxy2 membership...");
+ 	if (!(record->proxy2) || add_peer(record->proxy2)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+
+ 	puts("Now to the adding the record...");
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
@@ -633,6 +652,7 @@
  	}
 
  	print_linkStateRecords();
+ 	print_peerList();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
@@ -640,7 +660,6 @@
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	// new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
@@ -672,10 +691,6 @@
  		decode_singleLinkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
- 	}
-
- 	if (debug) {
- 		print_linkStateRecords();
  	}
  }
 
