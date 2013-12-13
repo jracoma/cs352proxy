@@ -578,12 +578,15 @@
  	struct linkStateRecord *tmp;
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2;
+ 	memset(&key, 0, sizeof(struct linkStateRecord));
 
  	printf("ATTEMPTING TO ADD RECORD\n");
 
- 	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
- 		buf1 = send_peerList(record->proxy1);
- 		printf("test: %s\n", buf1);
+ 	if (records == NULL) {
+ 		puts("EMPTY RECORDS");
+ 		HASH_ADD(hh, records, uniqueID, sizeof(timeval), tmp);
+ 	} else {
+ 		puts("poop");
  	}
 
  	pthread_mutex_unlock(&linkstate_mutex);
