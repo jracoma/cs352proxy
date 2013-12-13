@@ -126,3 +126,5 @@ void decode_linkStatePacket(char *buffer, int in_fd);
 void decode_singleLinkStateRecord(char *buffer, int in_fd);
 void readMAC(char *buffer, struct peerList *pl);
 void *sleeper();
+int compare_uniqueID(struct timeval a, struct timeval b);
+

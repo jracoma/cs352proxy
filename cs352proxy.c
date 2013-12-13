@@ -396,16 +396,17 @@
  	strcat(buffer, send_peerList(local_info));
  	strcat(buffer, send_peerList(peer));
 
+ 	/* Send linkStatePacket */
  	send(peer->net_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
+ 	/* Receive MAC Address and tapDevice */
  	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
  	/* Moving inside create linkStateRecord */
- 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
@@ -443,9 +444,7 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
- 	// add_peer(proxy1);
- 	// add_peer(proxy2);
- 	printf("inside createLSR: %d/%d | %d/%d\n", proxy1->net_fd, proxy1->in_fd, proxy2->net_fd, proxy2->in_fd);
+ 	/* Verify peer isn't in the list, connect if it ins't */
  	if (add_peer(proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
@@ -745,6 +744,15 @@
  	exit(1);
  }
 
+/* Compare uniqueIDs */
+int compare_uniqueID(struct timeval a, struct timeval b) {
+	if (a.tv_sec > b.tvsec) return 1;
+	else if (a.tv_sec < b.tv_sec) return 0;
+	else if (a.tv_usec > b.tv_usec) return 1;
+	else if (a.tv_usec < b.tv_usec) return 0;
+	return 0;
+}
+
 /* Main */
  int main (int argc, char *argv[]) {
  	if (debug) {
@@ -790,6 +798,12 @@
  // 		perror("socket_thread");
  // 		return EXIT_FAILURE;
  // 	}
+
+ 	struct timeval a, b;
+ 	gettimeofday(a, NULL);
+ 	gettimeofday(b, NULL);
+
+ 	printf("%ld:%ld VS %ld:%ld --- %d", a.tv_sec, a.tv_usec, b.tv_sec, b.tv_usec, compare_uniqueID(a, b));
 
 	/* Parse input file */
  	if (parseInput(argc, argv)) {
