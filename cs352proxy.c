@@ -578,7 +578,6 @@
  	struct linkStateRecord *tmp;
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2;
- 	memset(&key, 0, sizeof(struct linkStateRecord));
 
  	printf("ATTEMPTING TO ADD RECORD\n");
 
