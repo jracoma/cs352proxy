@@ -718,7 +718,7 @@
  void decode_leavePacket(char *buffer) {
  	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
 
-	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
+	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
  	char *next_field, ip[100];
  	printf("\nDECODING: %s\n", buffer);
  	next_field = strtok(buffer, " \n");
@@ -726,12 +726,17 @@
  		getIP(next_field, ip);
  		next_field = ip;
  	}
- 	inet_aton(next_field, &new_peerList->listenIP);
- 	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
+ 	inet_aton(next_field, &leaving->listenIP);
+ 	leaving->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	readMAC(next_field, new_peerList);
+ 	readMAC(next_field, leaving);
 
- 	printf("PEER LEAVING: %s\n", send_peerList(new_peerList));
+ 	printf("PEER LEAVING: %s\n", send_peerList(leaving));
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(leaving, s);
+ 	}
+ 	remove_peer(leaving);
+ 	remove_record(leaving);
  }
 
 /* Decode linkStatePacket information */
