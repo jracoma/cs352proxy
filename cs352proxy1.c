@@ -161,7 +161,6 @@
  		}
  		else if (!strcmp(next_field, "peer")) {
  			current = (struct peerList *)malloc(sizeof(struct peerList));
- 			// current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
@@ -376,7 +375,6 @@
  		send_singleLinkStatePacket(peer);
 
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
@@ -518,55 +516,30 @@
 /* Add new member */
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	struct peerList *tmp, *p;
- 	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
+ 	struct peerList *tmp, *s;
+ 	char *buf1, *buf2;
 
- 	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->ethMAC.sa_data[0], (unsigned char)peer->ethMAC.sa_data[1], (unsigned char)peer->ethMAC.sa_data[2], (unsigned char)peer->ethMAC.sa_data[3], (unsigned char)peer->ethMAC.sa_data[4], (unsigned char)peer->ethMAC.sa_data[5]);
+ 	buf1 = send_peerList(peer);
+ 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER:\n%s\n", HASH_COUNT(peers), buf1);
 
- 	// if (!strcmp(ethMAC1,"00:00:00:00:00:00")) {
- 	// 	pthread_mutex_unlock(&peer_mutex);
- 	// 	return 0;
- 	// }
+ 	if (peers == NULL) {
+ 		puts("EMPTY PEERLIST");
+ 		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 	} else {
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			buf2 = send_peerList(s);
+ 			printf("CHECKING:\n%s\n", buf2);
+ 			if (!strcmp(buf1, buf2)) {
+ 				puts("EXISTS!");
+ 				pthread_mutex_unlock(&peer_mutex);
+ 				return 0;
+ 			} else if (s->hh.next == NULL) {
+ 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 				puts("PEER ADDED");
+ 			}
+ 		}
+ 	}
 
-
-
- 	// HASH_FIND_INT(peers, &peer->net_fd, tmp);
- 	// if (tmp == NULL) {
- 	// 	HASH_ADD_INT(peers, net_fd, peer);
- 	// } else {
- 	// 	puts("ALREADY EXISTS!!");
- 	// 	free(ethMAC1);
- 	// free(ethMAC2);
- 	// pthread_mutex_unlock(&peer_mutex);
- 	// return 0;
- 	// }
-
- 	// printf("\n$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
- 	// /* Verify MAC address does not already exist */
- 	// if (peers == NULL) {
- 	// 	puts("EMPTY!");
- 	// 	HASH_ADD_INT(peers, net_fd, peer);
- 	// } else {
- 	// 	for (tmp = peers; tmp != NULL; tmp = tmp->hh.next) {
- 	// 		sprintf(ethMAC2, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)tmp->lsInfo->ethMAC.sa_data[0], (unsigned char)tmp->lsInfo->ethMAC.sa_data[1], (unsigned char)tmp->lsInfo->ethMAC.sa_data[2], (unsigned char)tmp->lsInfo->ethMAC.sa_data[3], (unsigned char)tmp->lsInfo->ethMAC.sa_data[4], (unsigned char)tmp->lsInfo->ethMAC.sa_data[5]);
- 	// 		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
-
- 	// 		if (!strcmp(ethMAC1, ethMAC2)) {
- 	// 			puts("ALREADY IN PEERLIST!");
- 	// 			free(ethMAC1);
- 	// 			free(ethMAC2);
- 	// 			pthread_mutex_unlock(&peer_mutex);
- 	// 			return 0;
- 	// 		} else if (tmp->hh.next == NULL) {
- 	// 			puts("ADDING NEW");
- 	// 			HASH_ADD_INT(peers, net_fd, peer);
- 	// 			break;
- 	// 		}
- 	// 	}
- 	// }
-
- 	free(ethMAC1);
- 	free(ethMAC2);
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
@@ -574,32 +547,32 @@
 
 /* Add new record */
  int add_record(struct linkStateRecord *record) {
- 	struct linkStateRecord *tmp, *s;
  	pthread_mutex_lock(&linkstate_mutex);
+ 	struct linkStateRecord *tmp, *s;
  	char *buf1, *buf2, *buf3, *buf4;
 
-	buf1 = send_peerList(record->proxy1);
-	buf2 = send_peerList(record->proxy2);
- 	if (debug) printf("ATTEMPTING TO ADD RECORD:\n%s | %s\n", buf1, buf2);
+ 	buf1 = send_peerList(record->proxy1);
+ 	buf2 = send_peerList(record->proxy2);
+ 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s | %s\n", HASH_COUNT(records), buf1, buf2);
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
- 			// memset(buf1, 0, MAXBUFFSIZE);
- 			// memset(buf2, 0, MAXBUFFSIZE);
-	buf3 = send_peerList(s->proxy1);
-	buf4 = send_peerList(s->proxy2);
-			printf("CHECKING:\n%s | %s\n", buf3, buf4);
-			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
-				puts("EXISTS!");
-			} else {
-				puts("NEW!!");
-			}
+ 			buf3 = send_peerList(s->proxy1);
+ 			buf4 = send_peerList(s->proxy2);
+ 			printf("CHECKING:\n%s | %s\n", buf3, buf4);
+ 			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
+ 				puts("EXISTS!");
+ 				pthread_mutex_unlock(&linkstate_mutex);
+ 				return 0;
+ 			} else if (s->hh.next == NULL) {
+ 				HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
+ 				puts("RECORD ADDED");
+ 			}
  		}
  	}
-
 
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
@@ -638,10 +611,6 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(5);
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
- 			perror("connect_thread");
- 			pthread_exit(NULL);
- 		}
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
@@ -675,10 +644,13 @@
  	new_record->proxy2 = local_info;
 
  	print_linkStateRecord(new_record);
- 	add_record(new_record);
- 	// pthread_mutex_lock(&linkstate_mutex);
- 	// 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
- 	// pthread_mutex_unlock(&linkstate_mutex);
+
+ 	if (add_record(new_record)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
  }
 
 /* String to MAC Address */

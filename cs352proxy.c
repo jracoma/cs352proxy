@@ -651,11 +651,6 @@
  			pthread_exit(NULL);
  		}
  	}
-
- 	// add_record(new_record);
-
-
-
  }
 
 /* String to MAC Address */
