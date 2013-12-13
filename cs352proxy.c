@@ -449,8 +449,20 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
- 	add_peer(proxy1);
- 	add_peer(proxy2);
+ 	// add_peer(proxy1);
+ 	// add_peer(proxy2);
+ 	if (add_peer(proxy1)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+ 	if (add_peer(proxy2)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
  	add_record(new_record);
 
  	return new_record;
@@ -688,13 +700,15 @@
  	new_record->proxy2 = local_info;
 
  	print_linkStateRecord(new_record);
+ 	add_record(new_record);
 
- 	if (add_record(new_record)) {
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
- 			perror("connect_thread");
- 			pthread_exit(NULL);
- 		}
- 	}
+ 	/* Moving inside add_record */
+ 	// if (add_record(new_record)) {
+ 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
+ 	// 		perror("connect_thread");
+ 	// 		pthread_exit(NULL);
+ 	// 	}
+ 	// }
  }
 
 /* String to MAC Address */

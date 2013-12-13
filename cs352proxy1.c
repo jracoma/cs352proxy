@@ -410,7 +410,8 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
- 	add_peer(peer);
+ 	/* Moving inside create linkStateRecord */
+ 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
@@ -448,6 +449,20 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
+ 	// add_peer(proxy1);
+ 	// add_peer(proxy2);
+ 	if (add_peer(proxy1)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+ 	if (add_peer(proxy2)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
  	add_record(new_record);
 
  	return new_record;
@@ -521,8 +536,14 @@
  	char *buf1, *buf2;
 
  	buf1 = send_peerList(peer);
+ 	buf2 = send_peerList(local_info);
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
-
+ 	printf("CHECKING:%s\n", buf2);
+ 	if (!strcmp(buf1, buf2)) {
+ 		puts("LOCAL MACHINE INFO");
+ 		pthread_mutex_unlock(&peer_mutex);
+ 		return 0;
+ 	}
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
@@ -552,8 +573,10 @@
  	struct peerList *tmp, *s;
  	char *buf1, *buf2;
 
+ 	print_peerList();
+
  	buf1 = send_peerList(peer);
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd);
 
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
@@ -568,7 +591,6 @@
  				pthread_mutex_unlock(&peer_mutex);
  				return 1;
  			} else if (s->hh.next == NULL) {
- 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  				puts("PEER NOT FOUND");
  			}
  		}
@@ -645,7 +667,7 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(2);
- 		decode_linkStateRecord(next_field);
+ 		decode_singleLinkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
  	}
@@ -656,7 +678,7 @@
  }
 
 /* Decode linkStateRecord information */
- void decode_linkStateRecord(char *buffer) {
+ void decode_singleLinkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
@@ -678,13 +700,15 @@
  	new_record->proxy2 = local_info;
 
  	print_linkStateRecord(new_record);
+ 	add_record(new_record);
 
- 	if (add_record(new_record)) {
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
- 			perror("connect_thread");
- 			pthread_exit(NULL);
- 		}
- 	}
+ 	/* Moving inside add_record */
+ 	// if (add_record(new_record)) {
+ 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
+ 	// 		perror("connect_thread");
+ 	// 		pthread_exit(NULL);
+ 	// 	}
+ 	// }
  }
 
 /* String to MAC Address */
