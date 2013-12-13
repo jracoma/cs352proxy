@@ -386,7 +386,7 @@
  }
 
 /* Send linkState */
- char *send_linkState(struct linkState *ls) {
+ char *send_linkState(struct peerList *ls) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - listenIP | listenPort | ethMAC */
