@@ -583,7 +583,7 @@
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
- 		HASH_ADD(hh, records, uniqueID, sizeof(timeval), tmp);
+ 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), tmp);
  	} else {
  		puts("poop");
  	}
