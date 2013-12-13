@@ -649,6 +649,7 @@
  	}
 
  	print_linkStateRecords();
+ 	print_peerList();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
