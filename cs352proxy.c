@@ -405,10 +405,10 @@
  	strcat(buffer, send_peerList(local_info));
  	strcat(buffer, send_peerList(peer));
 
- 	send(new_fd, buffer, strlen(buffer), 0);
+ 	send(peer->net_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, new_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
- 	recv(new_fd, buffer, MAXBUFFSIZE, 0);
+ 	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
