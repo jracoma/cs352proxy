@@ -546,7 +546,11 @@
  		puts("LOCAL MACHINE INFO");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
- 	} else if (peers == NULL) {
+ 	} else if (!peer->net_fd) {
+ 		puts("NO NET_FD");
+ 		pthread_mutex_unlock(&peer_mutex);
+ 		return 0;
+  } else if (peers == NULL) {
  		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
