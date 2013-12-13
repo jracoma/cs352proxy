@@ -92,8 +92,8 @@ struct linkStatePacket {
 /* Struct for link state record information */
 struct linkStateRecord {
   struct timeval uniqueID;
-  struct linkState *proxy1;
-  struct linkState *proxy2;
+  struct peerList *proxy1;
+  struct peerList *proxy2;
   uint32_t linkWeight;
   UT_hash_handle hh;
 }__attribute__((packed));

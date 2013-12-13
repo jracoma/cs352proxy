@@ -210,7 +210,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
- 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->listenIP), peer->listenPort);
  	while (1) {
  		puts("in while");
  		memset(buffer, 0, MAXBUFFSIZE);
@@ -241,7 +241,7 @@
  			printf("recv error from %d | ERR: %d\n", peer->net_fd, errno);
  			break;
  		} else {
- 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
+ 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->net_fd);
  			return NULL;
  		}
