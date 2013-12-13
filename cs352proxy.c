@@ -649,6 +649,7 @@
 
  	print_linkStateRecord(new_record);
  	pthread_mutex_lock(&linkstate_mutex);
+ 	puts("here");
  	if (add_record(new_record)) {
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
  	}
