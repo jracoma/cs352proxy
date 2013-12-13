@@ -22,7 +22,7 @@
  char *dev = "tap14";
 
 /* Threads to handle socket and tap */
- pthread_t sleep_thread, listen_thread, connect_thread, socket_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -240,6 +240,7 @@
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->net_fd);
+ 			remove_peer(peer);
  			return NULL;
  		}
  	}
@@ -520,7 +521,7 @@
  	char *buf1, *buf2;
 
  	buf1 = send_peerList(peer);
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER:\n%s\n", HASH_COUNT(peers), buf1);
+ 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s\n", HASH_COUNT(peers), buf1);
 
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
@@ -528,7 +529,7 @@
  	} else {
  		HASH_ITER(hh, peers, s, tmp) {
  			buf2 = send_peerList(s);
- 			printf("CHECKING:\n%s\n", buf2);
+ 			printf("CHECKING:%s\n", buf2);
  			if (!strcmp(buf1, buf2)) {
  				puts("EXISTS!");
  				pthread_mutex_unlock(&peer_mutex);
@@ -543,6 +544,38 @@
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
+ }
+
+/* Remove peer member */
+ int remove_peer(struct peerList *peer) {
+ 	pthread_mutex_lock(&peer_mutex);
+ 	struct peerList *tmp, *s;
+
+ 	buf1 = send_peerList(peer);
+ 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s\n", HASH_COUNT(peers), buf1);
+
+ 	if (peers == NULL) {
+ 		puts("EMPTY PEERLIST");
+ 		return 1;
+ 	} else {
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			buf2 = send_peerList(s);
+ 			printf("CHECKING:%s\n", buf2);
+ 			if (!strcmp(buf1, buf2)) {
+ 				puts("REMOVED PEER");
+ 				HASH_DEL(peers, s);
+ 				pthread_mutex_unlock(&peer_mutex);
+ 				return 1;
+ 			} else if (s->hh.next == NULL) {
+ 				HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
+ 				puts("PEER NOT FOUND");
+ 			}
+ 		}
+ 	}
+
+
+ 	pthread_mutex_unlock(&peer_mutex);
+ 	return 0;
  }
 
 /* Add new record */
@@ -610,7 +643,7 @@
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
- 		sleep(5);
+ 		sleep(2);
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
