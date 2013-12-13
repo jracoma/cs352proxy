@@ -18,7 +18,6 @@
  int linkPeriod, linkTimeout, quitAfter;
  struct peerList *peers = NULL, *local_info;
  struct linkStateRecord *records = NULL;
- // struct linkState *local_info;
  struct linkStatePacket *lsPacket;
  char *dev = "tap10";
 
@@ -585,12 +584,11 @@
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
- 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), tmp);
+ 		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		puts("poop");
  	}
 
- 	puts("OUT");
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
