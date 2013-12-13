@@ -619,7 +619,6 @@
  		}
  	}
 
- 	pthread_join(connect_thread, NULL);
  	puts("Now to the adding the record...");
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
