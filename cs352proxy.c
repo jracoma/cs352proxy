@@ -170,7 +170,7 @@
  				getIP(host, ip);
  				host = ip;
  			}
- 			inet_aton(host, &current->lsInfo->listenIP);
+ 			inet_aton(host, &current->listenIP);
  			current->lsInfo->listenPort = atoi(strtok(NULL, " \n"));
  			fgets(line, MAXLINESIZE, input_file);
  			next_field = strtok(line, " \n");
