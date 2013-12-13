@@ -718,7 +718,24 @@
  void decode_leavePacket(char *buffer) {
  	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
 
+	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
+ 	char *next_field, ip[100];
+ 	printf("\nDECODING: %s\n", buffer);
+ 	new_peerList->in_fd = in_fd;
+ 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
+ 	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
+ 	new_record->linkWeight = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_peerList->listenIP);
+ 	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, new_peerList);
 
+ 	printf("PEER LEAVING: %s\n", send_peerList(new_peer));
  }
 
 /* Decode linkStatePacket information */
@@ -782,14 +799,6 @@
 
  	print_linkStateRecord(new_record);
  	add_record(new_record);
-
- 	/* Moving inside add_record */
- 	// if (add_record(new_record)) {
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peerList) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
  }
 
 /* String to MAC Address */
