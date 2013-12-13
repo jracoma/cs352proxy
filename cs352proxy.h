@@ -61,9 +61,11 @@ struct packetHeader {
 
 /* Struct for peer list */
 struct peerList {
-  struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
   int net_fd;
+    struct in_addr listenIP;
+  uint16_t listenPort;
+  struct sockaddr ethMAC;
   UT_hash_handle hh;
 }__attribute__((packed));
 

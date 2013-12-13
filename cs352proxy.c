@@ -521,7 +521,7 @@
 /* Add new member */
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	struct peerList *tmp;
+ 	struct peerList *tmp, *p,
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
  	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
@@ -531,16 +531,18 @@
  	// 	return 0;
  	// }
 
- 	HASH_FIND_INT(peers, &peer->net_fd, tmp);
- 	if (tmp == NULL) {
- 		HASH_ADD_INT(peers, net_fd, peer);
- 	} else {
- 		puts("ALREADY EXISTS!!");
- 		free(ethMAC1);
- 	free(ethMAC2);
- 	pthread_mutex_unlock(&peer_mutex);
- 	return 0;
- 	}
+
+
+ 	// HASH_FIND_INT(peers, &peer->net_fd, tmp);
+ 	// if (tmp == NULL) {
+ 	// 	HASH_ADD_INT(peers, net_fd, peer);
+ 	// } else {
+ 	// 	puts("ALREADY EXISTS!!");
+ 	// 	free(ethMAC1);
+ 	// free(ethMAC2);
+ 	// pthread_mutex_unlock(&peer_mutex);
+ 	// return 0;
+ 	// }
 
  	// printf("\n$$$ATTEMPTING TO ADD PEER: %s | CURRENT PEERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	// /* Verify MAC address does not already exist */
