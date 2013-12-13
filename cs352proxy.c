@@ -596,15 +596,11 @@
  				return 0;
  			} else if (s->hh.next == NULL) {
  				HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
- 				puts("ADDADD");
+ 				pthread_mutex_unlock(&linkstate_mutex);
+ 				return 1;
  			}
  		}
  	}
-
- 	// HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
- 	print_linkStateRecords();
- 	pthread_mutex_unlock(&linkstate_mutex);
- 	return 1;
  }
 
 /* Decode linkStatePacket information */
