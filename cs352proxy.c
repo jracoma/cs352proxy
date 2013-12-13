@@ -667,7 +667,7 @@ int remove_record(struct peerList *peer) {
 		buf2 = send_peerList(s->proxy1);
 		buf3 = send_peerList(s->proxy2);
 		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
-			puts("delete!");
+			HASH_DEL(records, s);
 		}
 	}
 
