@@ -295,13 +295,16 @@
  			// 	pthread_exit(NULL);
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
+
+
  		new_peer->net_fd = new_fd;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
+ 		if (add_member(new_peer)) {
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
  			perror("listen_thread");
  			exit(1);
- 		}
+ 		}}
  	}
  }
 
@@ -357,7 +360,6 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
-	if (!(add_member(peer))) return NULL;
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
