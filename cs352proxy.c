@@ -564,9 +564,11 @@
  int add_record(struct linkStateRecord *record) {
  	struct linkStateRecord *tmp;
  	pthread_mutex_lock(&linkstate_mutex);
+ 	char *buf1, *buf2;
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
- 		printf("test: %s\n", send_linkState(record->proxy1));
+ 		buf1 = send_linkState(record->proxy1);
+ 		printf("test: %s\n", buf1);
  	}
 
  	pthread_mutex_unlock(&linkstate_mutex);
