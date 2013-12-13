@@ -477,7 +477,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
+ 	printf("--Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
  }
 
 /* Print peers hash table */
@@ -496,7 +496,7 @@
  void print_linkState(struct linkState *ls) {
  	char *ethMAC = malloc(MAXBUFFSIZE);
  	sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
- 	printf("--LINKSTATE: listenIP: %s:%d | MAC: %s\n", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
+ 	printf("--LINKSTATE: listenIP: %s:%d | MAC: %s ", inet_ntoa(ls->listenIP), ls->listenPort, ethMAC);
  	free(ethMAC);
  }
 
@@ -530,7 +530,6 @@
 /* Add new member */
  void add_member(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	puts("\nADDING MEMBER:\n");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
@@ -612,7 +611,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100];
- 	printf("DECODING: %s\n", buffer);
+ 	printf("\nDECODING: %s\n", buffer);
 
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
