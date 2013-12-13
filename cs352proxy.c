@@ -585,10 +585,10 @@
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
- 			memset(buf1, 0, MAXBUFFSIZE);
- 			memset(buf2, 0, MAXBUFFSIZE);
- 	// buf1 = send_peerList(record->proxy1);
- 	// buf2 = send_peerList(record->proxy2);
+ 			// memset(buf1, 0, MAXBUFFSIZE);
+ 			// memset(buf2, 0, MAXBUFFSIZE);
+ 	buf1 = send_peerList(record->proxy1);
+ 	buf2 = send_peerList(record->proxy2);
  	printf("TEST: %s | %s\n", buf1, buf2);
  			print_linkStateRecord(s);
  		}
