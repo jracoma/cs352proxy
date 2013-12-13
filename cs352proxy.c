@@ -613,7 +613,7 @@
 
  	buf1 = send_peerList(record->proxy1);
  	buf2 = send_peerList(record->proxy2);
- 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s | %s\n", HASH_COUNT(records), buf1, buf2);
+ 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n - %d%s | %s - %d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, buf2, record->proxy2->net_fd);
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
@@ -642,7 +642,6 @@
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	// new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	printf("Received: %s\n", buffer);
