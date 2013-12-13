@@ -63,7 +63,8 @@ struct packetHeader {
 struct peerList {
   struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
-  int net_fd;
+  int in_fd;
+  int out_fd;
   UT_hash_handle hh;
 }__attribute__((packed));
 
@@ -116,7 +117,7 @@ void print_linkStatePacket();
 void print_linkStateRecord(struct linkStateRecord *record);
 void print_linkStateRecords();
 void add_member(struct peerList *peer);
-void decode_linkStatePacket(char *buffer, int net_fd);
+void decode_linkStatePacket(char *buffer, int in_fd);
 void decode_linkStateRecord(char *buffer);
 void readMAC(char *buffer, struct linkState *ls);
 void *sleeper();
