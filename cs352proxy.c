@@ -144,7 +144,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
- 			 	/* Set quitAfter sleeper */
+		 	/* Set quitAfter sleeper */
  			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
@@ -211,8 +211,6 @@
  			switch (type) {
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
- 					// printf("Received message: %d bytes\n", size);
- 					// printf("Received: %s\n", buffer);
  				decode_linkStatePacket(buffer, peer->in_fd);
  				default:
  				printf("Negative.\n");
