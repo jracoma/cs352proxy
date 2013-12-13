@@ -92,6 +92,15 @@
  	}
  	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
+	/* Obtain local MAC ID for tap10 */
+	//  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
+	//  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
+	//    perror("ioctl(SIOCGIFHWADDR)");
+	//    return EXIT_FAILURE;
+	//  }
+
+	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
+
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
@@ -211,6 +220,8 @@
  			switch (type) {
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
+ 					// printf("Received message: %d bytes\n", size);
+ 					// printf("Received: %s\n", buffer);
  				decode_linkStatePacket(buffer, peer->in_fd);
  				default:
  				printf("Negative.\n");
@@ -246,6 +257,7 @@
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	// new_peer = (struct linkState *)malloc(sizeof(struct linkState));
 
 		/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
@@ -340,6 +352,10 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
+ 	if (!add_peer(peer) && peer->net_fd) {
+ 		puts("bahumbug");
+ 		return NULL;
+}
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -401,6 +417,8 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
+ 	/* Moving inside create linkStateRecord */
+ 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
