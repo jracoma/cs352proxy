@@ -509,7 +509,7 @@
 
  	if (records == NULL) return;
 
-	HASH_ITER(hh, records, s, tmp) {
+ 	HASH_ITER(hh, records, s, tmp) {
  		puts("uno");
  		print_linkStateRecord(s);
  	}
@@ -576,9 +576,11 @@
  int add_record(struct linkStateRecord *record) {
  	struct linkStateRecord *tmp, *s;
  	pthread_mutex_lock(&linkstate_mutex);
- 	char *buf1, *buf2;
+ 	char *buf1, *buf2, *buf3, *buf4;
 
- 	if (debug) printf("ATTEMPTING TO ADD RECORD\n");
+	buf1 = send_peerList(record->proxy1);
+	buf2 = send_peerList(record->proxy2);
+ 	if (debug) printf("ATTEMPTING TO ADD RECORD:\n%s | %s\n", buf1, buf2);
 
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
@@ -587,13 +589,17 @@
  		HASH_ITER(hh, records, s, tmp) {
  			// memset(buf1, 0, MAXBUFFSIZE);
  			// memset(buf2, 0, MAXBUFFSIZE);
- 	buf1 = send_peerList(record->proxy1);
- 	buf2 = send_peerList(record->proxy2);
- 	printf("TEST: %s | %s\n", buf1, buf2);
+	buf3 = send_peerList(s->proxy1);
+	buf4 = send_peerList(s->proxy2);
+			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			print_linkStateRecord(s);
  		}
  	}
 
+ 	free(buf1);
+ 	free(buf2);
+ 	free(buf3);
+ 	free(buf4);
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
