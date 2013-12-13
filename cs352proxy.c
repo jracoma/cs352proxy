@@ -533,7 +533,7 @@
 
  	HASH_FIND_INT(peers, &peer->net_fd, tmp);
  	if (tmp == NULL) {
- 		HASH_ADD_INT(peers, peer->net_fd, peer);
+ 		HASH_ADD_INT(peers, net_fd, peer);
  	} else {
  		puts("ALREADY EXISTS!!");
  		free(ethMAC1);
