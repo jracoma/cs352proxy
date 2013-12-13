@@ -92,15 +92,6 @@
  	}
  	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
-	/* Obtain local MAC ID for tap10 */
-	//  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
-	//  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
-	//    perror("ioctl(SIOCGIFHWADDR)");
-	//    return EXIT_FAILURE;
-	//  }
-
-	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
-
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
@@ -153,7 +144,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
- 			 	/* Set quitAfter sleeper */
+		 	/* Set quitAfter sleeper */
  			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
@@ -220,13 +211,11 @@
  			switch (type) {
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
- 					// printf("Received message: %d bytes\n", size);
- 					// printf("Received: %s\n", buffer);
  				decode_linkStatePacket(buffer, peer->in_fd);
  				default:
  				printf("Negative.\n");
  			}
- 		// // } else if (size == 0) {
+ 		// } else if (size == 0) {
  		// 	pthread_mutex_lock(&peer_mutex);
  		// 	pthread_mutex_lock(&linkstate_mutex);
 
@@ -257,15 +246,14 @@
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	// new_peer = (struct linkState *)malloc(sizeof(struct linkState));
 
-		/* Allows reuse of socket if not closed properly */
+	/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
  		perror("setsockopt");
  		exit(1);
  	}
 
-		/* Bind socket */
+	/* Bind socket */
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -277,7 +265,7 @@
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
 
-		/* Listens for connection, backlog 10 */
+	/* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
  		exit(1);
@@ -352,10 +340,6 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) {
- 		puts("bahumbug");
- 		return NULL;
-}
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -417,8 +401,6 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
- 	/* Moving inside create linkStateRecord */
- 	// add_peer(peer);
  	print_linkStateRecords();
 
  	free(temp);
@@ -456,9 +438,6 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
- 	// add_peer(proxy1);
- 	// add_peer(proxy2);
- 	printf("inside createLSR: %d/%d | %d/%d\n", proxy1->net_fd, proxy1->in_fd, proxy2->net_fd, proxy2->in_fd);
  	if (add_peer(proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
@@ -658,21 +637,21 @@
  }
 
 /* Remove peer from records */
-int remove_record(struct peerList *peer) {
-	struct linkStateRecord *tmp, *s;
-	char *buf1 = send_peerList(peer), *buf2, *buf3;
+ int remove_record(struct peerList *peer) {
+ 	struct linkStateRecord *tmp, *s;
+ 	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
-	printf("Removing: %s\n", buf1);
-	HASH_ITER(hh, records, s, tmp) {
-		buf2 = send_peerList(s->proxy1);
-		buf3 = send_peerList(s->proxy2);
-		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
-			HASH_DEL(records, s);
-		}
-	}
+ 	printf("Removing: %s\n", buf1);
+ 	HASH_ITER(hh, records, s, tmp) {
+ 		buf2 = send_peerList(s->proxy1);
+ 		buf3 = send_peerList(s->proxy2);
+ 		if (!strcmp(buf1, buf2) || !strcmp(buf1, buf3)) {
+ 			HASH_DEL(records, s);
+ 		}
+ 	}
 
-	return 1;
-}
+ 	return 1;
+ }
 
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
