@@ -801,6 +801,7 @@ int compare_uniqueID(struct timeval a, struct timeval b) {
 
  	struct timeval a, b;
  	gettimeofday(&a, NULL);
+ 	sleep(1);
  	gettimeofday(&b, NULL);
 
  	printf("%ld:%ld VS %ld:%ld --- %d", a.tv_sec, a.tv_usec, b.tv_sec, b.tv_usec, compare_uniqueID(a, b));
