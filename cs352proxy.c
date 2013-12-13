@@ -92,15 +92,6 @@
  	}
  	inet_aton((char *)inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr), &local_info->listenIP);
 
-	/* Obtain local MAC ID for tap10 */
-	//  strncpy(ifr.ifr_name, "tap10", IFNAMSIZ-1);
-	//  if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
-	//    perror("ioctl(SIOCGIFHWADDR)");
-	//    return EXIT_FAILURE;
-	//  }
-
-	// local_info->ethMAC = (struct sockaddr *)ifr.ifr_hwaddr;
-
  	sprintf(buffer, "/sys/class/net/%s/address", dev);
  	FILE *f = fopen(buffer, "r");
  	fread(buffer, 1, MAXLINESIZE, f);
@@ -352,10 +343,8 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) {
- 		puts("KAS::AFAF:KLSDF");
- 		return NULL;
- 	}
+ 	if (!add_peer(peer) && peer->net_fd) return NULL;
+
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
