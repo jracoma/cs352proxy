@@ -288,7 +288,7 @@
  			exit(1);
  		}
 
- 		new_peer->net_fd = new_fd;
+ 		new_peer->in_fd = new_fd;
  		new_peer->listenIP = client_addr.sin_addr;
  		new_peer->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
@@ -482,7 +482,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer);
- 	printf("--Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
+ 	printf("--Tap: %s | NET_FD: %d | IN_FD: %d\n", peer->tapDevice, peer->net_fd, peer->in_fd);
  }
 
 /* Print peers hash table */
