@@ -257,7 +257,7 @@
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
+ 	// new_peer = (struct linkState *)malloc(sizeof(struct linkState));
 
 		/* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
