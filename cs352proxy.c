@@ -617,6 +617,7 @@
  		}
  	}
 
+ 	pthread_join(connect_thread, NULL);
  	puts("Now to the adding the record...");
  	if (records == NULL) {
  		puts("EMPTY RECORDS");
@@ -629,6 +630,7 @@
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				puts("EXISTS!");
  				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
@@ -739,8 +741,7 @@
 
 /* Sleeper for quitAfter */
  void *sleeper() {
- 	// sleep(quitAfter);
- 	sleep(30);
+ 	sleep(quitAfter);
  	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
  	exit(1);
  }
