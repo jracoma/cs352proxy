@@ -63,8 +63,7 @@ struct packetHeader {
 struct peerList {
   struct linkState *lsInfo;
   char tapDevice[MAXBUFFSIZE];
-  int in_fd;
-  int out_fd;
+  int net_fd;
   UT_hash_handle hh;
 }__attribute__((packed));
 

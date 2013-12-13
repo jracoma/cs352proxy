@@ -214,7 +214,7 @@
  	// printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  	while (1) {
  		memset(buffer, 0, MAXBUFFSIZE);
- 		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
+ 		size = recv(peer->net_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
  		if (size > 0) {
  			strncpy(buffer2, buffer, 6);
@@ -225,7 +225,7 @@
  				strncpy(buffer, buffer+7, sizeof(buffer));
  					// printf("Received message: %d bytes\n", size);
  					// printf("Received: %s\n", buffer);
- 				decode_linkStatePacket(buffer, peer->in_fd);
+ 				decode_linkStatePacket(buffer, peer->net_fd);
  				default:
  				printf("Negative.\n");
  			}
@@ -238,11 +238,11 @@
  		// 	pthread_mutex_unlock(&peer_mutex);
  		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
+ 			printf("recv error from %d | ERR: %d\n", peer->net_fd, errno);
  			break;
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
- 			close(peer->in_fd);
+ 			close(peer->net_fd);
  			return NULL;
  		}
  	}
@@ -294,7 +294,7 @@
  			// 	pthread_exit(NULL);
  			// } 	printf("Client connected from %s:%d.\n", inet_ntoa(peer->lsIn), htons(client_addr.sin_port));
 
- 		new_peer->in_fd = new_fd;
+ 		new_peer->net_fd = new_fd;
  		new_peer->lsInfo->listenIP = client_addr.sin_addr;
  		new_peer->lsInfo->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
@@ -477,7 +477,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | IN_FD: %d | OUT_FD: %d\n", peer->tapDevice, peer->in_fd, peer->out_fd);
+ 	printf("----Tap: %s | NET_FD: %d | OUT_FD: %d\n", peer->tapDevice, peer->net_fd);
  }
 
 /* Print peers hash table */
@@ -547,14 +547,14 @@
  			break;
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
- 			HASH_ADD_INT(peers, in_fd, peer);
+ 			HASH_ADD_INT(peers, net_fd, peer);
  			break;
  		}
  	}
 
  	if (peers == NULL) {
  		puts("EMPTY!");
- 		HASH_ADD_INT(peers, in_fd, peer);
+ 		HASH_ADD_INT(peers, net_fd, peer);
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -562,7 +562,7 @@
  }
 
 /* Decode linkStatePacket information */
- void decode_linkStatePacket(char *buffer, int in_fd) {
+ void decode_linkStatePacket(char *buffer, int net_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	new_peer->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
@@ -591,7 +591,7 @@
  		puts("SINGLE LINKLIST!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		printf("SENT MAC: %s\n", ethMAC);
- 		send(in_fd, ethMAC, strlen(ethMAC), 0);
+ 		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(5);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
  			perror("connect_thread");
