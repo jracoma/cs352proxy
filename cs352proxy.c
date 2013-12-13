@@ -578,6 +578,10 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buf1, *buf2;
 
+ 	buf1 = send_peerList(record->proxy1);
+ 	buf2 = send_peerList(record->proxy2);
+
+ 	printf("TEST: %s | %s\n", buf1, buf2);
  	printf("ATTEMPTING TO ADD RECORD\n");
 
  	if (records == NULL) {
@@ -585,6 +589,7 @@
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
+
  			puts("UNF");
  			print_linkStateRecord(s);
  		}
