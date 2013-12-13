@@ -641,7 +641,7 @@
 /* Decode linkStateRecord information */
  void decode_linkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
- 	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
+ 	struct peerList *new_peerList = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100];
  	printf("\nDECODING: %s\n", buffer);
 
@@ -653,11 +653,11 @@
  		getIP(next_field, ip);
  		next_field = ip;
  	}
- 	inet_aton(next_field, &new_linkState->listenIP);
- 	new_linkState->listenPort = atoi(strtok(NULL, " \n"));
+ 	inet_aton(next_field, &new_peerList->listenIP);
+ 	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
- 	readMAC(next_field, new_linkState);
- 	new_record->proxy1 = new_linkState;
+ 	readMAC(next_field, new_peerList);
+ 	new_record->proxy1 = new_peerList;
  	new_record->proxy2 = local_info;
 
  	print_linkStateRecord(new_record);
