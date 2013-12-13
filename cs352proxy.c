@@ -379,7 +379,7 @@
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
- 		peer->out_fd = new_fd;
+ 		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(new_fd, peer);
  		add_member(peer);
  		// pthread_mutex_lock(&peer_mutex);
@@ -477,7 +477,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | NET_FD: %d | OUT_FD: %d\n", peer->tapDevice, peer->net_fd);
+ 	printf("----Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
  }
 
 /* Print peers hash table */
