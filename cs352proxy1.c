@@ -246,6 +246,7 @@
  			return NULL;
  		}
  	}
+ 	if (debug) puts("Leaving handle_listen");
  	return NULL;
  }
 
@@ -356,6 +357,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
+	if (!(add_member(peer))) return NULL;
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
@@ -371,8 +373,7 @@
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
- 	int test = (connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr)));
- 	if (test < 0) {
+ 	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->lsInfo->listenIP), peer->lsInfo->listenPort);
  		if (debug) printf("errno: %d\n", errno);
  	} else {
@@ -380,19 +381,13 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		send_singleLinkStatePacket(new_fd, peer);
- 		add_member(peer);
- 		// pthread_mutex_lock(&peer_mutex);
- 		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
- 		// if (debug) {
- 			// puts("After Add:\n");
- 			// print_peerList();
- 		// }
+ 			send_singleLinkStatePacket(new_fd, peer);
+
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		puts("NEW PEER: Single link state record sent.");
  		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
+ 	if (debug) puts("Leaving connectToPeer");
  	return NULL;
  }
 
@@ -421,7 +416,7 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	recv(new_fd, buffer, MAXBUFFSIZE, 0);
  	if (debug) printf("Remote MAC: %s\n", buffer);
-
+ 	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->lsInfo->ethMAC.sa_data[0], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[1], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[2], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[3], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[4], (unsigned char *)&peer->lsInfo->ethMAC.sa_data[5], peer->tapDevice);
 
  	print_linkStateRecords();
@@ -477,7 +472,7 @@
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer->lsInfo);
- 	printf("----Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
+ 	printf("--Tap: %s | NET_FD: %d\n", peer->tapDevice, peer->net_fd);
  }
 
 /* Print peers hash table */
@@ -520,7 +515,7 @@
 /* Print linkStateRecords */
  void print_linkStateRecords() {
  	struct linkStateRecord *tmp;
- 	printf("\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
+ 	printf("\n\n###Complete linkStateRecords: %d Records###\n", HASH_COUNT(records));
 
  	for (tmp = records; tmp != NULL; tmp = tmp->hh.next) {
  		print_linkStateRecord(tmp);
@@ -528,13 +523,14 @@
  }
 
 /* Add new member */
- void add_member(struct peerList *peer) {
+ int add_member(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	puts("\nADDING MEMBER:\n");
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
 
  	sprintf(ethMAC1, "%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)peer->lsInfo->ethMAC.sa_data[0], (unsigned char)peer->lsInfo->ethMAC.sa_data[1], (unsigned char)peer->lsInfo->ethMAC.sa_data[2], (unsigned char)peer->lsInfo->ethMAC.sa_data[3], (unsigned char)peer->lsInfo->ethMAC.sa_data[4], (unsigned char)peer->lsInfo->ethMAC.sa_data[5]);
+
+ 	if (!strcmp(ethMAC1,"00:00:00:00:00:00")) return 1;
 
  	printf("$$$ATTEMPTING TO ADD MEMBER: %s | CURRENT MEMBERS: %d\n", ethMAC1, HASH_COUNT(peers));
  	/* Verify MAC address does not already exist */
@@ -543,8 +539,8 @@
  		printf("***COMPARING: ETH1: %s | ETH2: %s\n", ethMAC1, ethMAC2);
 
  		if (!strcmp(ethMAC1, ethMAC2)) {
- 			puts("MATCH!");
- 			break;
+ 			puts("ALREADY IN PEERLIST!");
+ 			return 0;
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
  			HASH_ADD_INT(peers, net_fd, peer);
@@ -559,6 +555,7 @@
 
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
+ 	return 1;
  }
 
 /* Decode linkStatePacket information */
@@ -597,7 +594,6 @@
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
- 		add_member(new_peer);
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
@@ -612,7 +608,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct linkState *new_linkState = (struct linkState *)malloc(sizeof(struct linkState));
  	char *next_field, ip[100];
- 	printf("DECODING: %s\n", buffer);
+ 	printf("\nDECODING: %s\n", buffer);
 
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
