@@ -731,7 +731,7 @@
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_peerList);
 
- 	printf("PEER LEAVING: %s\n", send_peerList(new_peer));
+ 	printf("PEER LEAVING: %s\n", send_peerList(new_peerList));
  }
 
 /* Decode linkStatePacket information */
