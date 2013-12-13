@@ -351,7 +351,7 @@
 
 /* Client Mode */
  void *connectToPeer(void *temp) {
- 	struct sockaddr_in remote_addr;
+ 	struct sockaddr_in remote_addr, local_addr;
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
@@ -361,6 +361,17 @@
  		perror("could not create socket");
  		exit(1);
  	}
+
+		/* Bind socket */
+ 	memset((char *)&local_addr, 0, sizeof(local_addr));
+ 	local_addr.sin_family = AF_INET;
+ 	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+ 	local_addr.sin_port = htons(port);
+ 	if (bind(new_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
+ 		perror("bind");
+ 		exit(1);
+ 	}
+
  	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
