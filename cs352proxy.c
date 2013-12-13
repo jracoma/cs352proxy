@@ -161,7 +161,6 @@
  		}
  		else if (!strcmp(next_field, "peer")) {
  			current = (struct peerList *)malloc(sizeof(struct peerList));
- 			// current->lsInfo = (struct linkState *)malloc(sizeof(struct linkState));
  			host = strtok(NULL, " \n");
 
 			/* Checks for a.b.c.d address, otherwise resolve hostname */
@@ -376,7 +375,6 @@
  		send_singleLinkStatePacket(peer);
 
  		lsPacket->neighbors = HASH_COUNT(peers);
- 		// pthread_mutex_unlock(&peer_mutex);
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
@@ -613,10 +611,6 @@
  		printf("SENT MAC: %s\n", ethMAC);
  		send(net_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(5);
- 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
- 			perror("connect_thread");
- 			pthread_exit(NULL);
- 		}
  		decode_linkStateRecord(next_field);
  	} else {
  		puts("NOT SOLO!");
@@ -650,10 +644,18 @@
  	new_record->proxy2 = local_info;
 
  	print_linkStateRecord(new_record);
- 	add_record(new_record);
- 	// pthread_mutex_lock(&linkstate_mutex);
- 	// 	HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), new_record);
- 	// pthread_mutex_unlock(&linkstate_mutex);
+
+ 	if (add_record(new_record)) {
+ 		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)new_peer) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 		}
+ 	}
+
+ 	// add_record(new_record);
+
+
+
  }
 
 /* String to MAC Address */
