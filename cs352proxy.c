@@ -470,6 +470,7 @@
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(peer));
  	printf("LEAVING AND SENDING: %s\n", buffer);
+ 	send(peer->net_fd, buffer, strlen(buffer), 0);
  }
 
 /* Print packetHeader information */
