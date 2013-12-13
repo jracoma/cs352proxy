@@ -380,8 +380,11 @@
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
- 		send_singleLinkStatePacket(new_fd, peer);
- 		add_member(peer);
+ 		if (add_member(peer)) {
+ 			send_singleLinkStatePacket(new_fd, peer);
+ 		} else {
+ 			return NULL;
+ 		}
  		// pthread_mutex_lock(&peer_mutex);
  		// HASH_ADD(hh, peers, uniqueID, sizeof(struct timeval), peer);
  		// if (debug) {
@@ -529,7 +532,7 @@
  }
 
 /* Add new member */
- void add_member(struct peerList *peer) {
+ int add_member(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
  	char *ethMAC1 = malloc(MAXBUFFSIZE), *ethMAC2 = malloc(MAXBUFFSIZE);
@@ -544,7 +547,7 @@
 
  		if (!strcmp(ethMAC1, ethMAC2)) {
  			puts("ALREADY IN PEERLIST!");
- 			break;
+ 			return 0;
  		} else if (tmp->hh.next == NULL) {
  			puts("ADDING NEW");
  			HASH_ADD_INT(peers, net_fd, peer);
@@ -559,6 +562,7 @@
 
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
+ 	return 1;
  }
 
 /* Decode linkStatePacket information */
