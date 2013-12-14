@@ -202,6 +202,7 @@
  	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
+ 		printf("///Start while loop for %s\n", send_peerList(peer));
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
