@@ -186,8 +186,8 @@
  	}
 
 	/* Close input file */
+	free(current);
  	fclose(input_file);
-
  	return 0;
  }
 
@@ -202,7 +202,7 @@
  	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
- 		printf("///Start while loop for %s\n", send_peerList(peer));
+ 		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
  		if (debug) printf("\nSIZE: %d | ", size);
@@ -220,11 +220,10 @@
  				decode_leavePacket(buffer);
  				break;
  				case PACKET_QUIT:
- 				puts("RECEIVED QUIT COMMAND");
  				send_quitPacket();
  				break;
  				default:
- 				printf("Negative.\n");
+ 				if (debug) printf("Negative.\n");
  			}
  		// // } else if (size == 0) {
  		// 	pthread_mutex_lock(&peer_mutex);
@@ -305,7 +304,7 @@
 /* Thread to open and handle tap device, read from tap and send to socket */
  void *handle_tap()
  {
- 	puts("create thread for tap");
+ 	if (debug) puts("create thread for tap");
  	uint16_t type;
  	ssize_t size;
  	char *buffer = malloc(MAXBUFFSIZE);
@@ -398,6 +397,11 @@
  	return buffer;
  }
 
+/* Flood linkStateRecords */
+void *flood_packets() {
+	if (debug) puts("^^^^FLOODING^^^^");
+}
+
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
@@ -451,7 +455,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
- 	// if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
+ 	/* Ensure proxy1 != proxy2 */
  	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
@@ -462,35 +466,20 @@
  	new_record->proxy2 = proxy2;
  	/* Verify peer isn't in the list, connect if it ins't */
  	if (find_peer(proxy1) == NULL) {
- 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
+ 		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
  	if (find_peer(proxy2) == NULL) {
- 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
+ 		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
- 	// if (add_peer(proxy1)) {
- 	// 	printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
- 	// if (add_peer(proxy2)) {
- 	// 	printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
  	add_record(new_record);
-
  	return new_record;
  }
 
@@ -499,7 +488,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(leaving));
- 	printf("LEAVING AND SENDING: %s - %d\n", buffer, sendto->net_fd);
+ 	if (debug) printf("LEAVING AND SENDING: %s - %d\n", buffer, sendto->net_fd);
  	send(sendto->net_fd, buffer, strlen(buffer), 0);
  }
 
@@ -509,7 +498,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_QUIT, send_peerList(local_info));
- 	printf("QUIT PACKET GOGO: %s\n", buffer);
+ 	if (debug) printf("QUIT PACKET GOGO: %s\n", buffer);
  	HASH_ITER(hh, peers, s, tmp) {
  		send(s->net_fd, buffer, strlen(buffer), 0);
  		close(s->net_fd);
@@ -581,42 +570,27 @@
 /* Add new member */
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	struct peerList *tmp, *s;
+ 	struct peerList *tmp;
  	char *buf1 = send_peerList(peer), *buf2;
 
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	if (!strcmp(buf1, buf2)) {
- 		puts("LOCAL MACHINE INFO");
+ 		if (debug) puts("LOCAL MACHINE INFO");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
- 		printf("EMPTY PEERLIST: ADDING %s\n", buf1);
+ 		if (debug) printf("EMPTY PEERLIST: ADDING %s\n", buf1);
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
- 			puts("Not Found!");
+ 			if (debug) puts("Not Found!");
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
- 			puts("PEER FOUND!");
+ 			if (debug) puts("PEER FOUND!");
  			pthread_mutex_unlock(&peer_mutex);
  			return 0;
  		}
-
-
- 		// HASH_ITER(hh, peers, s, tmp) {
- 		// 	buf2 = send_peerList(s);
- 		// 	printf("CHECKING:%s\n", buf2);
- 		// 	if (!strcmp(buf1, buf2)) {
- 		// 		puts("EXISTS!");
- 		// 		if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
- 		// 		pthread_mutex_unlock(&peer_mutex);
- 		// 		return 0;
- 		// 	} else if (s->hh.next == NULL) {
- 		// 		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
- 		// 		puts("PEER ADDED");
- 		// 	}
- 		// }
  	}
 
  	pthread_mutex_unlock(&peer_mutex);
@@ -627,40 +601,27 @@
 /* Remove peer member */
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	struct peerList *tmp, *s;
- 	char *buf1 = send_peerList(peer), *buf2;
+ 	struct peerList *tmp;
+ 	char *buf1 = send_peerList(peer);
 
  	print_peerList();
 
  	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
 
  	if (peers == NULL) {
- 		puts("EMPTY PEERLIST");
+ 		if (debug) puts("EMPTY PEERLIST");
  		pthread_mutex_unlock(&peer_mutex);
  		return 1;
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
- 			puts("PEER NOT FOUND");
+ 			if (debug) puts("PEER NOT FOUND");
  		} else {
- 			puts("REMOVED PEER");
+ 			if (debug) puts("REMOVED PEER");
  			remove_record(tmp);
  			HASH_DEL(peers, tmp);
  			pthread_mutex_unlock(&peer_mutex);
  			return 1;
  		}
- 		// HASH_ITER(hh, peers, s, tmp) {
- 		// 	buf2 = send_peerList(s);
- 		// 	printf("CHECKING:%s\n", buf2);
- 		// 	if (!strcmp(buf1, buf2) || s->in_fd == peer->in_fd) {
- 		// 		puts("REMOVED PEER");
- 		// 		remove_record(s);
- 		// 		HASH_DEL(peers, s);
- 		// 		pthread_mutex_unlock(&peer_mutex);
- 		// 		return 1;
- 		// 	} else if (s->hh.next == NULL) {
- 		// 		puts("PEER NOT FOUND");
- 		// 	}
- 		// }
  	}
 
  	print_peerList();
@@ -675,10 +636,10 @@
 
  	if (peers == NULL) return NULL;
 
- 	printf("LOOKING FOR: %s\n", buf1);
+ 	if (debug) printf("LOOKING FOR: %s\n", buf1);
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
- 		printf("CHECK: %s\n", buf2);
+ 		if (debug) printf("CHECK: %s\n", buf2);
  		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd)) {
  			if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
  			return s;
@@ -694,33 +655,19 @@
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
- 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
-
- 	printf("\nChecking proxy1 membership...\n");
+ 	if (debug) {
+ 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
+ 		printf("\nChecking proxy1 membership...\n");
+ 	}
  	if (find_peer(record->proxy1) == NULL) {
- 		printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy1->listenIP), record->proxy1->listenPort);
+ 		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy1->listenIP), record->proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
 
- 	// if (!(record->proxy1) || add_peer(record->proxy1)) {
- 	// 	puts("here");
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
-
- 	printf("\nChecking proxy2 membership...\n");
- 	// if (!(record->proxy2) || add_peer(record->proxy2)) {
- 	// 	puts("here2");
- 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
- 	// 		perror("connect_thread");
- 	// 		pthread_exit(NULL);
- 	// 	}
- 	// }
+ 	if (debug) printf("\nChecking proxy2 membership...\n");
  	if (find_peer(record->proxy2) == NULL) {
  		printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy2->listenIP), record->proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
@@ -729,9 +676,9 @@
  		}
  	}
 
- 	puts("Now to the adding the record...");
+ 	if (debug) puts("Now to the adding the record...");
  	if (records == NULL) {
- 		puts("EMPTY RECORDS");
+ 		if (debug) puts("EMPTY RECORDS");
  		HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
  	} else {
  		HASH_ITER(hh, records, s, tmp) {
@@ -739,20 +686,22 @@
  			buf4 = send_peerList(s->proxy2);
  			printf("CHECKING:\n%s | %s\n", buf3, buf4);
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
- 				puts("RECORD EXISTS!");
- 				printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 				if (debug) {
+ 					puts("RECORD EXISTS!");
+ 					printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 				}
  				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
  				HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
- 				puts("RECORD ADDED");
+ 				if (debug) puts("RECORD ADDED");
  			}
  		}
  	}
 
  	print_linkStateRecords();
- 	print_peerList();
+ 	if (debug) print_peerList();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
@@ -762,7 +711,7 @@
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
- 	printf("Removing: %s\n", buf1);
+ 	if (debug) printf("Removing: %s\n", buf1);
  	HASH_ITER(hh, records, s, tmp) {
  		buf2 = send_peerList(s->proxy1);
  		buf3 = send_peerList(s->proxy2);
@@ -770,17 +719,17 @@
  			HASH_DEL(records, s);
  		}
  	}
-
  	return 1;
  }
 
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
- 	printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
-
  	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
  	char *next_field, ip[100];
- 	printf("\nDECODING: %s\n", buffer);
+ 	if (debug) {
+ 		printf("\n!!LEAVE PACKET RECEIVED: %s\n", buffer);
+ 		printf("\nDECODING: %s\n", buffer);
+ 	}
  	next_field = strtok(buffer, " \n");
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
@@ -799,37 +748,12 @@
  	}
  }
 
-// /* Decode leavePacket */
-//  void decode_quitPacket(char *buffer) {
-//  	printf("\n!!QUIT PACKET RECEIVED: %s\n", buffer);
-
-//  	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
-//  	char *next_field, ip[100];
-//  	printf("\nDECODING: %s\n", buffer);
-//  	next_field = strtok(buffer, " \n");
-//  	if (inet_addr(next_field) == -1) {
-//  		getIP(next_field, ip);
-//  		next_field = ip;
-//  	}
-//  	inet_aton(next_field, &leaving->listenIP);
-//  	leaving->listenPort = atoi(strtok(NULL, " \n"));
-//  	next_field = strtok(NULL, " \n");
-//  	readMAC(next_field, leaving);
-
-//  	printf("QUIT FROM: %s\n", send_peerList(leaving));
-//  	HASH_ITER(hh, peers, s, tmp) {
-//  		send_quitPacket(leaving);
-//  	}
-//  	puts("Proxy terminating.");
-//  	exit(1);
-//  }
-
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
- 	printf("Received: %s\n", buffer);
+ 	if (debug)printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
  	next_field = strtok(buffer, " \n");
@@ -848,16 +772,15 @@
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, "\n");
- 	printf("Neighbors: %d\n", neighbors);
+ 	if (debug)printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
- 		puts("SINGLE LINKLIST!");
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
- 		printf("SENT MAC: %s\n", ethMAC);
+ 		if (debug) printf("SINGLE LINKSTATE: SENT MAC: %s\n", ethMAC);
  		send(in_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(2);
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
- 		puts("NOT SOLO!");
+ 		if (debug) puts("NOT SOLO!");
  	}
  }
 
@@ -866,7 +789,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
- 	printf("\nDECODING: %s\n", buffer);
+ 	if (debug) printf("\nDECODING: %s\n", buffer);
  	new_peerList->in_fd = in_fd;
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
@@ -897,17 +820,17 @@
  	struct peerList *s, *tmp;
 
  	sleep(quitAfter);
- 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+ 	printf("%d seconds have elapsed. Proxy terminating.\n", quitAfter);
  	print_peerList();
  	print_linkStateRecords();
 
- 	send_quitPacket();
+ 	// send_quitPacket();
 
- 	// HASH_ITER(hh, peers, s, tmp) {
- 	// 	send_leavePacket(local_info, s);
- 	// 	close(s->net_fd);
- 	// 	close(s->in_fd);
- 	// }
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(local_info, s);
+ 		close(s->net_fd);
+ 		close(s->in_fd);
+ 	}
  	exit(1);
  }
 
@@ -922,9 +845,7 @@
 
 /* Main */
  int main (int argc, char *argv[]) {
- 	if (debug) {
- 		puts("DEBUGGING MODE:");
- 	}
+ 	if (debug) puts("DEBUGGING MODE:");
 
  // 	int size;
  // 	char if_name[IFNAMSIZ] = "";
@@ -974,7 +895,7 @@
 
 	/* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
- 		perror("connect_thread");
+ 		perror("server_thread");
  		pthread_exit(NULL);
  	}
 

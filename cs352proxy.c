@@ -186,8 +186,8 @@
  	}
 
 	/* Close input file */
+	free(current);
  	fclose(input_file);
-
  	return 0;
  }
 
@@ -397,6 +397,11 @@
  	return buffer;
  }
 
+/* Flood linkStateRecords */
+void *flood_packets() {
+	if (debug) puts("^^^^FLOODING^^^^");
+}
+
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
@@ -450,7 +455,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
- 	// if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
+ 	/* Ensure proxy1 != proxy2 */
  	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
@@ -475,7 +480,6 @@
  		}
  	}
  	add_record(new_record);
-
  	return new_record;
  }
 
@@ -598,7 +602,7 @@
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
- 	char *buf1 = send_peerList(peer), *buf2;
+ 	char *buf1 = send_peerList(peer);
 
  	print_peerList();
 
@@ -715,14 +719,11 @@
  			HASH_DEL(records, s);
  		}
  	}
-
  	return 1;
  }
 
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
-
-
  	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
  	char *next_field, ip[100];
  	if (debug) {
@@ -819,17 +820,17 @@
  	struct peerList *s, *tmp;
 
  	sleep(quitAfter);
- 	printf("%d seconds have elapsed. Program terminating.\n", quitAfter);
+ 	printf("%d seconds have elapsed. Proxy terminating.\n", quitAfter);
  	print_peerList();
  	print_linkStateRecords();
 
- 	send_quitPacket();
+ 	// send_quitPacket();
 
- 	// HASH_ITER(hh, peers, s, tmp) {
- 	// 	send_leavePacket(local_info, s);
- 	// 	close(s->net_fd);
- 	// 	close(s->in_fd);
- 	// }
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send_leavePacket(local_info, s);
+ 		close(s->net_fd);
+ 		close(s->in_fd);
+ 	}
  	exit(1);
  }
 
