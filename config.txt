@@ -1,6 +1,6 @@
 // Local Machine Information
 listenPort 5555
-linkPeriod 60
+linkPeriod 20
 linkTimeout 5
 quitAfter 120
 // Optional Proxy Peer Fields
