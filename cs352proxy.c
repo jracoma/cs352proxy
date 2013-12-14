@@ -249,7 +249,7 @@
  }
 
 /* Server Mode */
- void server(void *temp)
+ void *server(void *temp)
  {
  	int port = (int *)temp;
  	struct sockaddr_in local_addr, client_addr;
@@ -296,6 +296,7 @@
  			exit(1);
  		}
  	}
+ 	return NULL;
  }
 
 /* Thread to open and handle tap device, read from tap and send to socket */
