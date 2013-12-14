@@ -373,7 +373,6 @@
  		peer->net_fd = new_fd;
  		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
  		send_singleLinkStatePacket(peer);
-
  		lsPacket->neighbors = HASH_COUNT(peers);
  		if (debug) print_linkStatePacket();
  	}
