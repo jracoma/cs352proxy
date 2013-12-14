@@ -197,7 +197,6 @@
  	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
- 	struct timeval current_time;
 
  	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
@@ -212,9 +211,6 @@
  			if (debug) printf("TYPE: %x\n", type);
  			switch (type) {
  				case PACKET_LINKSTATE:
- 				// gettimeofday(&current_time, NULL);
- 				// peer->lastLS = current_time.tv_sec;
- 				// add_peer(peer);
  				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
@@ -607,8 +603,10 @@
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
+ 	struct timeval current_time;
  	char *buf1 = send_peerList(peer), *buf2;
 
+ 	gettimeofday(&current_time, NULL);
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	if (!strcmp(buf1, buf2)) {
@@ -617,10 +615,12 @@
  		return 0;
  	} else if (peers == NULL) {
  		if (debug) printf("EMPTY PEERLIST: ADDING %s\n", buf1);
+ 		peer->lastLS = current_time.tv_sec;
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
  			if (debug) puts("Not Found!");
+ 			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
  			if (debug) puts("PEER FOUND!");
@@ -790,13 +790,9 @@
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
- 	struct timeval current_time;
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	if (debug)printf("Received: %s\n", buffer);
-
- 	gettimeofday(&current_time, NULL);
- 	new_peer->lastLS = current_time.tv_sec;
 
  	/* Parse through buffer */
  	next_field = strtok(buffer, " \n");
