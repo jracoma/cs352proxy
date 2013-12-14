@@ -359,7 +359,7 @@
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
- 	if (!(strcmp(inet_ntoa(peer->listenIP, inet_ntoa(remote_addr.sin_addr))))) return NULL;
+ 	if (!(strcmp(inet_ntoa(peer->listenIP), inet_ntoa(remote_addr.sin_addr))) return NULL;
 	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
