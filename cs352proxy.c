@@ -343,7 +343,7 @@
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE), *buf1 = malloc(MAXBUFFSIZE), *buf2 = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
  	if (!add_peer(peer) && (peer->net_fd)) return NULL;
@@ -358,6 +358,11 @@
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
+
+ 	sprintf(buf1, "%s %d", inet_ntoa(local_info->listenIP), local_info->listenPort);
+ 	sprintf(buf2, "%s %d", inet_ntoa(peer->listenIP), peer->listenPort);
+
+ 	printf("COMPARING %s --- %s\n", buf1, buf2);
 
 	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
@@ -603,13 +608,8 @@
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
  	struct timeval current_time;
- 	char *buf1 = send_peerList(peer), *buf2 = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
-
-
- 	strcpy(buf2, inet_ntoa(local_info->listenIP));
- 	strcpy(temp, inet_ntoa(peer->listenIP));
+ 	char *buf1 = send_peerList(peer), *buf2;
  	gettimeofday(&current_time, NULL);
- 	printf("TEST BUF2: %s - %s\n", buf2, temp);
 
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
