@@ -360,6 +360,9 @@
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
  	tmp1 = inet_ntoa(peer->listenIP);
+ 	tmp2 = inet_ntoa(remote_addr.sin_addr);
+
+ 	printf("COMPARING: %s --- %s\n", tmp1, tmp2);
 
 	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
