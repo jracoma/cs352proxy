@@ -241,7 +241,7 @@
  			return NULL;
  		}
 
- 		puts("end while");
+ 		printf("///End while loop for %s\n", send_peerList(peer));
  	}
  	if (debug) puts("Leaving handle_listen");
  	return NULL;

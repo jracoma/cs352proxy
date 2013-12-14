@@ -240,6 +240,8 @@
  			print_linkStateRecords();
  			return NULL;
  		}
+
+ 		printf("///End while loop for %s\n", send_peerList(peer));
  	}
  	if (debug) puts("Leaving handle_listen");
  	return NULL;
@@ -818,6 +820,7 @@
 
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(local_info, s);
+ 		close(s);
  	}
  	exit(1);
  }
