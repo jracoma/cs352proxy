@@ -374,7 +374,7 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
-		printf("here");
+ 		printf("here");
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(peer);
@@ -498,6 +498,18 @@
  	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(leaving));
  	printf("LEAVING AND SENDING: %s - %d\n", buffer, sendto->net_fd);
  	send(sendto->net_fd, buffer, strlen(buffer), 0);
+ }
+
+/* Sends quitPacket */
+ void send_quitPacket() {
+ 	char *buffer = malloc(MAXBUFFSIZE);
+
+ 	sprintf(buffer, "0x%x 20 %s", PACKET_QUIT, send_peerList(local_info));
+ 	printf("QUIT PACKET GOGO: %s\n", buffer);
+
+ 	HASH_ITER(hh, peers, s, tmp) {
+ 		send(sendto->net_fd, buffer, strlen(buffer), 0);
+ 	}
  }
 
 /* Print packetHeader information */
@@ -774,12 +786,37 @@
  	readMAC(next_field, leaving);
 
  	printf("PEER LEAVING: %s\n", send_peerList(leaving));
+ 	remove_peer(leaving);
+ 	remove_record(leaving);
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(leaving, s);
  	}
- 	remove_peer(leaving);
- 	remove_record(leaving);
  }
+
+// /* Decode leavePacket */
+//  void decode_quitPacket(char *buffer) {
+//  	printf("\n!!QUIT PACKET RECEIVED: %s\n", buffer);
+
+//  	struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
+//  	char *next_field, ip[100];
+//  	printf("\nDECODING: %s\n", buffer);
+//  	next_field = strtok(buffer, " \n");
+//  	if (inet_addr(next_field) == -1) {
+//  		getIP(next_field, ip);
+//  		next_field = ip;
+//  	}
+//  	inet_aton(next_field, &leaving->listenIP);
+//  	leaving->listenPort = atoi(strtok(NULL, " \n"));
+//  	next_field = strtok(NULL, " \n");
+//  	readMAC(next_field, leaving);
+
+//  	printf("QUIT FROM: %s\n", send_peerList(leaving));
+//  	HASH_ITER(hh, peers, s, tmp) {
+//  		send_quitPacket(leaving);
+//  	}
+//  	puts("Proxy terminating.");
+//  	exit(1);
+//  }
 
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
@@ -859,10 +896,16 @@
  	print_linkStateRecords();
 
  	HASH_ITER(hh, peers, s, tmp) {
- 		send_leavePacket(local_info, s);
+ 		send_quitPacket();
  		close(s->net_fd);
  		close(s->in_fd);
  	}
+
+ 	// HASH_ITER(hh, peers, s, tmp) {
+ 	// 	send_leavePacket(local_info, s);
+ 	// 	close(s->net_fd);
+ 	// 	close(s->in_fd);
+ 	// }
  	exit(1);
  }
 
