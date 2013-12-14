@@ -204,14 +204,13 @@
  		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
- 		if (debug) printf("\nSIZE: %d | ", size);
+ 		if (debug) printf("\nSIZE from %s: %d | ", send_peerList(peer), size);
  		if (size > 0) {
  			strncpy(buffer2, buffer, 6);
  			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 			if (debug) printf("TYPE: %x\n", type);
+ 			if (debug) printf("TYPE from %s: %x\n", send_peerList(peer), type);
  			switch (type) {
  				case PACKET_LINKSTATE:
- 				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
  				break;
@@ -226,7 +225,7 @@
  				if (debug) printf("Negative.\n");
  			}
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
+ 			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
  			break;
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
