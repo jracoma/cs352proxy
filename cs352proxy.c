@@ -354,12 +354,13 @@
  		exit(1);
  	}
 
- 	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
+ 	if ((peer->listenIP == remote_addr.sin_addr) && (peer->listenPort == ntohs(remote_addr.sin_port))) return NULL;
+	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
@@ -749,7 +750,7 @@
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
- 	if (debug) printf("Removing: %s\n", buf1);
+ 	if (debug) printf("Removing peer: %s\n", buf1);
  	HASH_ITER(hh, records, s, tmp) {
  		buf2 = send_peerList(s->proxy1);
  		buf3 = send_peerList(s->proxy2);
