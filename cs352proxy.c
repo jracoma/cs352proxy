@@ -214,7 +214,7 @@
  				case PACKET_LINKSTATE:
  				gettimeofday(&current_time, NULL);
  				peer->lastLS = current_time.tv_sec;
- 				if (debug) printf("Last LS: %ld", peer->lastLS);
+ 				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
  				break;
