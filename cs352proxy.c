@@ -186,7 +186,6 @@
  	}
 
 	/* Close input file */
- 	free(current);
  	fclose(input_file);
  	return 0;
  }
@@ -386,7 +385,6 @@
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
- 	free(buffer);
  	return NULL;
  }
 
