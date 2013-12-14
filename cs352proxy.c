@@ -22,7 +22,7 @@
  char *dev = "tap10";
 
 /* Threads to handle socket and tap */
- pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -249,8 +249,9 @@
  }
 
 /* Server Mode */
- void server(int port)
+ void server(void *temp)
  {
+ 	int port = (int *)temp;
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
@@ -891,7 +892,10 @@
  	}
 
 	/* Start server path */
- 	server(local_info->listenPort);
+	 		if (pthread_create(&server_thread, NULL, server, (void *)local_info->listenPort) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 	}
 
  	close(tap_fd);
  	pthread_exit(NULL);

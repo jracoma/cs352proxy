@@ -103,7 +103,7 @@ int getIP(char *host, char *ip);
 int initLocalParams();
 int parseInput(int argc, char *argv[]);
 void *handle_listen(void *temp);
-void server(int port);
+void *server(void *temp);
 void *handle_tap();
 void *connectToPeer(void *temp);
 char *send_peerList(struct peerList *ls);
