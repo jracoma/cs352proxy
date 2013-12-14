@@ -433,11 +433,14 @@
  		puts("Checking for timed out peers...\n");
 
  		HASH_ITER(hh, peers, s, tmp) {
+ 			pthread_mutex_lock(&peer_mutex);
  			printf("%ld -- %ld\n", current_time.tv_sec, s->lastLS);
  			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
  				printf("PEER: %s has timed out.\n", send_peerList(s));
+ 				pthread_mutex_unlock(&peer_mutex);
  				remove_peer(s);
  			}
+ 			pthread_mutex_unlock(&peer_mutex);
  		}
  	}
  }
