@@ -502,6 +502,7 @@
 
 /* Sends quitPacket */
  void send_quitPacket() {
+ 	struct peerList *s, *tmp;
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_QUIT, send_peerList(local_info));
