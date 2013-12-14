@@ -360,8 +360,7 @@
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
-
- 	tmp2 = inet_ntoa(remote_addr.sin_addr);
+ 	tmp2 = inet_ntoa(peer->listenIP);
 
  	printf("COMPARING: %s --- %s\n", tmp1, tmp2);
 
