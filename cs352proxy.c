@@ -615,7 +615,7 @@
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	if (!strcmp(buf1, buf2)) {
- 		if (debug) puts("LOCAL MACHINE INFO");
+ 		if (debug) puts("LOCAL MACHINE INFO\n");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
@@ -687,6 +687,7 @@
  			return s;
  		}
  	}
+ 	if (debug) puts("PEER NOT FOUND");
  	return NULL;
  }
 
@@ -733,7 +734,10 @@
  					puts("RECORD EXISTS!");
  					printf("COMPARE: %d\n", compare_uniqueID(record->uniqueID, s->uniqueID));
  				}
- 				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 				if (compare_uniqueID(record->uniqueID, s->uniqueID)) {
+ 					HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 				}
+ 				print_linkStateRecords();
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
