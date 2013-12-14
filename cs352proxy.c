@@ -904,13 +904,13 @@
  // 	unsigned int frame_len = data_len + ETH_HLEN;
  // 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
  // 	printf("Attempting to open %s...\n", if_name);
-	// /* Open tap interface */
- // 	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
- // 		perror("Opening tap interface failed!");
- // 		return EXIT_FAILURE;
- // 	} else {
- // 		printf("Successfully opened %s interface...\n", if_name);
- // 	}
+	/* Open tap interface */
+ 	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
+ 		perror("Opening tap interface failed!");
+ 		return EXIT_FAILURE;
+ 	} else {
+ 		printf("Successfully opened %s interface...\n", if_name);
+ 	}
 
  // 	if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
  // 		perror("write to tap");
