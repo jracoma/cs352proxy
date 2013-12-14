@@ -651,6 +651,8 @@
  	struct peerList *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2;
 
+ 	if (peers == NULL) return NULL;
+
  	printf("LOOKING FOR: %s\n", buf1);
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
@@ -661,7 +663,7 @@
  		}
  	}
 
- 	return tmp;
+ 	return NULL;
  }
 
 /* Add new record */
