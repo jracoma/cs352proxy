@@ -204,7 +204,7 @@
  		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
- 		if (debug) printf("\nSIZE from %s: %d | ", send_peerList(peer), size);
+ 		if (debug) printf("\nSIZE from %s: %d\n", send_peerList(peer), size);
  		if (size > 0) {
  			strncpy(buffer2, buffer, 6);
  			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
