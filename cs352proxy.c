@@ -404,7 +404,8 @@
  	while (1) {
  		sleep(10);
  		if (debug) puts("^^^^FLOODING^^^^");
-
+ 		print_linkStateRecords();
+ 		print_peerList();
 
  	}
  	return NULL;
