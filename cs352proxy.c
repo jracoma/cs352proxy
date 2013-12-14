@@ -425,7 +425,7 @@
 
  	while (1) {
  		sleep(linkTimeout);
- 		gettimeofday(current_time, NULL);
+ 		gettimeofday(&current_time, NULL);
  		puts("Checking for timed out peers...\n");
 
  		HASH_ITER(hh, peers, s, tmp) {
@@ -460,7 +460,6 @@
 
  	print_linkStateRecords();
 
- 	free(temp);
  	free(buffer);
  }
 
