@@ -219,6 +219,9 @@
  				strncpy(buffer, buffer+10, sizeof(buffer));
  				decode_leavePacket(buffer);
  				break;
+ 				case PACKET_QUIT:
+ 				send_quitPacket();
+ 				break;
  				default:
  				printf("Negative.\n");
  			}
@@ -374,7 +377,6 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
- 		printf("here");
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(peer);
@@ -507,10 +509,12 @@
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_QUIT, send_peerList(local_info));
  	printf("QUIT PACKET GOGO: %s\n", buffer);
-
  	HASH_ITER(hh, peers, s, tmp) {
  		send(s->net_fd, buffer, strlen(buffer), 0);
+ 		close(s->net_fd);
+ 		close(s->in_fd);
  	}
+ 	exit(1);
  }
 
 /* Print packetHeader information */
@@ -896,11 +900,7 @@
  	print_peerList();
  	print_linkStateRecords();
 
- 	HASH_ITER(hh, peers, s, tmp) {
- 		send_quitPacket();
- 		close(s->net_fd);
- 		close(s->in_fd);
- 	}
+ 	send_quitPacket();
 
  	// HASH_ITER(hh, peers, s, tmp) {
  	// 	send_leavePacket(local_info, s);
