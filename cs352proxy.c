@@ -470,7 +470,7 @@
  }
 
 /* Send linkStatePacket */
- void send_linkStatePacket(struct peerList *target) {
+ void send_linkStatePacket(struct peerList *target, char *buffer) {
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
  	char *buffer = malloc(MAXBUFFSIZE);
