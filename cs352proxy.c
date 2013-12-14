@@ -598,7 +598,7 @@
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
- 	char *buf1 = send_peerList(peer);
+ 	char *buf1 = send_peerList(peer), *buf2;
 
  	print_peerList();
 
