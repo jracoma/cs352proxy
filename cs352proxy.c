@@ -213,7 +213,7 @@
  			switch (type) {
  				case PACKET_LINKSTATE:
  				gettimeofday(&current_time, NULL);
- 				peer->time = current_time.tv_sec;
+ 				peer->lastLS = current_time.tv_sec;
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
  				break;
@@ -432,7 +432,7 @@
  		puts("Checking for timed out peers...\n");
 
  		HASH_ITER(hh, peers, s, tmp) {
- 			if ((current_time.tv_sec - s->tv_sec) > linkTimeout) {
+ 			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
  				printf("PEER: %s has timed out.\n", send_peerList(s));
  				remove_peer(s);
  			}
