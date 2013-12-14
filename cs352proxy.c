@@ -779,7 +779,7 @@
  		sleep(2);
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
- 		puts("NOT SOLO!");
+ 		if (debug) puts("NOT SOLO!");
  	}
  }
 
@@ -788,7 +788,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100];
- 	printf("\nDECODING: %s\n", buffer);
+ 	if (debug) printf("\nDECODING: %s\n", buffer);
  	new_peerList->in_fd = in_fd;
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
@@ -844,9 +844,7 @@
 
 /* Main */
  int main (int argc, char *argv[]) {
- 	if (debug) {
- 		puts("DEBUGGING MODE:");
- 	}
+ 	if (debug) puts("DEBUGGING MODE:");
 
  // 	int size;
  // 	char if_name[IFNAMSIZ] = "";
@@ -896,7 +894,7 @@
 
 	/* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
- 		perror("connect_thread");
+ 		perror("server_thread");
  		pthread_exit(NULL);
  	}
 
