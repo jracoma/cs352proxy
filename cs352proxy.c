@@ -345,6 +345,7 @@
  	int new_fd;
  	char *buffer = malloc(MAXBUFFSIZE), *tmp1, *tmp2;
  	struct peerList *peer = (struct peerList *)temp;
+	tmp1 = inet_ntoa(local_info->listenIP);
 
  	if (!add_peer(peer) && (peer->net_fd)) return NULL;
 
@@ -359,7 +360,7 @@
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
- 	tmp1 = inet_ntoa(peer->listenIP);
+
  	tmp2 = inet_ntoa(remote_addr.sin_addr);
 
  	printf("COMPARING: %s --- %s\n", tmp1, tmp2);
