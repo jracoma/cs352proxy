@@ -821,7 +821,8 @@
 
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(local_info, s);
- 		close(s);
+ 		close(s->net_fd);
+ 		close(s->in_fd);
  	}
  	exit(1);
  }
