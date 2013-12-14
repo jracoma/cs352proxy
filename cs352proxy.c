@@ -603,10 +603,10 @@
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
  	struct timeval current_time;
- 	char *buf1 = send_peerList(peer), *buf2 = inet_ntoa(local_info->listenIP), *temp;
+ 	char *buf1 = send_peerList(peer), *buf2 = inet_ntoa(local_info->listenIP), *temp = inet_ntoa(peer->listenIP);
 
  	gettimeofday(&current_time, NULL);
- 	printf("TEST BUF2: %s\n", buf2);
+ 	printf("TEST BUF2: %s - %s\n", buf2, temp);
 
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
