@@ -656,7 +656,7 @@
 
  	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy1->in_fd);
 
- 	printf("\nChecking proxy1 membership...");
+ 	printf("\nChecking proxy1 membership...\n");
  	if (!(record->proxy1) || add_peer(record->proxy1)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
@@ -664,7 +664,7 @@
  		}
  	}
 
- 	printf("\nChecking proxy2 membership...");
+ 	printf("\nChecking proxy2 membership...\n");
  	if (!(record->proxy2) || add_peer(record->proxy2)) {
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
