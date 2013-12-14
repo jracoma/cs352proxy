@@ -186,7 +186,7 @@
  	}
 
 	/* Close input file */
-	free(current);
+ 	free(current);
  	fclose(input_file);
  	return 0;
  }
@@ -398,9 +398,15 @@
  }
 
 /* Flood linkStateRecords */
-void *flood_packets() {
-	if (debug) puts("^^^^FLOODING^^^^");
-}
+ void *flood_packets() {
+ 	while (1) {
+ 		sleep(10);
+ 		if (debug) puts("^^^^FLOODING^^^^");
+
+
+ 	}
+ 	return NULL;
+ }
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct peerList *peer) {
@@ -456,7 +462,10 @@ void *flood_packets() {
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
  	/* Ensure proxy1 != proxy2 */
- 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) {
+ 		printf("NEW PEER: Peer Removed %s:%d: Duplicate proxies\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
+ 		pthread_exit(NULL);
+ 	}
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
@@ -688,7 +697,7 @@ void *flood_packets() {
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				if (debug) {
  					puts("RECORD EXISTS!");
- 					printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 					printf("COMPARE: %d\n", compare_uniqueID(record->uniqueID, s->uniqueID));
  				}
  				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				pthread_mutex_unlock(&linkstate_mutex);
@@ -896,6 +905,12 @@ void *flood_packets() {
 	/* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
  		perror("server_thread");
+ 		pthread_exit(NULL);
+ 	}
+
+ 	/* Start flooding thread */
+ 	if (pthread_create(&flood_thread, NULL, flood_packets, NULL) != 0) {
+ 		perror("flood_thread");
  		pthread_exit(NULL);
  	}
 
