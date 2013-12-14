@@ -227,7 +227,7 @@
  		} else if (size < 0) {
  			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
  			break;
- 		} else {
+ 		} else if (size == 0) {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->in_fd);
  			close(peer->net_fd);
@@ -283,7 +283,6 @@
  		}
 
  		new_peer->in_fd = new_fd;
- 		printf("~~~IN FD: %d\n", new_fd);
  		new_peer->listenIP = client_addr.sin_addr;
  		new_peer->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
