@@ -193,7 +193,7 @@
 /* Read from socket and write to tap */
  void *handle_listen(void *temp)
  {
- 	struct peerList *peer = (struct peerList *)temp, *tmp;
+ 	struct peerList *peer = (struct peerList *)temp;
  	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
