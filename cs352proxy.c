@@ -374,7 +374,7 @@
  	} else {
  		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
-		print("here");
+		printf("here");
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		send_singleLinkStatePacket(peer);
@@ -449,7 +449,7 @@
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
  	// if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
- 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULLg);
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
