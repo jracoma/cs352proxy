@@ -179,7 +179,7 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		printf("Count: %d\n", lsPacket->neighbors);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
- 		printf("\n---FINAL Linked List after parseInput:\n");
+ 		printf("\n\n\n---FINAL Linked List after parseInput:---\n");
  		pthread_mutex_lock(&peer_mutex);
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
