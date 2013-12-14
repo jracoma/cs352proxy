@@ -212,9 +212,9 @@
  			if (debug) printf("TYPE: %x\n", type);
  			switch (type) {
  				case PACKET_LINKSTATE:
- 				gettimeofday(&current_time, NULL);
- 				peer->lastLS = current_time.tv_sec;
- 				add_peer(peer);
+ 				// gettimeofday(&current_time, NULL);
+ 				// peer->lastLS = current_time.tv_sec;
+ 				// add_peer(peer);
  				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
@@ -790,9 +790,13 @@
 /* Decode linkStatePacket information */
  void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct timeval current_time;
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
  	int neighbors;
  	if (debug)printf("Received: %s\n", buffer);
+
+ 	gettimeofday(&current_time, NULL);
+ 	new_peer->lastLS = current_time.tv_sec;
 
  	/* Parse through buffer */
  	next_field = strtok(buffer, " \n");
