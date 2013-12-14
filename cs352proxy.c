@@ -249,9 +249,8 @@
  }
 
 /* Server Mode */
- void *server(void *temp)
+ void *server()
  {
- 	int port = (int *)temp;
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
  	socklen_t addrlen = sizeof(client_addr);
@@ -267,7 +266,7 @@
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
- 	local_addr.sin_port = htons(port);
+ 	local_addr.sin_port = htons(local_info->listenPort);
  	if (bind(sock_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
  		perror("bind");
  		exit(1);
@@ -911,7 +910,7 @@
  	}
 
 	/* Start server path */
-	 		if (pthread_create(&server_thread, NULL, server, (void *)local_info->listenPort) != 0) {
+	 		if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  	}
