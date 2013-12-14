@@ -368,10 +368,10 @@
  		if (debug) printf("errno: %d\n", errno);
  		remove_peer(peer);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
+ 		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
  		send_singleLinkStatePacket(peer);
 
  		lsPacket->neighbors = HASH_COUNT(peers);
