@@ -925,17 +925,17 @@
  // 		perror("socket_thread");
  // 		return EXIT_FAILURE;
  // 	}
+ 	/* Start server path */
+ 	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
+ 		perror("server_thread");
+ 		pthread_exit(NULL);
+ 	}
+
  	/* Parse input file */
  	if (parseInput(argc, argv)) {
  		perror("parseInput");
  		close(tap_fd);
  		return EXIT_FAILURE;
- 	}
-
-	/* Start server path */
- 	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
- 		perror("server_thread");
- 		pthread_exit(NULL);
  	}
 
  	/* Start flooding thread */
