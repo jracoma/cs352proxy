@@ -22,7 +22,7 @@
  char *dev = "tap14";
 
 /* Threads to handle socket and tap */
- pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -249,7 +249,7 @@
  }
 
 /* Server Mode */
- void server(int port)
+ void *server()
  {
  	struct sockaddr_in local_addr, client_addr;
  	int optval = 1, new_fd;
@@ -266,13 +266,13 @@
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
- 	local_addr.sin_port = htons(port);
+ 	local_addr.sin_port = htons(local_info->listenPort);
  	if (bind(sock_fd, (struct sockaddr *)&local_addr, sizeof(local_addr)) < 0) {
  		perror("bind");
  		exit(1);
  	}
 
- 	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), port);
+ 	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), local_info->listenPort);
 
 	/* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
@@ -295,6 +295,7 @@
  			exit(1);
  		}
  	}
+ 	return NULL;
  }
 
 /* Thread to open and handle tap device, read from tap and send to socket */
@@ -446,6 +447,8 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
+
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
@@ -453,20 +456,34 @@
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
  	/* Verify peer isn't in the list, connect if it ins't */
- 	if (add_peer(proxy1)) {
- 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
+ 	if (find_peer(proxy1) == NULL) {
+ 		 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
- 	if (add_peer(proxy2)) {
- 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
+ 	 	if (find_peer(proxy2) == NULL) {
+ 		 		printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
+ 	// if (add_peer(proxy1)) {
+ 	// 	printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
+ 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
+ 	// 		perror("connect_thread");
+ 	// 		pthread_exit(NULL);
+ 	// 	}
+ 	// }
+ 	// if (add_peer(proxy2)) {
+ 	// 	printf("Starting new thread for %s:%d\n", inet_ntoa(proxy2->listenIP), proxy2->listenPort);
+ 	// 	if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy2) != 0) {
+ 	// 		perror("connect_thread");
+ 	// 		pthread_exit(NULL);
+ 	// 	}
+ 	// }
  	add_record(new_record);
 
  	return new_record;
@@ -635,6 +652,8 @@
  	struct peerList *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2;
 
+ 	if (peers == NULL) return NULL;
+
  	printf("LOOKING FOR: %s\n", buf1);
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
@@ -645,7 +664,7 @@
  		}
  	}
 
- 	return tmp;
+ 	return NULL;
  }
 
 /* Add new record */
@@ -654,18 +673,20 @@
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
- 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy1->in_fd);
+ 	if (debug) printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
 
- 	printf("\nChecking proxy1 membership...");
+ 	printf("\nChecking proxy1 membership...\n");
  	if (!(record->proxy1) || add_peer(record->proxy1)) {
+ 		puts("here");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
  		}
  	}
 
- 	printf("\nChecking proxy2 membership...");
+ 	printf("\nChecking proxy2 membership...\n");
  	if (!(record->proxy2) || add_peer(record->proxy2)) {
+ 		puts("here2");
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
  			pthread_exit(NULL);
@@ -889,7 +910,10 @@
  	}
 
 	/* Start server path */
- 	server(local_info->listenPort);
+	 		if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
+ 			perror("connect_thread");
+ 			pthread_exit(NULL);
+ 	}
 
  	close(tap_fd);
  	pthread_exit(NULL);
