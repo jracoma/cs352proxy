@@ -640,7 +640,6 @@
 
  	if (debug) {
  		printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
- 		print_peerList();
  	}
 
  	if (peers == NULL) {
