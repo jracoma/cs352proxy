@@ -220,6 +220,7 @@
  				decode_leavePacket(buffer);
  				break;
  				case PACKET_QUIT:
+ 				puts("RECEIVED QUIT COMMAND");
  				send_quitPacket();
  				break;
  				default:
