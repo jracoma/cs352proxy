@@ -193,7 +193,7 @@
 /* Read from socket and write to tap */
  void *handle_listen(void *temp)
  {
- 	struct peerList *peer = (struct peerList *)temp;
+ 	struct peerList *peer = (struct peerList *)temp, *tmp;
  	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
@@ -212,8 +212,9 @@
  			if (debug) printf("TYPE: %x\n", type);
  			switch (type) {
  				case PACKET_LINKSTATE:
+ 				tmp = find_peer(peer);
  				gettimeofday(&current_time, NULL);
- 				peer->lastLS = current_time.tv_sec;
+ 				tmp->lastLS = current_time.tv_sec;
  				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
