@@ -607,7 +607,7 @@
 
 
  	strcpy(buf2, inet_ntoa(local_info->listenIP));
- 	strcpy(temp, inet_ntoa(peer->listenIP))
+ 	strcpy(temp, inet_ntoa(peer->listenIP));
  	gettimeofday(&current_time, NULL);
  	printf("TEST BUF2: %s - %s\n", buf2, temp);
 
