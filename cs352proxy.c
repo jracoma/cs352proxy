@@ -240,6 +240,8 @@
  			print_linkStateRecords();
  			return NULL;
  		}
+
+ 		puts("end while");
  	}
  	if (debug) puts("Leaving handle_listen");
  	return NULL;
