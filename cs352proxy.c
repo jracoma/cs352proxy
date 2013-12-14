@@ -429,7 +429,7 @@
  		puts("Checking for timed out peers...\n");
 
  		HASH_ITER(hh, peers, s, tmp) {
- 			if ((current_time.tv_sec - s.tv_sec) > linkTimeout) {
+ 			if ((current_time.tv_sec - s->uniqueID.tv_sec) > linkTimeout) {
  				printf("PEER: %s has timed out.\n", send_peerList(s));
  				remove_peer(s);
  			}
