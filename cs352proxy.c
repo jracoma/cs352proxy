@@ -212,9 +212,9 @@
  			if (debug) printf("TYPE: %x\n", type);
  			switch (type) {
  				case PACKET_LINKSTATE:
- 				tmp = find_peer(peer);
  				gettimeofday(&current_time, NULL);
- 				tmp->lastLS = current_time.tv_sec;
+ 				peer->lastLS = current_time.tv_sec;
+ 				add_peer(peer);
  				if (debug) printf("Last LS: %ld\n", peer->lastLS);
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
