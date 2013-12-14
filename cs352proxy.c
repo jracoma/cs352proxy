@@ -448,6 +448,8 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
+
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
  	new_record->uniqueID = current_time;
