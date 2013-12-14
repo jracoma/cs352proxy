@@ -710,7 +710,7 @@
  		printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy2->listenIP), record->proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
- 			pthread_mutex_unlock(&linkstate_mutex)
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_exit(NULL);
  		}
  	}
