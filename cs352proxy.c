@@ -616,6 +616,7 @@
 
  	if (peers == NULL) {
  		puts("EMPTY PEERLIST");
+ 		pthread_mutex_unlock(&peer_mutex);
  		return 1;
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
