@@ -33,7 +33,7 @@
 /* Macro Definitions */
 #define eprintf(...) fprintf(stderr, __VA_ARGS__);
 #define MAXBUFFSIZE 2048
-#define BACKLOG 10
+#define BACKLOG 20
 #define MAXLINESIZE 256
 /* Packet Definitions */
 #define PACKET_DATA 0xABCD
