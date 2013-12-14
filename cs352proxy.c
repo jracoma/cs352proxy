@@ -449,7 +449,7 @@
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
  	// if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) return NULL;
- 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULLg);
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
