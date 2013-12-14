@@ -22,7 +22,7 @@
  char *dev = "tap10";
 
 /* Threads to handle socket and tap */
- pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread, timeout_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -383,6 +383,7 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		if (debug) print_linkStatePacket();
  	}
+
  	if (debug) puts("Leaving connectToPeer");
  	return NULL;
  }
@@ -398,20 +399,48 @@
 
 /* Flood linkStateRecords */
  void *flood_packets() {
+ 	struct peerList *s, *tmp;
+ 	char *buffer = malloc(MAXBUFFSIZE);
+
+	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
+
  	while (1) {
- 		sleep(10);
+ 		sleep(linkPeriod);
  		if (debug) puts("^^^^FLOODING^^^^");
  		print_linkStateRecords();
  		print_peerList();
 
+ 		/* Lock peers and records, iterate through peers and send records */
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			send_linkStatePacket(s);
+ 		}
  	}
  	return NULL;
+ }
+
+/* Periodically check for timed out peers */
+ void *check_timeout() {
+ 	struct timeval current_time;
+ 	struct peerList *s, *tmp;
+
+ 	while (1) {
+ 		sleep(linkTimeout);
+ 		gettimeofday(current_time, NULL);
+ 		puts("Checking for timed out peers...\n");
+
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			if ((current_time.tv_sec - s.tv_sec) > linkTimeout) {
+ 				printf("PEER: %s has timed out.\n", send_peerList(s));
+ 				remove_peer(s);
+ 			}
+ 		}
+ 	}
  }
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
- 	char *buffer = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
@@ -429,7 +458,6 @@
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
- 	/* Moving inside create linkStateRecord */
  	print_linkStateRecords();
 
  	free(temp);
@@ -437,20 +465,15 @@
  }
 
 /* Send linkStatePacket */
- void send_peerListPacket(struct linkStatePacket *lsp) {
- 	// char *buffer = malloc(MAXBUFFSIZE);
- 	// struct peerList *peer;
-
+ void send_linkStatePacket(struct peerList *target) {
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | linkWeight */
- 	// lsp->header->length = sizeof(lsp);
- 	// sprintf(buffer, "0x%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->linkWeight);
+ 	printf("FLOODING TO: %s\n", send_peerList(target));
+ 	print_linkStateRecords();
 
- 	/* Add proxy information */
- 	// printf("SENT: %s | Length: %d\n", buffer, strlen(buffer));
- 	// send(peer->net_fd, buffer, strlen(buffer), 0);
+
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
@@ -601,7 +624,6 @@
  			return 0;
  		}
  	}
-
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
@@ -613,9 +635,10 @@
  	struct peerList *tmp;
  	char *buf1 = send_peerList(peer);
 
- 	print_peerList();
-
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
+ 	if (debug) {
+ 		printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
+ 		print_peerList();
+ 	}
 
  	if (peers == NULL) {
  		if (debug) puts("EMPTY PEERLIST");
@@ -654,7 +677,6 @@
  			return s;
  		}
  	}
-
  	return NULL;
  }
 
@@ -717,6 +739,7 @@
 
 /* Remove peer from records */
  int remove_record(struct peerList *peer) {
+ 	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
@@ -728,6 +751,7 @@
  			HASH_DEL(records, s);
  		}
  	}
+ 	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
 
@@ -786,7 +810,7 @@
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		if (debug) printf("SINGLE LINKSTATE: SENT MAC: %s\n", ethMAC);
  		send(in_fd, ethMAC, strlen(ethMAC), 0);
- 		sleep(2);
+ 		sleep(1);
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SOLO!");
@@ -911,6 +935,12 @@
  	/* Start flooding thread */
  	if (pthread_create(&flood_thread, NULL, flood_packets, NULL) != 0) {
  		perror("flood_thread");
+ 		pthread_exit(NULL);
+ 	}
+
+ 	/* Start timeout thread */
+ 	if (pthread_create(&timeout_thread, NULL, check_timeout, NULL) != 0) {
+ 		perror("timeout_thread");
  		pthread_exit(NULL);
  	}
 

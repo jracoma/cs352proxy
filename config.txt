@@ -1,7 +1,7 @@
 // Local Machine Information
 listenPort 5555
 linkPeriod 60
-linkTimeout 60
+linkTimeout 5
 quitAfter 120
 // Optional Proxy Peer Fields
 peer cs352-50.cs.rutgers.edu 55510
