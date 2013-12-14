@@ -357,6 +357,7 @@
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+ 		free(buffer);
  		perror("could not create socket");
  		exit(1);
  	}
@@ -385,6 +386,7 @@
  		if (debug) print_linkStatePacket();
  	}
  	if (debug) puts("Leaving connectToPeer");
+ 	free(buffer);
  	return NULL;
  }
 
