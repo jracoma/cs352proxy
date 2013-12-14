@@ -197,6 +197,7 @@
  	int size;
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
+ 	struct timeval current_time;
 
  	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
@@ -211,6 +212,8 @@
  			if (debug) printf("TYPE: %x\n", type);
  			switch (type) {
  				case PACKET_LINKSTATE:
+ 				gettimeofday(&current_time, NULL);
+ 				peer->time = current_time.tv_sec;
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
  				break;
@@ -429,7 +432,7 @@
  		puts("Checking for timed out peers...\n");
 
  		HASH_ITER(hh, peers, s, tmp) {
- 			if ((current_time.tv_sec - s->uniqueID.tv_sec) > linkTimeout) {
+ 			if ((current_time.tv_sec - s->tv_sec) > linkTimeout) {
  				printf("PEER: %s has timed out.\n", send_peerList(s));
  				remove_peer(s);
  			}

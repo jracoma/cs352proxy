@@ -67,6 +67,7 @@ struct peerList {
   struct in_addr listenIP;
   uint16_t listenPort;
   struct sockaddr ethMAC;
+  struct tv_sec time;
   UT_hash_handle hh;
 }__attribute__((packed));
 
