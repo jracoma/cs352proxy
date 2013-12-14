@@ -229,20 +229,13 @@
  				default:
  				if (debug) printf("Negative.\n");
  			}
- 		// // } else if (size == 0) {
- 		// 	pthread_mutex_lock(&peer_mutex);
- 		// 	pthread_mutex_lock(&linkstate_mutex);
-
- 		// 	/* Stuff about orderly shutdown */
-
- 		// 	pthread_mutex_unlock(&peer_mutex);
- 		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
  			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
  			break;
  		} else {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->in_fd);
+ 			close(peer->net_fd);
  			remove_peer(peer);
  			print_peerList();
  			print_linkStateRecords();
@@ -408,6 +401,10 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
+ 	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 %ld:%ld %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
+
+ 	printf("OUTGOING PAYLOAD: %s\n", buffer);
 
  	while (1) {
  		sleep(linkPeriod);
@@ -417,7 +414,7 @@
 
  		/* Lock peers and records, iterate through peers and send records */
  		HASH_ITER(hh, peers, s, tmp) {
- 			send_linkStatePacket(s);
+ 			send_linkStatePacket(s, buffer);
  		}
  	}
  	return NULL;
@@ -658,6 +655,8 @@
  		} else {
  			if (debug) puts("REMOVED PEER");
  			remove_record(tmp);
+ 			close(tmp->in_fd);
+ 			close(tmp->net_fd);
  			HASH_DEL(peers, tmp);
  			pthread_mutex_unlock(&peer_mutex);
  			return 1;
