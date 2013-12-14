@@ -509,7 +509,7 @@
  	printf("QUIT PACKET GOGO: %s\n", buffer);
 
  	HASH_ITER(hh, peers, s, tmp) {
- 		send(sendto->net_fd, buffer, strlen(buffer), 0);
+ 		send(s->net_fd, buffer, strlen(buffer), 0);
  	}
  }
 
