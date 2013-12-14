@@ -49,6 +49,7 @@
 
  	strcpy(dev, ifr.ifr_name);
 
+ 	if (debug) printf("TUN FD: %d\n", fd);
  	return fd;
  }
 
@@ -345,7 +346,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) return NULL;
+ 	if (!add_peer(peer) && (peer->net_fd)) return NULL;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -690,7 +691,7 @@
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
  	if (debug) {
- 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s -%d/%d | %s -%d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
+ 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s- %d/%d | %s- %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
  		printf("\nChecking proxy1 membership...\n");
  	}
  	if (add_peer(record->proxy1)) {
