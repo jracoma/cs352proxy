@@ -606,8 +606,8 @@
  	char *buf1 = send_peerList(peer), *buf2 = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
 
 
- 	strcpy(buf2, inet_ntoa(peer->listenIP));
- 	temp = inet_ntoa(peer->listenIP);
+ 	strcpy(buf2, inet_ntoa(local_info->listenIP));
+ 	strcpy(temp, inet_ntoa(peer->listenIP))
  	gettimeofday(&current_time, NULL);
  	printf("TEST BUF2: %s - %s\n", buf2, temp);
 
