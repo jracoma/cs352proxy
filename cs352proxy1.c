@@ -474,7 +474,7 @@
  	char *buffer = malloc(MAXBUFFSIZE);
 
  	sprintf(buffer, "0x%x 20 %s", PACKET_LEAVE, send_peerList(leaving));
- 	printf("LEAVING AND SENDING: %s\n", buffer);
+ 	printf("LEAVING AND SENDING: %s - %d\n", buffer, sendto->net_fd);
  	send(sendto->net_fd, buffer, strlen(buffer), 0);
  }
 
@@ -622,7 +622,7 @@
  		// }
  	}
 
-
+ 	print_peerList();
  	pthread_mutex_unlock(&peer_mutex);
  	return 0;
  }
