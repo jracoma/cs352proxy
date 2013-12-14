@@ -362,7 +362,8 @@
  	sprintf(buf1, "%s %d", inet_ntoa(local_info->listenIP), local_info->listenPort);
  	sprintf(buf2, "%s %d", inet_ntoa(peer->listenIP), peer->listenPort);
 
- 	printf("COMPARING %s --- %s\n", buf1, buf2);
+	if (debug) printf("COMPARING %s --- %s\n", buf1, buf2);
+	if (!(strcmp(buf1, buf2))) return NULL;
 
 	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
