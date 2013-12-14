@@ -566,7 +566,7 @@
 /* Add new member */
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
- 	struct peerList *tmp, *s;
+ 	struct peerList *tmp;
  	char *buf1 = send_peerList(peer), *buf2;
 
  	buf2 = send_peerList(local_info);
