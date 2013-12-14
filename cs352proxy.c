@@ -603,7 +603,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
  	struct timeval current_time;
- 	char *buf1 = send_peerList(peer), *buf2 = inet_ntoa(local_info->listenIP), *tmp;
+ 	char *buf1 = send_peerList(peer), *buf2 = inet_ntoa(local_info->listenIP), *temp;
 
  	gettimeofday(&current_time, NULL);
  	printf("TEST BUF2: %s\n", buf2);
