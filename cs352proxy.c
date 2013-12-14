@@ -283,6 +283,7 @@
  		}
 
  		new_peer->in_fd = new_fd;
+ 		printf("~~~IN FD: %d\n", new_fd);
  		new_peer->listenIP = client_addr.sin_addr;
  		new_peer->listenPort = htons(client_addr.sin_port);
  		if (pthread_create(&listen_thread, NULL, handle_listen, (void*)new_peer) != 0) {
@@ -690,7 +691,7 @@
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
  	if (debug) {
- 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
+ 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s -%d/%d | %s -%d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
  		printf("\nChecking proxy1 membership...\n");
  	}
  	if (add_peer(record->proxy1)) {
