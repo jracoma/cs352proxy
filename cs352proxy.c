@@ -230,8 +230,6 @@
  			break;
  		} else if (size == 0) {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
- 			close(peer->in_fd);
- 			close(peer->net_fd);
  			remove_peer(peer);
  			print_peerList();
  			print_linkStateRecords();
@@ -447,6 +445,7 @@
  void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
  	char *buffer = malloc(MAXBUFFSIZE);
+ 	int size;
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
@@ -459,7 +458,22 @@
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
  	/* Receive MAC Address and tapDevice */
- 	recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
+ 	size = recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
+
+
+if (size < 0) {
+ 			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
+ 			remove_peer(peer);
+ 			free(buffer);
+ 			return;
+ 		} else if (size == 0) {
+ 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
+ 			remove_peer(peer);
+ 			print_peerList();
+ 			print_linkStateRecords();
+ 			return NULL;
+ 		}
+
  	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
