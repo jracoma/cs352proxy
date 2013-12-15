@@ -213,8 +213,7 @@
  			switch (type) {
  				case PACKET_DATA:
  				strncpy(buffer, buffer+7, sizeof(buffer));
- 				// decode_dataPacket(buffer);
- 				printf("BUFFER: %s\n", buffer);
+ 				decode_dataPacket(buffer);
  				// next_field = strtok(buffer, " \n");
  				// printf("HUH!?! : %s\n", next_field);
  				// next_field = strtok(NULL, " \n");
@@ -826,6 +825,8 @@
  void decode_dataPacket(char *buffer) {
  	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
  	new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+
+ 	printf("BUFFER: %s\n", buffer);
 
  	new_data->header->type = htons(PACKET_DATA);
  	new_data->header->length = atoi(strtok(buffer, " \n"));
