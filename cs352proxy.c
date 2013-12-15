@@ -501,7 +501,7 @@
  		strcat(buffer, buf1);
  		strcat(buffer, send_peerList(s->proxy1));
  		strcat(buffer, send_peerList(s->proxy2));
- 		strcat(buffer, "! ");
+ 		strcat(buffer, "!");
  	}
 
  	/* Send linkStatePacket */
