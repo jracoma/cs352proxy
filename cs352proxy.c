@@ -902,7 +902,7 @@
  		next_field = ip;
  	}
  	inet_aton(next_field, &new_peerList2->listenIP);
- 	new_peerList1->listenPort = atoi(strtok(NULL, " \n"));
+ 	new_peerList2->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_peerList2);
  	new_record->proxy2 = new_peerList2;
