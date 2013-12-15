@@ -857,6 +857,7 @@
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, "\n");
+ 	i = atoi(strtok(NULL, "!\n"));
  	if (debug) printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
@@ -866,7 +867,6 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
- 		i = strtok(NULL, "!\n");
  		printf("INCOMING NUMBER OF RECORDS: %d\n", i);
  		for (; i < neighbors; i++) {
  			printf("NEXT: %s\n", next_field);
