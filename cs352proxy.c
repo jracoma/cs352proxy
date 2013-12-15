@@ -826,13 +826,12 @@
  	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
  	new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
 
- 	printf("BUFFER: %s\n", buffer);
-
- 	new_data->header->type = htons(PACKET_DATA);
+	new_data->header->type = htons(PACKET_DATA);
  	new_data->header->length = atoi(strtok(buffer, " \n"));
  	strcpy(new_data->data, strtok(NULL, "\n"));
 
  	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(new_data->header->type), new_data->header->length, new_data->data);
+ 	write(tap_fd, new_data->data, strlen(new_data->data));
  }
 
 /* Decode leavePacket */
@@ -1004,24 +1003,6 @@
  int main (int argc, char *argv[]) {
  	if (debug) puts("DEBUGGING MODE:");
 
-	//         int size;
-	//         char if_name[IFNAMSIZ] = "";
-	//         unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
-	//         unsigned short proto = 0x1234;
-	//         char *data = "hello world~!!!";
-	//         unsigned short data_len = strlen(data);
-
-	//         unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
-
-	//         union ethframe frame;
-	//         memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
-	//         memcpy(frame.field.header.h_source, source, ETH_ALEN);
-	//         frame.field.header.h_proto = htons(proto);
-	//         memcpy(frame.field.data, data, data_len);
-
-	//         unsigned int frame_len = data_len + ETH_HLEN;
-	//         strncpy(if_name, "tap10", IFNAMSIZ - 1);
-	//         printf("Attempting to open %s...\n", if_name);
 	/* Open tap interface */
  	if ((tap_fd = allocate_tunnel(dev, IFF_TAP | IFF_NO_PI)) < 0) {
  		perror("Opening tap interface failed!");
