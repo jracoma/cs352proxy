@@ -212,10 +212,12 @@
  			if (debug) printf("TYPE from %s: %x\n", send_peerList(peer), type);
  			switch (type) {
  				case PACKET_DATA:
- 				next_field = strtok(buffer, " \n");
- 				printf("HUH!?! : %s\n", next_field);
- 				 				next_field = strtok(NULL, " \n");
- 				printf("HUH!?! : %s\n", next_field);
+ 				strncpy(buffer, buffer+7, sizeof(buffer));
+ 				decode_dataPacket(buffer);
+ 				// next_field = strtok(buffer, " \n");
+ 				// printf("HUH!?! : %s\n", next_field);
+ 				// next_field = strtok(NULL, " \n");
+ 				// printf("HUH!?! : %s\n", next_field);
  				break;
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
@@ -817,6 +819,11 @@
  	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
+ }
+
+/* Decode dataPacket */
+ void decode_dataPacket(char *buffer) {
+ 	printf("DATA PACKET: %s\n", buffer);
  }
 
 /* Decode leavePacket */

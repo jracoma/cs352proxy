@@ -127,6 +127,7 @@ int remove_peer(struct peerList *peer);
 struct peerList *find_peer(struct peerList *peer);
 int add_record(struct linkStateRecord *record);
 int remove_record(struct peerList *peer);
+void decode_dataPacket(char *buffer);
 void decode_leavePacket(char *buffer);
 void decode_linkStatePacket(char *buffer, int in_fd);
 void decode_linkStateRecord(char *buffers);
