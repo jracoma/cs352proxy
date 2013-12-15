@@ -870,7 +870,7 @@
  		printf("INCOMING NUMBER OF RECORDS: %d\n", numrecords);
  		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %s\n", next_field);
- 			// decode_linkStateRecord(next_field);
+ 			decode_linkStateRecord(next_field);
  			next_field = strtok(NULL, "!");
  		}
  	}
@@ -880,30 +880,30 @@
  void decode_linkStateRecord(char *buffer) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList1 = (struct peerList *)malloc(sizeof(struct peerList)), *new_peerList2 = (struct peerList *)malloc(sizeof(struct peerList));
- 	char *next_field, ip[100];
+ 	char *next_tok, ip[100];
  	if (debug) printf("\nDECODING: %s\n", buffer);
  	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
  	new_record->linkWeight = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, " \n");
- 	if (inet_addr(next_field) == -1) {
- 		getIP(next_field, ip);
- 		next_field = ip;
+ 	next_tok = strtok(NULL, " \n");
+ 	if (inet_addr(next_tok) == -1) {
+ 		getIP(next_tok, ip);
+ 		next_tok = ip;
  	}
- 	inet_aton(next_field, &new_peerList1->listenIP);
+ 	inet_aton(next_tok, &new_peerList1->listenIP);
  	new_peerList1->listenPort = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, " \n");
- 	readMAC(next_field, new_peerList1);
+ 	next_tok = strtok(NULL, " \n");
+ 	readMAC(next_tok, new_peerList1);
  	new_record->proxy1 = new_peerList1;
- 	next_field = strtok(NULL, " \n");
- 	if (inet_addr(next_field) == -1) {
- 		getIP(next_field, ip);
- 		next_field = ip;
+ 	next_tok = strtok(NULL, " \n");
+ 	if (inet_addr(next_tok) == -1) {
+ 		getIP(next_tok, ip);
+ 		next_tok = ip;
  	}
- 	inet_aton(next_field, &new_peerList2->listenIP);
+ 	inet_aton(next_tok, &new_peerList2->listenIP);
  	new_peerList2->listenPort = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, " \n");
- 	readMAC(next_field, new_peerList2);
+ 	next_tok = strtok(NULL, " \n");
+ 	readMAC(next_tok, new_peerList2);
  	new_record->proxy2 = new_peerList2;
 
  	print_linkStateRecord(new_record);
