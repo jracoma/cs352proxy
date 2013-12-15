@@ -824,14 +824,13 @@
 /* Decode dataPacket */
  void decode_dataPacket(char *buffer) {
  	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
- 	dataPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	char *next_field;
+ 	new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
 
- 	dataPacket->header->type = htons(PACKET_DATA);
- 	dataPacket->header->length = atoi(strtok(buffer, " \n"));
- 	dataPacket->data = strtok(NULL, " \n");
+ 	new_data->header->type = htons(PACKET_DATA);
+ 	new_data->header->length = atoi(strtok(buffer, " \n"));
+ 	new_data->data = strtok(NULL, " \n");
 
- 	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(dataPacket->header->type), dataPacket->header->length, dataPacket->data);
+ 	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(new_data->header->type), new_data->header->length, new_data->data);
  }
 
 /* Decode leavePacket */
