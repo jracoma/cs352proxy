@@ -867,6 +867,7 @@
  	} else {
  		if (debug) puts("NOT SINGLE!");
  		i = strtok(NULL, "!\n");
+ 		printf("INCOMING NUMBER OF RECORDS: %d\n", i);
  		for (; i < neighbors; i++) {
  			printf("NEXT: %s\n", next_field);
  			decode_linkStateRecord(next_field);
