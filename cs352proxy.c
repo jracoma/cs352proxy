@@ -182,7 +182,9 @@
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
  		printf("\n\n\n---FINAL Linked List after parseInput:---\n");
  		pthread_mutex_lock(&peer_mutex);
+ 		pthread_mutex_lock(&linkstate_mutex);
  		print_peerList();
+ 		pthread_mutex_unlock(&linkstate_mutex);
  		pthread_mutex_unlock(&peer_mutex);
  	}
 
@@ -433,12 +435,15 @@
 
  		HASH_ITER(hh, peers, s, tmp) {
  			pthread_mutex_lock(&peer_mutex);
+ 			pthread_mutex_lock(&linkstate_mutex);
  			printf("%ld -- %ld\n", current_time.tv_sec, s->lastLS);
  			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
  				printf("PEER: %shas timed out.\n", send_peerList(s));
+ 				pthread_mutex_unlock(&linkstate_mutex);
  				pthread_mutex_unlock(&peer_mutex);
  				remove_peer(s);
  			}
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_mutex_unlock(&peer_mutex);
  		}
  	}
@@ -644,6 +649,7 @@
 /* Add new member */
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
+ 	pthread_mutex_lock(&linkstate_mutex);
  	struct peerList *tmp;
  	struct timeval current_time;
  	char *buf1 = send_peerList(peer), *buf2;
@@ -653,6 +659,7 @@
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	if (!strcmp(buf1, buf2)) {
  		if (debug) puts("LOCAL MACHINE INFO\n");
+ 		pthread_mutex_unlock(&linkstate_mutex);
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
@@ -664,10 +671,12 @@
  			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_mutex_unlock(&peer_mutex);
  			return 0;
  		}
  	}
+ 	pthread_mutex_unlock(&linkstate_mutex);
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
@@ -676,6 +685,7 @@
 /* Remove peer member */
  int remove_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
+ 	pthread_mutex_lock(&linkstate_mutex);
  	struct peerList *tmp;
  	char *buf1 = send_peerList(peer);
 
@@ -685,6 +695,7 @@
 
  	if (peers == NULL) {
  		if (debug) puts("EMPTY PEERLIST");
+ 		pthread_mutex_unlock(&linkstate_mutex);
  		pthread_mutex_unlock(&peer_mutex);
  		return 1;
  	} else {
@@ -694,12 +705,14 @@
  			close(tmp->in_fd);
  			close(tmp->net_fd);
  			HASH_DEL(peers, tmp);
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_mutex_unlock(&peer_mutex);
  			return 1;
  		}
  	}
 
  	print_peerList();
+ 	pthread_mutex_unlock(&linkstate_mutex);
  	pthread_mutex_unlock(&peer_mutex);
  	return 0;
  }
@@ -730,6 +743,7 @@
 
 /* Add new record */
  int add_record(struct linkStateRecord *record) {
+ 	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
@@ -742,6 +756,7 @@
  		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy1->listenIP), record->proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
+ 			pthread_mutex_unlock(&peer_mutex);
  			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_exit(NULL);
  		}
@@ -752,6 +767,7 @@
  		printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy2->listenIP), record->proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
+ 			pthread_mutex_unlock(&peer_mutex);
  			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_exit(NULL);
  		}
@@ -775,6 +791,7 @@
  					HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  				}
  				print_linkStateRecords();
+ 				pthread_mutex_unlock(&peer_mutex);
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
@@ -786,12 +803,14 @@
 
  	print_linkStateRecords();
  	if (debug) print_peerList();
+ 	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
 
 /* Remove peer from records */
  int remove_record(struct peerList *peer) {
+ 	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
@@ -805,6 +824,7 @@
  		}
  	}
  	print_linkStateRecords();
+ 	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
@@ -1021,13 +1041,6 @@
  // 		return EXIT_FAILURE;
  // 	}
 
- 	/* Parse input file */
- 	if (parseInput(argc, argv)) {
- 		perror("parseInput");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
- 	}
-
  	/* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
  		perror("server_thread");
@@ -1044,6 +1057,13 @@
  	if (pthread_create(&timeout_thread, NULL, check_timeout, NULL) != 0) {
  		perror("timeout_thread");
  		pthread_exit(NULL);
+ 	}
+
+ 	/* Parse input file */
+ 	if (parseInput(argc, argv)) {
+ 		perror("parseInput");
+ 		close(tap_fd);
+ 		return EXIT_FAILURE;
  	}
 
  	close(tap_fd);
