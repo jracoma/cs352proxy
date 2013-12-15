@@ -22,7 +22,7 @@
  char *dev = "tap14";
 
 /* Threads to handle socket and tap */
- pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread;
+ pthread_t sleep_thread, listen_thread, connect_thread, socket_thread, flood_thread, server_thread, timeout_thread;
  pthread_mutex_t peer_mutex = PTHREAD_MUTEX_INITIALIZER, linkstate_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Open a tun/tap and return the fd to read/write back to caller */
@@ -47,8 +47,9 @@
  		return error;
  	}
 
- 	strcpy(dev, ifr.ifr_name);
+ 	// strcpy(dev, ifr.ifr_name);
 
+ 	if (debug) printf("TUN FD: %d\n", fd);
  	return fd;
  }
 
@@ -179,14 +180,13 @@
  		lsPacket->neighbors = HASH_COUNT(peers);
  		printf("Count: %d\n", lsPacket->neighbors);
  		printf("linkPeriod: %d | linkTimeout: %d | quitAfter: %d\n\n\n", linkPeriod, linkTimeout, quitAfter);
- 		printf("\n---FINAL Linked List after parseInput:\n");
+ 		printf("\n\n\n---FINAL Linked List after parseInput:---\n");
  		pthread_mutex_lock(&peer_mutex);
  		print_peerList();
  		pthread_mutex_unlock(&peer_mutex);
  	}
 
 	/* Close input file */
-	free(current);
  	fclose(input_file);
  	return 0;
  }
@@ -205,11 +205,11 @@
  		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
  		memset(buffer, 0, MAXBUFFSIZE);
  		size = recv(peer->in_fd, buffer, sizeof(buffer), 0);
- 		if (debug) printf("\nSIZE: %d | ", size);
+ 		if (debug) printf("\nSIZE from %s: %d\n", send_peerList(peer), size);
  		if (size > 0) {
  			strncpy(buffer2, buffer, 6);
  			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
- 			if (debug) printf("TYPE: %x\n", type);
+ 			if (debug) printf("TYPE from %s: %x\n", send_peerList(peer), type);
  			switch (type) {
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
@@ -225,20 +225,13 @@
  				default:
  				if (debug) printf("Negative.\n");
  			}
- 		// // } else if (size == 0) {
- 		// 	pthread_mutex_lock(&peer_mutex);
- 		// 	pthread_mutex_lock(&linkstate_mutex);
-
- 		// 	/* Stuff about orderly shutdown */
-
- 		// 	pthread_mutex_unlock(&peer_mutex);
- 		// 	pthread_mutex_unlock(&linkstate_mutex);
  		} else if (size < 0) {
- 			printf("recv error from %d | ERR: %d\n", peer->in_fd, errno);
+ 			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
  			break;
- 		} else {
+ 		} else if (size == 0) {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
  			close(peer->in_fd);
+ 			close(peer->net_fd);
  			remove_peer(peer);
  			print_peerList();
  			print_linkStateRecords();
@@ -350,10 +343,10 @@
  void *connectToPeer(void *temp) {
  	struct sockaddr_in remote_addr;
  	int new_fd;
- 	char *buffer = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE), *buf1 = malloc(MAXBUFFSIZE), *buf2 = malloc(MAXBUFFSIZE);
  	struct peerList *peer = (struct peerList *)temp;
 
- 	if (!add_peer(peer) && peer->net_fd) return NULL;
+ 	if (!add_peer(peer) && (peer->net_fd)) return NULL;
 
 	/* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -361,12 +354,18 @@
  		exit(1);
  	}
 
- 	puts("Client Mode:");
  	memset((char *)&remote_addr, 0, sizeof(remote_addr));
  	remote_addr.sin_family = AF_INET;
  	remote_addr.sin_port = htons(peer->listenPort);
  	inet_aton((char *)inet_ntoa(peer->listenIP), &remote_addr.sin_addr);
 
+ 	sprintf(buf1, "%s %d", inet_ntoa(local_info->listenIP), local_info->listenPort);
+ 	sprintf(buf2, "%s %d", inet_ntoa(peer->listenIP), peer->listenPort);
+
+	if (debug) printf("COMPARING %s --- %s\n", buf1, buf2);
+	if (!(strcmp(buf1, buf2))) return NULL;
+
+	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
@@ -375,15 +374,15 @@
  		if (debug) printf("errno: %d\n", errno);
  		remove_peer(peer);
  	} else {
- 		printf("NEW PEER: Connected to server %s:%d\n", inet_ntoa(peer->listenIP), peer->listenPort);
 		/* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
+ 		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
  		send_singleLinkStatePacket(peer);
-
  		lsPacket->neighbors = HASH_COUNT(peers);
  		if (debug) print_linkStatePacket();
  	}
+
  	if (debug) puts("Leaving connectToPeer");
  	return NULL;
  }
@@ -398,14 +397,56 @@
  }
 
 /* Flood linkStateRecords */
-void *flood_packets() {
-	if (debug) puts("^^^^FLOODING^^^^");
-}
+ void *flood_packets() {
+ 	struct peerList *s, *tmp;
+ 	char *buffer = malloc(MAXBUFFSIZE);
+
+	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
+ 	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers));
+
+ 	printf("OUTGOING PAYLOAD: %s\n", buffer);
+
+ 	while (1) {
+ 		sleep(linkPeriod);
+ 		if (debug) puts("^^^^FLOODING^^^^");
+ 		print_peerList();
+
+ 		/* Lock peers and records, iterate through peers and send records */
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			send_linkStatePacket(s, buffer);
+ 		}
+ 	}
+ 	return NULL;
+ }
+
+/* Periodically check for timed out peers */
+ void *check_timeout() {
+ 	struct timeval current_time;
+ 	struct peerList *s, *tmp;
+
+ 	while (1) {
+ 		sleep(linkTimeout);
+ 		gettimeofday(&current_time, NULL);
+ 		puts("Checking for timed out peers...\n");
+
+ 		HASH_ITER(hh, peers, s, tmp) {
+ 			pthread_mutex_lock(&peer_mutex);
+ 			printf("%ld -- %ld\n", current_time.tv_sec, s->lastLS);
+ 			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
+ 				printf("PEER: %s has timed out.\n", send_peerList(s));
+ 				pthread_mutex_unlock(&peer_mutex);
+ 				remove_peer(s);
+ 			}
+ 			pthread_mutex_unlock(&peer_mutex);
+ 		}
+ 	}
+ }
 
 /* Send single linkStatePacket */
  void send_singleLinkStatePacket(struct peerList *peer) {
  	struct linkStateRecord *new_record = create_linkStateRecord(local_info, peer);
- 	char *buffer = malloc(MAXBUFFSIZE), *temp = malloc(MAXBUFFSIZE);
+ 	char *buffer = malloc(MAXBUFFSIZE);
 
  	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
@@ -423,28 +464,20 @@ void *flood_packets() {
  	puts("NEW PEER: Single link state record sent.");
  	sscanf(buffer ,"%hhX:%hhX:%hhX:%hhX:%hhX:%hhX %s", (unsigned char *)&peer->ethMAC.sa_data[0], (unsigned char *)&peer->ethMAC.sa_data[1], (unsigned char *)&peer->ethMAC.sa_data[2], (unsigned char *)&peer->ethMAC.sa_data[3], (unsigned char *)&peer->ethMAC.sa_data[4], (unsigned char *)&peer->ethMAC.sa_data[5], peer->tapDevice);
 
- 	/* Moving inside create linkStateRecord */
  	print_linkStateRecords();
 
- 	free(temp);
  	free(buffer);
  }
 
 /* Send linkStatePacket */
- void send_peerListPacket(struct linkStatePacket *lsp) {
- 	// char *buffer = malloc(MAXBUFFSIZE);
- 	// struct peerList *peer;
-
+ void send_linkStatePacket(struct peerList *target, char *buffer) {
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | Neighbors | UniqueID | linkWeight */
- 	// lsp->header->length = sizeof(lsp);
- 	// sprintf(buffer, "0x%x %x %s %d %02x:%02x:%02x:%02x:%02x:%02x %d %ld:%ld %d", ntohs(lsp->header->type), lsp->header->length, inet_ntoa(lsp->source->ls->listenIP), ntohs(lsp->source->ls->listenPort), (unsigned char)lsp->source->ls->ethMAC.sa_data[0], (unsigned char)lsp->source->ls->ethMAC.sa_data[1], (unsigned char)lsp->source->ls->ethMAC.sa_data[2], (unsigned char)lsp->source->ls->ethMAC.sa_data[3], (unsigned char)lsp->source->ls->ethMAC.sa_data[4], (unsigned char)lsp->source->ls->ethMAC.sa_data[5], lsp->source->neighbors, lsp->uniqueID.tv_sec, lsp->uniqueID.tv_usec, lsp->linkWeight);
+ 	printf("\n^^FLOODING TO: %s", send_peerList(target));
+ 	print_linkStateRecords();
 
- 	/* Add proxy information */
- 	// printf("SENT: %s | Length: %d\n", buffer, strlen(buffer));
- 	// send(peer->net_fd, buffer, strlen(buffer), 0);
+
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
@@ -456,7 +489,10 @@ void *flood_packets() {
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
  	/* Ensure proxy1 != proxy2 */
- 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) pthread_exit(NULL);
+ 	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) {
+ 		printf("NEW PEER: Peer Removed %s:%d: Duplicate proxies\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
+ 		pthread_exit(NULL);
+ 	}
 
  	if (debug) printf("\nCreating new linkStateRecord: %s | %s\n", send_peerList(proxy1), send_peerList(proxy2));
  	gettimeofday(&current_time, NULL);
@@ -515,7 +551,7 @@ void *flood_packets() {
 /* Print peerList information */
  void print_peer(struct peerList *peer) {
  	print_linkState(peer);
- 	printf("--Tap: %s | NET_FD: %d | IN_FD: %d\n", peer->tapDevice, peer->net_fd, peer->in_fd);
+ 	printf("--Tap: %s | NET_FD: %d | IN_FD: %d | LASTLS: %ld\n", peer->tapDevice, peer->net_fd, peer->in_fd, peer->lastLS);
  }
 
 /* Print peers hash table */
@@ -571,20 +607,24 @@ void *flood_packets() {
  int add_peer(struct peerList *peer) {
  	pthread_mutex_lock(&peer_mutex);
  	struct peerList *tmp;
+ 	struct timeval current_time;
  	char *buf1 = send_peerList(peer), *buf2;
+ 	gettimeofday(&current_time, NULL);
 
  	buf2 = send_peerList(local_info);
  	if (debug) printf("\n\nTOTAL PEERS: %d | ATTEMPTING TO ADD PEER: %s - %d/%d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
  	if (!strcmp(buf1, buf2)) {
- 		if (debug) puts("LOCAL MACHINE INFO");
+ 		if (debug) puts("LOCAL MACHINE INFO\n");
  		pthread_mutex_unlock(&peer_mutex);
  		return 0;
  	} else if (peers == NULL) {
  		if (debug) printf("EMPTY PEERLIST: ADDING %s\n", buf1);
+ 		peer->lastLS = current_time.tv_sec;
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
- 			if (debug) puts("Not Found!");
+ 			if (debug) puts("PEER NOT FOUND!");
+ 			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
  			if (debug) puts("PEER FOUND!");
@@ -592,7 +632,6 @@ void *flood_packets() {
  			return 0;
  		}
  	}
-
  	pthread_mutex_unlock(&peer_mutex);
  	print_peerList();
  	return 1;
@@ -604,9 +643,9 @@ void *flood_packets() {
  	struct peerList *tmp;
  	char *buf1 = send_peerList(peer);
 
- 	print_peerList();
-
- 	if (debug) printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
+ 	if (debug) {
+ 		printf("TOTAL PEERS: %d | ATTEMPTING TO REMOVE PEER: %s | NET_FD: %d | IN_FD: %d\n", HASH_COUNT(peers), buf1, peer->net_fd, peer->in_fd);
+ 	}
 
  	if (peers == NULL) {
  		if (debug) puts("EMPTY PEERLIST");
@@ -618,6 +657,8 @@ void *flood_packets() {
  		} else {
  			if (debug) puts("REMOVED PEER");
  			remove_record(tmp);
+ 			close(tmp->in_fd);
+ 			close(tmp->net_fd);
  			HASH_DEL(peers, tmp);
  			pthread_mutex_unlock(&peer_mutex);
  			return 1;
@@ -639,13 +680,13 @@ void *flood_packets() {
  	if (debug) printf("LOOKING FOR: %s\n", buf1);
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
- 		if (debug) printf("CHECK: %s\n", buf2);
- 		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd)) {
+ 		if (debug) printf("CHECK peer: %s\n", buf2);
+ 		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd && !(s->in_fd))) {
  			if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
  			return s;
  		}
  	}
-
+ 	if (debug) puts("PEER NOT FOUND");
  	return NULL;
  }
 
@@ -656,22 +697,24 @@ void *flood_packets() {
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
 
  	if (debug) {
- 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s - %d/%d | %s - %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
+ 		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s- %d/%d | %s- %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
  		printf("\nChecking proxy1 membership...\n");
  	}
- 	if (find_peer(record->proxy1) == NULL) {
+ 	if (add_peer(record->proxy1)) {
  		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy1->listenIP), record->proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy1) != 0) {
  			perror("connect_thread");
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_exit(NULL);
  		}
  	}
 
  	if (debug) printf("\nChecking proxy2 membership...\n");
- 	if (find_peer(record->proxy2) == NULL) {
+ 	if (add_peer(record->proxy2)) {
  		printf("Starting new thread for %s:%d\n", inet_ntoa(record->proxy2->listenIP), record->proxy2->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)record->proxy2) != 0) {
  			perror("connect_thread");
+ 			pthread_mutex_unlock(&linkstate_mutex);
  			pthread_exit(NULL);
  		}
  	}
@@ -688,9 +731,12 @@ void *flood_packets() {
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				if (debug) {
  					puts("RECORD EXISTS!");
- 					printf("COMPARE: %d", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 					printf("COMPARE: %d\n", compare_uniqueID(record->uniqueID, s->uniqueID));
  				}
- 				HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 				if (compare_uniqueID(record->uniqueID, s->uniqueID)) {
+ 					HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 				}
+ 				print_linkStateRecords();
  				pthread_mutex_unlock(&linkstate_mutex);
  				return 0;
  			} else if (s->hh.next == NULL) {
@@ -708,10 +754,11 @@ void *flood_packets() {
 
 /* Remove peer from records */
  int remove_record(struct peerList *peer) {
+ 	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
- 	if (debug) printf("Removing: %s\n", buf1);
+ 	if (debug) printf("Removing peer from record: %s\n", buf1);
  	HASH_ITER(hh, records, s, tmp) {
  		buf2 = send_peerList(s->proxy1);
  		buf3 = send_peerList(s->proxy2);
@@ -719,6 +766,7 @@ void *flood_packets() {
  			HASH_DEL(records, s);
  		}
  	}
+ 	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
 
@@ -742,7 +790,7 @@ void *flood_packets() {
 
  	printf("PEER LEAVING: %s\n", send_peerList(leaving));
  	remove_peer(leaving);
- 	remove_record(leaving);
+ 	// remove_record(leaving);
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(leaving, s);
  	}
@@ -777,7 +825,7 @@ void *flood_packets() {
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
  		if (debug) printf("SINGLE LINKSTATE: SENT MAC: %s\n", ethMAC);
  		send(in_fd, ethMAC, strlen(ethMAC), 0);
- 		sleep(2);
+ 		sleep(1);
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SOLO!");
@@ -865,13 +913,13 @@ void *flood_packets() {
  // 	unsigned int frame_len = data_len + ETH_HLEN;
  // 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
  // 	printf("Attempting to open %s...\n", if_name);
-	// /* Open tap interface */
- // 	if ((tap_fd = allocate_tunnel(if_name, IFF_TAP | IFF_NO_PI)) < 0) {
- // 		perror("Opening tap interface failed!");
- // 		return EXIT_FAILURE;
- // 	} else {
- // 		printf("Successfully opened %s interface...\n", if_name);
- // 	}
+	/* Open tap interface */
+ 	if ((tap_fd = allocate_tunnel(dev, IFF_TAP | IFF_NO_PI)) < 0) {
+ 		perror("Opening tap interface failed!");
+ 		return EXIT_FAILURE;
+ 	} else {
+ 		printf("Successfully opened %s interface...\n", dev);
+ 	}
 
  // 	if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
  // 		perror("write to tap");
@@ -886,6 +934,7 @@ void *flood_packets() {
  // 		perror("socket_thread");
  // 		return EXIT_FAILURE;
  // 	}
+
  	/* Parse input file */
  	if (parseInput(argc, argv)) {
  		perror("parseInput");
@@ -893,9 +942,21 @@ void *flood_packets() {
  		return EXIT_FAILURE;
  	}
 
-	/* Start server path */
+ 	/* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
  		perror("server_thread");
+ 		pthread_exit(NULL);
+ 	}
+
+ 	/* Start flooding thread */
+ 	if (pthread_create(&flood_thread, NULL, flood_packets, NULL) != 0) {
+ 		perror("flood_thread");
+ 		pthread_exit(NULL);
+ 	}
+
+ 	/* Start timeout thread */
+ 	if (pthread_create(&timeout_thread, NULL, check_timeout, NULL) != 0) {
+ 		perror("timeout_thread");
  		pthread_exit(NULL);
  	}
 

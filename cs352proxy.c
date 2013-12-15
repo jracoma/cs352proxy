@@ -410,7 +410,6 @@
  	while (1) {
  		sleep(linkPeriod);
  		if (debug) puts("^^^^FLOODING^^^^");
- 		print_linkStateRecords();
  		print_peerList();
 
  		/* Lock peers and records, iterate through peers and send records */
@@ -475,7 +474,7 @@
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
 
- 	printf("FLOODING TO: %s\n", send_peerList(target));
+ 	printf("\n^^FLOODING TO: %s", send_peerList(target));
  	print_linkStateRecords();
 
 
@@ -624,7 +623,7 @@
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
- 			if (debug) puts("Not Found!");
+ 			if (debug) puts("PEER NOT FOUND!");
  			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
