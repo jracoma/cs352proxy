@@ -109,14 +109,14 @@
  int parseInput(int argc, char *argv[]) {
  	FILE *input_file;
   /* Line number of current line being read from input_file */
-	int line_number = 0;
+ 	int line_number = 0;
 	/* ptr to next field extracted from current line */
-	char *next_field;
+ 	char *next_field;
 	/* ptr to current input  */
-	char line[MAXLINESIZE+1];
+ 	char line[MAXLINESIZE+1];
 	/* Variables for peer information */
-	char *host, *tapDevice, ip[100];
-	struct peerList *current;
+ 	char *host, *tapDevice, ip[100];
+ 	struct peerList *current;
 
 	/* Verifies proper syntax command line */
  	if (argc != 2) {
@@ -389,8 +389,8 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
- 		sprintf(buffer, "0xabcd 2048 %s blah blah", send_peerList(peer));
- 		send(peer->net_fd, buffer, strlen(buffer), 0);
+ 		// sprintf(buffer, "0xabcd 2048%s blah blah", send_peerList(peer));
+ 		// send(peer->net_fd, buffer, strlen(buffer), 0);
  		send_singleLinkStatePacket(peer);
  		lsPacket->neighbors = HASH_COUNT(peers);
  		if (debug) print_linkStatePacket();
@@ -500,8 +500,8 @@
  	printf("\n^^FLOODING TO: %s", send_peerList(target));
 
 		/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
- 		lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
+ 	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
+ 	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
 
  	HASH_ITER(hh, records, s, tmp) {
  		memset(buf1, 0, MAXBUFFSIZE);
@@ -825,14 +825,13 @@
  void decode_dataPacket(char *buffer) {
  	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
  	new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
- 	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
+ 	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
  	char *next_field, ip[100];
 
  	if (debug) printf("\nDECODING: %s\n", buffer);
-	new_data->header->type = htons(PACKET_DATA);
+ 	new_data->header->type = htons(PACKET_DATA);
  	new_data->header->length = atoi(strtok(buffer, " \n"));
-
- next_field = strtok(NULL, " \n");
+ 	next_field = strtok(NULL, " \n");
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
  		next_field = ip;
@@ -841,8 +840,14 @@
  	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_peerList);
-	strcpy(new_data->data, strtok(NULL, "\n"));
+ 	strcpy(new_data->data, strtok(NULL, "\n"));
+ 	tmp = find_peer(new_peerList);
 
+ 	if (!(strcmp(send_peerList(new_peerList), send_peerList(local_info)))) write(tap_fd, new_data->data, strlen(new_data->data));
+ 	else if (tmp != NULL) {
+ 		sprintf(next_field, "0x%x %d %s %s", PACKET_DATA, new_data->header->length, send_peerList(new_peerList), new_data->data);
+ 		send(tmp->net_fd, next_field, strlen(next_field), 0);
+ 	}
  }
 
 /* Decode leavePacket */
