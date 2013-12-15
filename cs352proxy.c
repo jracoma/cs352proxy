@@ -870,7 +870,7 @@
  		// while ((next_field = strtok(NULL, "|"))) {
  			printf("NEXT: %s\n", next_field);
  		// }
- 		decode_linkStateRecord(next_field);
+ 		// decode_linkStateRecord(next_field, );
  	}
  }
 
