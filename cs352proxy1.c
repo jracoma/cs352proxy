@@ -47,7 +47,7 @@
  		return error;
  	}
 
- 	// strcpy(dev, ifr.ifr_name);
+         // strcpy(dev, ifr.ifr_name);
 
  	if (debug) printf("TUN FD: %d\n", fd);
  	return fd;
@@ -81,7 +81,7 @@
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
 
-	/* Template for local linkStatePacket */
+        /* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
  	ifr.ifr_addr.sa_family = AF_INET;
 
@@ -108,33 +108,33 @@
 /* Parse through input file */
  int parseInput(int argc, char *argv[]) {
  	FILE *input_file;
-	/* Line number of current line being read from input_file */
+        /* Line number of current line being read from input_file */
  	int line_number = 0;
-	/* ptr to next field extracted from current line */
+        /* ptr to next field extracted from current line */
  	char *next_field;
-	/* ptr to current input  */
+        /* ptr to current input  */
  	char line[MAXLINESIZE+1];
-	/* Variables for peer information */
+        /* Variables for peer information */
  	char *host, *tapDevice, ip[100];
  	struct peerList *current;
 
-	/* Verifies proper syntax command line */
+        /* Verifies proper syntax command line */
  	if (argc != 2) {
  		puts("Syntax: cs352proxy <input_file>");
  		return EXIT_FAILURE;
  	}
 
-	/* Initialize local parameters */
+        /* Initialize local parameters */
  	initLocalParams();
 
-	/* Open input file */
+        /* Open input file */
  	input_file = fopen(argv[1], "r");
  	if (input_file == NULL) {
  		perror("argv[1]");
  		return EXIT_FAILURE;
  	}
 
-	/* Iterate through the input line one line at a time */
+        /* Iterate through the input line one line at a time */
  	while (fgets(line, MAXLINESIZE, input_file)) {
  		line_number++;
  		next_field = strtok(line, " \n");
@@ -145,7 +145,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
-		 	/* Set quitAfter sleeper */
+                         /* Set quitAfter sleeper */
  			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
@@ -155,7 +155,7 @@
  			current = (struct peerList *)malloc(sizeof(struct peerList));
  			host = strtok(NULL, " \n");
 
-			/* Checks for a.b.c.d address, otherwise resolve hostname */
+                        /* Checks for a.b.c.d address, otherwise resolve hostname */
  			if (inet_addr(host) == -1) {
  				getIP(host, ip);
  				host = ip;
@@ -186,7 +186,7 @@
  		pthread_mutex_unlock(&peer_mutex);
  	}
 
-	/* Close input file */
+        /* Close input file */
  	fclose(input_file);
  	return 0;
  }
@@ -199,7 +199,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
- 	/* Listen for client packets and parse accordingly */
+         /* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
  		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
@@ -254,13 +254,13 @@
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
 
-	/* Allows reuse of socket if not closed properly */
+        /* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
  		perror("setsockopt");
  		exit(1);
  	}
 
-	/* Bind socket */
+        /* Bind socket */
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -272,13 +272,13 @@
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), local_info->listenPort);
 
-	/* Listens for connection, backlog 10 */
+        /* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
  		exit(1);
  	}
 
- 	/* Wait for connections */
+         /* Wait for connections */
  	while (1) {
  		if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
  			perror("accept");
@@ -309,10 +309,10 @@
  		puts("in while tap");
  		size = read(tap_fd, &frame, MAXBUFFSIZE);
  		printf("tapSize: %d\n", size);
-		// if(errno!=EINTR) {
-		// 	perror("EINTR");
-		// 	exit(1);
-		// }
+                // if(errno!=EINTR) {
+                //         perror("EINTR");
+                //         exit(1);
+                // }
  		if (size < 0) {
  			perror("not connected tap");
  			close(net_fd);
@@ -350,7 +350,7 @@
 
  	if (!add_peer(peer) && (peer->net_fd)) return NULL;
 
-	/* Create TCP Socket */
+        /* Create TCP Socket */
  	if ((new_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
  		perror("could not create socket");
  		exit(1);
@@ -370,13 +370,13 @@
  	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
-	/* Connect to server */
+        /* Connect to server */
  	if ((connect(new_fd, (struct sockaddr *)&remote_addr, sizeof(remote_addr))) < 0) {
  		printf("NEW PEER: Peer Removed %s:%d: Failed to connect\n", inet_ntoa(peer->listenIP), peer->listenPort);
  		if (debug) printf("errno: %d\n", errno);
  		remove_peer(peer);
  	} else {
-		/* Create single link state packet */
+                /* Create single link state packet */
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
@@ -393,7 +393,7 @@
  char *send_peerList(struct peerList *ls) {
  	char *buffer = malloc(MAXBUFFSIZE);
 
- 	/* Serialize Data - listenIP | listenPort | ethMAC */
+         /* Serialize Data - listenIP | listenPort | ethMAC */
  	sprintf(buffer, " %s %d %02x:%02x:%02x:%02x:%02x:%02x", inet_ntoa(ls->listenIP), ls->listenPort, (unsigned char)ls->ethMAC.sa_data[0], (unsigned char)ls->ethMAC.sa_data[1], (unsigned char)ls->ethMAC.sa_data[2], (unsigned char)ls->ethMAC.sa_data[3], (unsigned char)ls->ethMAC.sa_data[4], (unsigned char)ls->ethMAC.sa_data[5]);
  	return buffer;
  }
@@ -405,7 +405,7 @@
 
  	while (1) {
  		sleep(linkPeriod);
- 			/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
+                         /* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
  		lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
 
@@ -413,7 +413,7 @@
  		if (debug) puts("^^^^FLOODING^^^^");
  		print_peerList();
 
- 		/* Lock peers and records, iterate through peers and send records */
+                 /* Lock peers and records, iterate through peers and send records */
  		HASH_ITER(hh, peers, s, tmp) {
  			send_linkStatePacket(s, buffer);
  		}
@@ -450,17 +450,17 @@
  	char *buffer = malloc(MAXBUFFSIZE);
  	int size;
 
- 	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
+         /* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s 0 0 %ld:%ld %d", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, new_record->uniqueID.tv_sec, new_record->uniqueID.tv_usec, new_record->linkWeight);
  	strcat(buffer, send_peerList(local_info));
  	strcat(buffer, send_peerList(peer));
 
- 	/* Send linkStatePacket */
+         /* Send linkStatePacket */
  	send(peer->net_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\nPAYLOAD SENT: %s on %d\n", buffer, peer->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
- 	/* Receive MAC Address and tapDevice */
+         /* Receive MAC Address and tapDevice */
  	size = recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
  	if (size < 0) {
  		printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
@@ -496,7 +496,7 @@
 
  	HASH_ITER(hh, records, s, tmp) {
  		memset(buf1, 0, MAXBUFFSIZE);
- 	/* Concat uniqueID | linkWeight */
+         /* Concat uniqueID | linkWeight */
  		sprintf(buf1, "%ld:%ld %d", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
  		strcat(buffer, buf1);
  		strcat(buffer, send_peerList(s->proxy1));
@@ -504,7 +504,7 @@
  		strcat(buffer, "!");
  	}
 
- 	/* Send linkStatePacket */
+         /* Send linkStatePacket */
  	size = send(target->net_fd, buffer, strlen(buffer), 0);
  	if (debug) printf("\n\n======FLOODING OUT: %s on %d\n", buffer, target->net_fd);
  	memset(buffer, 0, MAXBUFFSIZE);
@@ -526,7 +526,7 @@
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	memset(new_record, 0, sizeof(struct linkStateRecord));
 
- 	/* Ensure proxy1 != proxy2 */
+         /* Ensure proxy1 != proxy2 */
  	if (!strcmp(send_peerList(proxy1), send_peerList(proxy2))) {
  		printf("NEW PEER: Peer Removed %s:%d: Duplicate proxies\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		pthread_exit(NULL);
@@ -538,7 +538,7 @@
  	new_record->linkWeight = 1;
  	new_record->proxy1 = proxy1;
  	new_record->proxy2 = proxy2;
- 	/* Verify peer isn't in the list, connect if it ins't */
+         /* Verify peer isn't in the list, connect if it ins't */
  	if (find_peer(proxy1) == NULL) {
  		if (debug) printf("Starting new thread for %s:%d\n", inet_ntoa(proxy1->listenIP), proxy1->listenPort);
  		if (pthread_create(&connect_thread, NULL, connectToPeer, (void *)proxy1) != 0) {
@@ -733,6 +733,8 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(record->proxy1), *buf2 = send_peerList(record->proxy2), *buf3, *buf4;
+ 	struct timeval current_time;
+ 	gettimeofday(&current_time, NULL);
 
  	if (debug) {
  		printf("TOTAL RECORDS: %d | ATTEMPTING TO ADD RECORD:\n%s- %d/%d | %s- %d/%d\n", HASH_COUNT(records), buf1, record->proxy1->net_fd, record->proxy1->in_fd, buf2, record->proxy2->net_fd, record->proxy2->in_fd);
@@ -769,10 +771,14 @@
  			if (!strcmp(buf1, buf3) && !strcmp(buf2, buf4)) {
  				if (debug) {
  					puts("RECORD EXISTS!");
- 					printf("COMPARE: %d\n", compare_uniqueID(record->uniqueID, s->uniqueID));
+ 					printf("COMPARE: %d\n", compare_uniqueID(current_time, s->uniqueID));
  				}
- 				if (compare_uniqueID(record->uniqueID, s->uniqueID)) {
- 					HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 				if (!(compare_uniqueID(record->uniqueID, s->uniqueID))) {
+ 					record->uniqueID = current_time;
+ 					// HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 					HASH_DEL(records, s);
+ 					HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
+ 					if (debug) printf("RECORD UPDATED WITH NEW UNIQUEID\n");
  				}
  				print_linkStateRecords();
  				pthread_mutex_unlock(&linkstate_mutex);
@@ -829,7 +835,7 @@
 
  	printf("PEER LEAVING: %s\n", send_peerList(leaving));
  	remove_peer(leaving);
- 	// remove_record(leaving);
+         // remove_record(leaving);
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(leaving, s);
  	}
@@ -842,11 +848,11 @@
  	int neighbors, numrecords, i;
  	if (debug)printf("Received: %s\n", buffer);
 
- 	/* Parse through buffer */
+         /* Parse through buffer */
  	next_field = strtok(buffer, " \n");
  	next_field = strtok(NULL, " \n");
 
-	/* Checks for a.b.c.d address, otherwise resolve hostname */
+        /* Checks for a.b.c.d address, otherwise resolve hostname */
  	if (inet_addr(next_field) == -1) {
  		getIP(next_field, ip);
  		next_field = ip;
@@ -874,8 +880,8 @@
  		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %d || %s\n", strlen(next_field), next_field);
  			array[i] = next_field;
- 			// strcpy(array[i], next_field);
- 			// decode_linkStateRecord(next_field);
+                         // strcpy(array[i], next_field);
+                         // decode_linkStateRecord(next_field);
  			next_field = strtok(NULL, "!\n");
  		}
  		for (i = 0; i < numrecords; i++) {
@@ -958,7 +964,7 @@
  	print_peerList();
  	print_linkStateRecords();
 
- 	// send_quitPacket();
+         // send_quitPacket();
 
  	HASH_ITER(hh, peers, s, tmp) {
  		send_leavePacket(local_info, s);
@@ -981,25 +987,25 @@
  int main (int argc, char *argv[]) {
  	if (debug) puts("DEBUGGING MODE:");
 
- // 	int size;
- // 	char if_name[IFNAMSIZ] = "";
- // 	unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
- // 	unsigned short proto = 0x1234;
- // 	char *data = "hello world~!!!";
- // 	unsigned short data_len = strlen(data);
+ //         int size;
+ //         char if_name[IFNAMSIZ] = "";
+ //         unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
+ //         unsigned short proto = 0x1234;
+ //         char *data = "hello world~!!!";
+ //         unsigned short data_len = strlen(data);
 
- // 	unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
+ //         unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
 
- // 	union ethframe frame;
- // 	memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
- // 	memcpy(frame.field.header.h_source, source, ETH_ALEN);
- // 	frame.field.header.h_proto = htons(proto);
- // 	memcpy(frame.field.data, data, data_len);
+ //         union ethframe frame;
+ //         memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
+ //         memcpy(frame.field.header.h_source, source, ETH_ALEN);
+ //         frame.field.header.h_proto = htons(proto);
+ //         memcpy(frame.field.data, data, data_len);
 
- // 	unsigned int frame_len = data_len + ETH_HLEN;
- // 	strncpy(if_name, "tap10", IFNAMSIZ - 1);
- // 	printf("Attempting to open %s...\n", if_name);
-	/* Open tap interface */
+ //         unsigned int frame_len = data_len + ETH_HLEN;
+ //         strncpy(if_name, "tap10", IFNAMSIZ - 1);
+ //         printf("Attempting to open %s...\n", if_name);
+        /* Open tap interface */
  	if ((tap_fd = allocate_tunnel(dev, IFF_TAP | IFF_NO_PI)) < 0) {
  		perror("Opening tap interface failed!");
  		return EXIT_FAILURE;
@@ -1007,43 +1013,43 @@
  		printf("Successfully opened %s interface...\n", dev);
  	}
 
- // 	if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
- // 		perror("write to tap");
- // 		close(tap_fd);
- // 		return EXIT_FAILURE;
- // 	} else {
- // 		printf("%d bytes sent to tap..\n", size);
+ //         if ((size = write(tap_fd, &frame.buffer, frame_len)) < 0) {
+ //                 perror("write to tap");
+ //                 close(tap_fd);
+ //                 return EXIT_FAILURE;
+ //         } else {
+ //                 printf("%d bytes sent to tap..\n", size);
 
- // 	}
+ //         }
 
- // 	if (pthread_create(&socket_thread, NULL, handle_tap, NULL) != 0 ) {
- // 		perror("socket_thread");
- // 		return EXIT_FAILURE;
- // 	}
+ //         if (pthread_create(&socket_thread, NULL, handle_tap, NULL) != 0 ) {
+ //                 perror("socket_thread");
+ //                 return EXIT_FAILURE;
+ //         }
 
- 	/* Start server path */
+         /* Parse input file */
+ 	if (parseInput(argc, argv)) {
+ 		perror("parseInput");
+ 		close(tap_fd);
+ 		return EXIT_FAILURE;
+ 	}
+
+         /* Start server path */
  	if (pthread_create(&server_thread, NULL, server, NULL) != 0) {
  		perror("server_thread");
  		pthread_exit(NULL);
  	}
 
- 	/* Start flooding thread */
+         /* Start flooding thread */
  	if (pthread_create(&flood_thread, NULL, flood_packets, NULL) != 0) {
  		perror("flood_thread");
  		pthread_exit(NULL);
  	}
 
- 	/* Start timeout thread */
+         /* Start timeout thread */
  	if (pthread_create(&timeout_thread, NULL, check_timeout, NULL) != 0) {
  		perror("timeout_thread");
  		pthread_exit(NULL);
- 	}
-
- 	/* Parse input file */
- 	if (parseInput(argc, argv)) {
- 		perror("parseInput");
- 		close(tap_fd);
- 		return EXIT_FAILURE;
  	}
 
  	close(tap_fd);

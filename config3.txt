@@ -1,8 +1,8 @@
 // Local Machine Information
 listenPort 55556
-linkPeriod 60
+linkPeriod 25
 linkTimeout 60
-quitAfter 40
+quitAfter 300
 // Optional Proxy Peer Fields
 peer cs352-50.cs.rutgers.edu 55510
 tapDevice tun10
