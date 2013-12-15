@@ -772,7 +772,7 @@ if (size < 0) {
  	struct linkStateRecord *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2, *buf3;
 
- 	if (debug) printf("Removing peer from record: %s\n", buf1);
+ 	if (debug) printf("Removing peer from records: %s\n", buf1);
  	HASH_ITER(hh, records, s, tmp) {
  		buf2 = send_peerList(s->proxy1);
  		buf3 = send_peerList(s->proxy2);
@@ -780,6 +780,7 @@ if (size < 0) {
  			HASH_DEL(records, s);
  		}
  	}
+ 	print_linkStateRecords();
  	pthread_mutex_unlock(&linkstate_mutex);
  	return 1;
  }
