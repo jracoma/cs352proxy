@@ -510,7 +510,7 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	if (size < 0) {
  		printf("send error from %s - %d | ERR: %d\n", send_peerList(target), target->in_fd, errno);
- 		remove_peer(peer);
+ 		remove_peer(target);
  		free(buffer);
  		return;
  	}
