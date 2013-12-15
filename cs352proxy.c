@@ -623,7 +623,6 @@
  		HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  	} else {
  		if ((tmp = find_peer(peer)) == NULL) {
- 			if (debug) puts("PEER NOT FOUND!");
  			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
@@ -675,14 +674,18 @@
  	struct peerList *tmp, *s;
  	char *buf1 = send_peerList(peer), *buf2;
 
- 	if (peers == NULL) return NULL;
+ 	if (peers == NULL) {
+ 		if (debug) printf("EMPTY PEERLIST\n");
+ 		return NULL;
+ 	}
 
  	if (debug) printf("LOOKING FOR: %s\n", buf1);
  	HASH_ITER(hh, peers, s, tmp) {
  		buf2 = send_peerList(s);
- 		if (debug) printf("CHECK peer: %s\n", buf2);
+ 		if (debug) printf("CHECK PEER: %s\n", buf2);
  		if (!strcmp(buf1, buf2) || (s->in_fd == peer->in_fd && !(s->in_fd))) {
  			if (!(s->in_fd) && (peer->in_fd)) s->in_fd = peer->in_fd;
+ 			if (debug) printf("PEER FOUND: %s\n", buf1);
  			return s;
  		}
  	}
