@@ -867,11 +867,16 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
+ 		char *array[numrecords];
  		printf("INCOMING NUMBER OF RECORDS: %d\n", numrecords);
  		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %d || %s\n", strlen(next_field), next_field);
+ 			strcpy(array[i], next_field);
  			// decode_linkStateRecord(next_field);
  			next_field = strtok(NULL, "!\n");
+ 		}
+ 		for (i = 0; i < numrecords; i++) {
+ 			decode_linkStateRecord(array[i]);
  		}
  	}
  }
