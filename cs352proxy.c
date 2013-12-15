@@ -837,7 +837,7 @@
  void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
- 	int neighbors, i;
+ 	int neighbors, numrecords, i;
  	if (debug)printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
@@ -856,7 +856,7 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
- 	i = atoi(strtok(NULL, " \n"));
+ 	numrecords = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, "\n");
  	if (debug) printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
@@ -868,7 +868,7 @@
  	} else {
  		if (debug) puts("NOT SINGLE!");
  		printf("INCOMING NUMBER OF RECORDS: %d\n", i);
- 		for (; i < neighbors; i++) {
+ 		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %s\n", next_field);
  			decode_linkStateRecord(next_field);
  			next_field = strtok(NULL, "!\n");
