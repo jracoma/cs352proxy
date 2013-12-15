@@ -869,10 +869,10 @@
  		if (debug) puts("NOT SINGLE!");
  		printf("INCOMING NUMBER OF RECORDS: %d\n", numrecords);
  		for (i = 0; i < numrecords; i++) {
- 			next_field = strtok(NULL, "!\n");
+
  			printf("NEXT: %s\n", next_field);
  			decode_linkStateRecord(next_field);
-
+ 			next_field = strtok(NULL, "!\n");
  		}
  	}
  }
