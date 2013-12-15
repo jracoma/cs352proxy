@@ -837,7 +837,7 @@
  void decode_linkStatePacket(char *buffer, int in_fd) {
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_field, ip[100], *ethMAC = malloc(MAXBUFFSIZE);
- 	int neighbors;
+ 	int neighbors, i;
  	if (debug)printf("Received: %s\n", buffer);
 
  	/* Parse through buffer */
@@ -866,17 +866,16 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
-
- 		// while ((next_field = strtok(NULL, "|"))) {
+ 		for (i = 0; i < neighbors; i++) {
  			printf("NEXT: %s\n", next_field);
- 		// }
- 		// decode_linkStateRecord(next_field, );
+ 			decode_linkStateRecord(next_field);
+ 		}
  	}
  }
 
 /* Decode non-single linkStateRecord information */
- void decode_linkStateRecord(char *buffer, int in_fd) {
-
+ void decode_linkStateRecord(char *buffer) {
+ 	puts("poop");
  }
 
 /* Decode linkStateRecord information */

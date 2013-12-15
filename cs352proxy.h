@@ -129,7 +129,7 @@ int add_record(struct linkStateRecord *record);
 int remove_record(struct peerList *peer);
 void decode_leavePacket(char *buffer);
 void decode_linkStatePacket(char *buffer, int in_fd);
-void decode_linkStateRecord(char *buffer, int in_fd);
+void decode_linkStateRecord(char *buffer);
 void decode_singleLinkStateRecord(char *buffer, int in_fd);
 void readMAC(char *buffer, struct peerList *pl);
 void *sleeper();
