@@ -856,8 +856,8 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, "\n");
  	i = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, "\n");
  	if (debug) printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
