@@ -197,7 +197,7 @@
  	struct peerList *peer = (struct peerList *)temp;
  	int size;
  	uint16_t type;
- 	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE], *next_field;
+ 	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE);
 
 	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
@@ -213,7 +213,8 @@
  			switch (type) {
  				case PACKET_DATA:
  				strncpy(buffer, buffer+7, sizeof(buffer));
- 				decode_dataPacket(buffer);
+ 				// decode_dataPacket(buffer);
+ 				printf("BUFFER: %s\n", buffer);
  				// next_field = strtok(buffer, " \n");
  				// printf("HUH!?! : %s\n", next_field);
  				// next_field = strtok(NULL, " \n");
