@@ -407,7 +407,7 @@
  		sleep(linkPeriod);
  			/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
  		lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers));
+ 		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
 
  		printf("OUTGOING PAYLOAD: %s\n", buffer);
  		if (debug) puts("^^^^FLOODING^^^^");
@@ -856,7 +856,7 @@
  	next_field = strtok(NULL, " \n");
  	strcpy(new_peer->tapDevice, next_field);
  	neighbors = atoi(strtok(NULL, " \n"));
- 	next_field = strtok(NULL, "!\n");
+ 	next_field = strtok(NULL, "\n");
  	if (debug) printf("Neighbors: %d\n", neighbors);
  	if (!(neighbors)) {
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
@@ -866,9 +866,11 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
- 		for (i = 0; i < neighbors; i++) {
+ 		i = strtok(NULL, "!\n");
+ 		for (; i < neighbors; i++) {
  			printf("NEXT: %s\n", next_field);
  			decode_linkStateRecord(next_field);
+ 			next_field = strtok(NULL, "!\n");
  		}
  	}
  }
