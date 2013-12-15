@@ -829,7 +829,7 @@
 
  	new_data->header->type = htons(PACKET_DATA);
  	new_data->header->length = atoi(strtok(buffer, " \n"));
- 	new_data->data = strtok(NULL, " \n");
+ 	// new_data->data = strtok(NULL, " \n");
 
  	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(new_data->header->type), new_data->header->length, new_data->data);
  }
