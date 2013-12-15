@@ -775,7 +775,10 @@
  				}
  				if (compare_uniqueID(record->uniqueID, s->uniqueID)) {
  					record->uniqueID = current_time;
- 					HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 					// HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
+ 					HASH_DEL(records, s);
+ 					HASH_ADD(hh, records, uniqueID, sizeof(struct timeval), record);
+ 					if (debug) printf("RECORD UPDATED WITH NEW UNIQUEID\n");
  				}
  				print_linkStateRecords();
  				pthread_mutex_unlock(&linkstate_mutex);
