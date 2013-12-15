@@ -626,7 +626,6 @@
  			peer->lastLS = current_time.tv_sec;
  			HASH_ADD(hh, peers, ethMAC, sizeof(struct sockaddr), peer);
  		} else {
- 			if (debug) puts("PEER FOUND!");
  			pthread_mutex_unlock(&peer_mutex);
  			return 0;
  		}
