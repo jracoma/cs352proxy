@@ -47,7 +47,7 @@
  		return error;
  	}
 
- 	strcpy(dev, ifr.ifr_name);
+ 	// strcpy(dev, ifr.ifr_name);
 
  	if (debug) printf("TUN FD: %d\n", fd);
  	return fd;
