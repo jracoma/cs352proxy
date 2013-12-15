@@ -364,10 +364,10 @@
  	sprintf(buf1, "%s %d", inet_ntoa(local_info->listenIP), local_info->listenPort);
  	sprintf(buf2, "%s %d", inet_ntoa(peer->listenIP), peer->listenPort);
 
-	if (debug) printf("COMPARING %s --- %s\n", buf1, buf2);
-	if (!(strcmp(buf1, buf2))) return NULL;
+ 	if (debug) printf("COMPARING %s --- %s\n", buf1, buf2);
+ 	if (!(strcmp(buf1, buf2))) return NULL;
 
-	puts("Client Mode:");
+ 	puts("Client Mode:");
  	printf("NEW PEER: Connecting to %s:%d\n", inet_ntoa(remote_addr.sin_addr), ntohs(remote_addr.sin_port));
 
 	/* Connect to server */
@@ -465,18 +465,18 @@
  	size = recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
 
 
-if (size < 0) {
- 			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
- 			remove_peer(peer);
- 			free(buffer);
- 			return;
- 		} else if (size == 0) {
- 			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
- 			remove_peer(peer);
- 			print_peerList();
- 			print_linkStateRecords();
- 			return;
- 		}
+ 	if (size < 0) {
+ 		printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
+ 		remove_peer(peer);
+ 		free(buffer);
+ 		return;
+ 	} else if (size == 0) {
+ 		printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
+ 		remove_peer(peer);
+ 		print_peerList();
+ 		print_linkStateRecords();
+ 		return;
+ 	}
 
  	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
  	puts("NEW PEER: Single link state record sent.");
@@ -499,10 +499,11 @@ if (size < 0) {
  	HASH_ITER(hh, records, s, tmp) {
  		memset(buf1, 0, MAXBUFFSIZE);
  	/* Concat uniqueID | linkWeight */
-sprintf(buf1, "%ld:%ld %d ", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
-strcat(buffer, buf1);
-strcat(buffer, send_peerList(s->proxy1));
-strcat(buffer, send_peerList(s->proxy2));
+ 		sprintf(buf1, "%ld:%ld %d ", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
+ 		strcat(buffer, buf1);
+ 		strcat(buffer, send_peerList(s->proxy1));
+ 		strcat(buffer, send_peerList(s->proxy2));
+ 		strcat(buffer, " | ");
  	}
 
  	printf("\n\n======FLOODING OUT: %s\n", buffer);
