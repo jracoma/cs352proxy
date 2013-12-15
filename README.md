@@ -1,7 +1,7 @@
 cs352proxy
 ==========
 
-Syntax: ./cs352proxy <config file>
+Syntax: ./cs352proxy [config file]
 
 I believe that hardest part of this project was properly managing the structs and link lists/hash tables. Initially, I intended to construct the peer list and link state records using linked list but had difficulty managing the linked list because they would set next to itself and thus creating a never ending loop. I tried for a day or two to try and solve the problem but was unable to and eventually turned to hash tables. It took a bit to learn the mechanics of the hash tables but once I did, it was manageable.
 
