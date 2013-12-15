@@ -211,6 +211,14 @@
             type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
             if (debug) printf("TYPE from %s: %x\n", send_peerList(peer), type);
             switch (type) {
+                case PACKET_DATA:
+                strncpy(buffer, buffer+7, sizeof(buffer));
+                decode_dataPacket(buffer);
+                // next_field = strtok(buffer, " \n");
+                // printf("HUH!?! : %s\n", next_field);
+                // next_field = strtok(NULL, " \n");
+                // printf("HUH!?! : %s\n", next_field);
+                break;
                 case PACKET_LINKSTATE:
                 strncpy(buffer, buffer+7, sizeof(buffer));
                 decode_linkStatePacket(buffer, peer->in_fd);
@@ -224,6 +232,7 @@
                 break;
                 default:
                 if (debug) printf("Negative.\n");
+                break;
             }
         } else if (size < 0) {
             printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
@@ -380,6 +389,8 @@
         strcpy(buffer, peer->tapDevice);
         peer->net_fd = new_fd;
         printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
+        // sprintf(buffer, "0xabcd 2048%s blah blah", send_peerList(peer));
+        // send(peer->net_fd, buffer, strlen(buffer), 0);
         send_singleLinkStatePacket(peer);
         lsPacket->neighbors = HASH_COUNT(peers);
         if (debug) print_linkStatePacket();
@@ -489,8 +500,8 @@
     printf("\n^^FLOODING TO: %s", send_peerList(target));
 
         /* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
-        lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
-        sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
+    lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
+    sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
 
     HASH_ITER(hh, records, s, tmp) {
         memset(buf1, 0, MAXBUFFSIZE);
@@ -810,6 +821,36 @@
     return 1;
  }
 
+/* Decode dataPacket */
+ void decode_dataPacket(char *buffer) {
+    struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
+    new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+    struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList)), *tmp;
+    char *next_field, ip[100];
+
+    if (debug) printf("\nDECODING: %s\n", buffer);
+    new_data->header->type = htons(PACKET_DATA);
+    new_data->header->length = atoi(strtok(buffer, " \n"));
+    next_field = strtok(NULL, " \n");
+    if (inet_addr(next_field) == -1) {
+        getIP(next_field, ip);
+        next_field = ip;
+    }
+    inet_aton(next_field, &new_peerList->listenIP);
+    new_peerList->listenPort = atoi(strtok(NULL, " \n"));
+    next_field = strtok(NULL, " \n");
+    readMAC(next_field, new_peerList);
+    strcpy(new_data->data, strtok(NULL, "\n"));
+    tmp = find_peer(new_peerList);
+
+    /* Determine destination, forward accordingly */
+    if (!(strcmp(send_peerList(new_peerList), send_peerList(local_info)))) write(tap_fd, new_data->data, strlen(new_data->data));
+    else if (tmp != NULL) {
+        sprintf(next_field, "0x%x %d %s %s", PACKET_DATA, new_data->header->length, send_peerList(new_peerList), new_data->data);
+        send(tmp->net_fd, next_field, strlen(next_field), 0);
+    }
+ }
+
 /* Decode leavePacket */
  void decode_leavePacket(char *buffer) {
     struct peerList *leaving = (struct peerList *)malloc(sizeof(struct peerList)), *s, *tmp;
@@ -979,24 +1020,6 @@
  int main (int argc, char *argv[]) {
     if (debug) puts("DEBUGGING MODE:");
 
-    //         int size;
-    //         char if_name[IFNAMSIZ] = "";
-    //         unsigned char dest[ETH_ALEN] = { 0x00, 0x12, 0x34, 0x56, 0x78, 0x90 };
-    //         unsigned short proto = 0x1234;
-    //         char *data = "hello world~!!!";
-    //         unsigned short data_len = strlen(data);
-
-    //         unsigned char source[ETH_ALEN] = { 0x61, 0x12, 0x34, 0x56, 0x78, 0x90 };
-
-    //         union ethframe frame;
-    //         memcpy(frame.field.header.h_dest, dest, ETH_ALEN);
-    //         memcpy(frame.field.header.h_source, source, ETH_ALEN);
-    //         frame.field.header.h_proto = htons(proto);
-    //         memcpy(frame.field.data, data, data_len);
-
-    //         unsigned int frame_len = data_len + ETH_HLEN;
-    //         strncpy(if_name, "tap10", IFNAMSIZ - 1);
-    //         printf("Attempting to open %s...\n", if_name);
     /* Open tap interface */
     if ((tap_fd = allocate_tunnel(dev, IFF_TAP | IFF_NO_PI)) < 0) {
         perror("Opening tap interface failed!");

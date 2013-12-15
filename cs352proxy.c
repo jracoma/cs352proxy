@@ -843,6 +843,7 @@
  	strcpy(new_data->data, strtok(NULL, "\n"));
  	tmp = find_peer(new_peerList);
 
+ 	/* Determine destination, forward accordingly */
  	if (!(strcmp(send_peerList(new_peerList), send_peerList(local_info)))) write(tap_fd, new_data->data, strlen(new_data->data));
  	else if (tmp != NULL) {
  		sprintf(next_field, "0x%x %d %s %s", PACKET_DATA, new_data->header->length, send_peerList(new_peerList), new_data->data);
