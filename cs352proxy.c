@@ -773,7 +773,7 @@
  					puts("RECORD EXISTS!");
  					printf("COMPARE: %d\n", compare_uniqueID(current_time, s->uniqueID));
  				}
- 				if (compare_uniqueID(record->uniqueID, s->uniqueID)) {
+ 				if (!(compare_uniqueID(record->uniqueID, s->uniqueID))) {
  					record->uniqueID = current_time;
  					// HASH_REPLACE(hh, records, uniqueID, sizeof(struct timeval), record, s);
  					HASH_DEL(records, s);
