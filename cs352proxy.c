@@ -858,10 +858,10 @@
  	neighbors = atoi(strtok(NULL, " \n"));
  	numrecords = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, "!\n");
- 	if (debug) printf("Neighbors: %d\n", neighbors);
+ 	if (debug) printf("Neighbors: %d ", neighbors);
  	if (!(neighbors)) {
  		sprintf(ethMAC, "%02x:%02x:%02x:%02x:%02x:%02x %s", (unsigned char)local_info->ethMAC.sa_data[0], (unsigned char)local_info->ethMAC.sa_data[1], (unsigned char)local_info->ethMAC.sa_data[2], (unsigned char)local_info->ethMAC.sa_data[3], (unsigned char)local_info->ethMAC.sa_data[4], (unsigned char)local_info->ethMAC.sa_data[5], dev);
- 		if (debug) printf("SINGLE LINKSTATE: SENT MAC: %s\n", ethMAC);
+ 		if (debug) printf("\nSINGLE LINKSTATE: SENT MAC: %s\n", ethMAC);
  		send(in_fd, ethMAC, strlen(ethMAC), 0);
  		sleep(1);
  		decode_singleLinkStateRecord(next_field, in_fd);
@@ -879,7 +879,37 @@
 
 /* Decode non-single linkStateRecord information */
  void decode_linkStateRecord(char *buffer) {
- 	puts("poop");
+ 	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
+ 	struct peerList *new_peerList1 = (struct peerList *)malloc(sizeof(struct peerList)), *new_peerList2 = (struct peerList *)malloc(sizeof(struct peerList));
+ 	char *next_field, ip[100];
+ 	if (debug) printf("\nDECODING: %s\n", buffer);
+ 	new_peerList->in_fd = in_fd;
+ 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
+ 	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
+ 	new_record->linkWeight = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_peerList1->listenIP);
+ 	new_peerList1->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, new_peerList1);
+ 	new_record->proxy1 = new_peerList1;
+ 	next_field = strtok(NULL, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_peerList2->listenIP);
+ 	new_peerList1->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, new_peerList2);
+ 	new_record->proxy1 = new_peerList2;
+
+ 	print_linkStateRecord(new_record);
+ 	add_record(new_record);
  }
 
 /* Decode linkStateRecord information */
