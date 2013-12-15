@@ -47,7 +47,7 @@
  		return error;
  	}
 
-         // strcpy(dev, ifr.ifr_name);
+ 	strcpy(dev, ifr.ifr_name);
 
  	if (debug) printf("TUN FD: %d\n", fd);
  	return fd;
@@ -81,7 +81,7 @@
  	lsPacket = (struct linkStatePacket *)malloc(sizeof(struct linkStatePacket));
  	lsPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
 
-        /* Template for local linkStatePacket */
+  /* Template for local linkStatePacket */
  	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
  	ifr.ifr_addr.sa_family = AF_INET;
 
@@ -108,33 +108,33 @@
 /* Parse through input file */
  int parseInput(int argc, char *argv[]) {
  	FILE *input_file;
-        /* Line number of current line being read from input_file */
- 	int line_number = 0;
-        /* ptr to next field extracted from current line */
- 	char *next_field;
-        /* ptr to current input  */
- 	char line[MAXLINESIZE+1];
-        /* Variables for peer information */
- 	char *host, *tapDevice, ip[100];
- 	struct peerList *current;
+  /* Line number of current line being read from input_file */
+	int line_number = 0;
+	/* ptr to next field extracted from current line */
+	char *next_field;
+	/* ptr to current input  */
+	char line[MAXLINESIZE+1];
+	/* Variables for peer information */
+	char *host, *tapDevice, ip[100];
+	struct peerList *current;
 
-        /* Verifies proper syntax command line */
+	/* Verifies proper syntax command line */
  	if (argc != 2) {
  		puts("Syntax: cs352proxy <input_file>");
  		return EXIT_FAILURE;
  	}
 
-        /* Initialize local parameters */
+  /* Initialize local parameters */
  	initLocalParams();
 
-        /* Open input file */
+  /* Open input file */
  	input_file = fopen(argv[1], "r");
  	if (input_file == NULL) {
  		perror("argv[1]");
  		return EXIT_FAILURE;
  	}
 
-        /* Iterate through the input line one line at a time */
+  /* Iterate through the input line one line at a time */
  	while (fgets(line, MAXLINESIZE, input_file)) {
  		line_number++;
  		next_field = strtok(line, " \n");
@@ -145,7 +145,7 @@
  		else if (!strcmp(next_field, "linkTimeout")) linkTimeout = atoi(strtok(NULL, " \n"));
  		else if (!strcmp(next_field, "quitAfter")) {
  			quitAfter = atoi(strtok(NULL, " \n"));
-                         /* Set quitAfter sleeper */
+			/* Set quitAfter sleeper */
  			if (pthread_create(&sleep_thread, NULL, sleeper, NULL)) {
  				perror("connect thread");
  				pthread_exit(NULL);
@@ -155,7 +155,7 @@
  			current = (struct peerList *)malloc(sizeof(struct peerList));
  			host = strtok(NULL, " \n");
 
-                        /* Checks for a.b.c.d address, otherwise resolve hostname */
+      /* Checks for a.b.c.d address, otherwise resolve hostname */
  			if (inet_addr(host) == -1) {
  				getIP(host, ip);
  				host = ip;
@@ -186,7 +186,7 @@
  		pthread_mutex_unlock(&peer_mutex);
  	}
 
-        /* Close input file */
+  /* Close input file */
  	fclose(input_file);
  	return 0;
  }
@@ -199,7 +199,7 @@
  	uint16_t type;
  	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
 
-         /* Listen for client packets and parse accordingly */
+	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
  	while (1) {
  		if (debug) printf("///Start while loop for %s\n", send_peerList(peer));
@@ -254,13 +254,13 @@
  	socklen_t addrlen = sizeof(client_addr);
  	struct peerList *new_peer = (struct peerList *)malloc(sizeof(struct peerList));
 
-        /* Allows reuse of socket if not closed properly */
+  /* Allows reuse of socket if not closed properly */
  	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval)) < 0) {
  		perror("setsockopt");
  		exit(1);
  	}
 
-        /* Bind socket */
+  /* Bind socket */
  	memset((char *)&local_addr, 0, sizeof(local_addr));
  	local_addr.sin_family = AF_INET;
  	local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -272,13 +272,13 @@
 
  	printf("Server Mode: Waiting for connections on %s:%d...\n", inet_ntoa(local_info->listenIP), local_info->listenPort);
 
-        /* Listens for connection, backlog 10 */
+  /* Listens for connection, backlog 10 */
  	if (listen(sock_fd, BACKLOG) < 0) {
  		perror("listen");
  		exit(1);
  	}
 
-         /* Wait for connections */
+	/* Wait for connections */
  	while (1) {
  		if ((new_fd = accept(sock_fd, (struct sockaddr *)&client_addr, &addrlen)) < 0) {
  			perror("accept");
@@ -435,7 +435,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			printf("%ld -- %ld\n", current_time.tv_sec, s->lastLS);
  			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
- 				printf("PEER: %shas timed out.\n", send_peerList(s));
+ 				printf("PEER: %s has timed out.\n", send_peerList(s));
  				pthread_mutex_unlock(&peer_mutex);
  				remove_peer(s);
  			}
