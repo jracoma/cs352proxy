@@ -823,7 +823,15 @@
 
 /* Decode dataPacket */
  void decode_dataPacket(char *buffer) {
- 	printf("DATA PACKET: %s\n", buffer);
+ 	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
+ 	dataPacket->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	char *next_field;
+
+ 	dataPacket->header->type = htons(PACKET_DATA);
+ 	dataPacket->header->length = atoi(strtok(buffer, " \n"));
+ 	dataPacket->data = strtok(NULL, " \n");
+
+ 	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(dataPacket->header->type), dataPacket->header->length, dataPacket->data);
  }
 
 /* Decode leavePacket */
