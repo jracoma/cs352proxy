@@ -503,7 +503,7 @@
  		strcat(buffer, buf1);
  		strcat(buffer, send_peerList(s->proxy1));
  		strcat(buffer, send_peerList(s->proxy2));
- 		strcat(buffer, " | ");
+ 		strcat(buffer, "|");
  	}
 
  	printf("\n\n======FLOODING OUT: %s\n", buffer);
