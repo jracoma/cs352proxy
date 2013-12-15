@@ -871,7 +871,7 @@
  		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %s\n", next_field);
  			decode_linkStateRecord(next_field);
- 			next_field = strtok(NULL, "!\n");
+ 			next_field = strtok(NULL, "!");
  		}
  	}
  }
