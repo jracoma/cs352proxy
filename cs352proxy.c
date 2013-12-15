@@ -501,7 +501,7 @@
  		strcat(buffer, buf1);
  		strcat(buffer, send_peerList(s->proxy1));
  		strcat(buffer, send_peerList(s->proxy2));
- 		strcat(buffer, " | ");
+ 		strcat(buffer, " ! ");
  	}
 
  	/* Send linkStatePacket */
@@ -866,7 +866,7 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
- 		next_field = strtok(NULL, "|");
+ 		next_field = strtok(NULL, "!");
  		// while ((next_field = strtok(NULL, "|"))) {
  			printf("NEXT: %s\n", next_field);
  		// }
