@@ -510,6 +510,8 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	if (size < 0) {
  		printf("send error from %s - %d | ERR: %d\n", send_peerList(target), target->in_fd, errno);
+ 		pthread_mutex_unlock(&peer_mutex);
+ 		pthread_mutex_unlock(&linkstate_mutex);
  		remove_peer(target);
  		free(buffer);
  		return;
