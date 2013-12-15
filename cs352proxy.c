@@ -405,9 +405,9 @@
 
  	while (1) {
  		sleep(linkPeriod);
- 			/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
+ 			/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | Records */
  		lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
- 		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers));
+ 		sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers), HASH_COUNT(records));
 
  		printf("OUTGOING PAYLOAD: %s\n", buffer);
  		if (debug) puts("^^^^FLOODING^^^^");
@@ -462,8 +462,6 @@
  	memset(buffer, 0, MAXBUFFSIZE);
  	/* Receive MAC Address and tapDevice */
  	size = recv(peer->net_fd, buffer, MAXBUFFSIZE, 0);
-
-
  	if (size < 0) {
  		printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
  		remove_peer(peer);
@@ -492,6 +490,7 @@
  	pthread_mutex_lock(&linkstate_mutex);
  	struct linkStateRecord *s, *tmp;
  	char *buf1 = malloc(MAXBUFFSIZE);
+ 	int size;
 
  	printf("\n^^FLOODING TO: %s", send_peerList(target));
 
@@ -505,8 +504,16 @@
  		strcat(buffer, " | ");
  	}
 
- 	printf("\n\n======FLOODING OUT: %s\n", buffer);
-
+ 	/* Send linkStatePacket */
+ 	size = send(target->net_fd, buffer, strlen(buffer), 0);
+ 	if (debug) printf("\n\n======FLOODING OUT: %s on %d\n", buffer, target->net_fd);
+ 	memset(buffer, 0, MAXBUFFSIZE);
+ 	if (size < 0) {
+ 		printf("send error from %s - %d | ERR: %d\n", send_peerList(target), target->in_fd, errno);
+ 		remove_peer(peer);
+ 		free(buffer);
+ 		return;
+ 	}
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
  }
