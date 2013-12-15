@@ -877,12 +877,12 @@
  }
 
 /* Decode non-single linkStateRecord information */
- void decode_linkStateRecord(char *buffer) {
+ void decode_linkStateRecord(char *buffers) {
  	struct linkStateRecord *new_record = (struct linkStateRecord *)malloc(sizeof(struct linkStateRecord));
  	struct peerList *new_peerList1 = (struct peerList *)malloc(sizeof(struct peerList)), *new_peerList2 = (struct peerList *)malloc(sizeof(struct peerList));
  	char *next_tok, ip[100];
- 	if (debug) printf("\nDECODING: %s\n", buffer);
- 	new_record->uniqueID.tv_sec = atoi(strtok(buffer, ":\n"));
+ 	if (debug) printf("\nDECODING: %s\n", buffers);
+ 	new_record->uniqueID.tv_sec = atoi(strtok(buffers, ":\n"));
  	new_record->uniqueID.tv_usec = atoi(strtok(NULL, " \n"));
  	new_record->linkWeight = atoi(strtok(NULL, " \n"));
  	next_tok = strtok(NULL, " \n");
