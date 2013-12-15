@@ -111,7 +111,7 @@ char *send_peerList(struct peerList *ls);
 void *flood_packets();
 void *check_timeout();
 void send_singleLinkStatePacket(struct peerList *peer);
-void send_linkStatePacket(struct peerList *target, char *buffer);
+void send_linkStatePacket(struct peerList *target);
 struct linkStateRecord *create_linkStateRecord(struct peerList *proxy1, struct peerList *proxy2);
 void send_leavePacket(struct peerList *leaving, struct peerList *sendto);
 void send_quitPacket();
