@@ -871,7 +871,8 @@
  		printf("INCOMING NUMBER OF RECORDS: %d\n", numrecords);
  		for (i = 0; i < numrecords; i++) {
  			printf("NEXT: %d || %s\n", strlen(next_field), next_field);
- 			strcpy(array[i], next_field);
+ 			array[i] = next_field;
+ 			// strcpy(array[i], next_field);
  			// decode_linkStateRecord(next_field);
  			next_field = strtok(NULL, "!\n");
  		}
