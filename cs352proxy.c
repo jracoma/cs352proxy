@@ -227,6 +227,10 @@
  			}
  		} else if (size < 0) {
  			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
+ 			remove_peer(peer);
+ 			print_peerList();
+ 			print_linkStateRecords();
+ 			return NULL;
  			break;
  		} else if (size == 0) {
  			printf("PEER: Peer Removed %s:%d: Peer disconnected\n", inet_ntoa(peer->listenIP), peer->listenPort);
@@ -399,7 +403,7 @@
  	struct peerList *s, *tmp;
  	char *buffer = malloc(MAXBUFFSIZE);
 
-	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors | uniqueID | linkWeight */
+	/* Serialize Data - Packet Type | Packet Length | Source IP | Source Port | Eth MAC | tapDevice | Neighbors */
  	lsPacket->header->length = sizeof(lsPacket) + sizeof(lsPacket->header) + sizeof(lsPacket->source);
  	sprintf(buffer, "0x%x %d %s %d %02x:%02x:%02x:%02x:%02x:%02x %s %d ", ntohs(lsPacket->header->type), lsPacket->header->length, inet_ntoa(lsPacket->source->listenIP), lsPacket->source->listenPort, (unsigned char)lsPacket->source->ethMAC.sa_data[0], (unsigned char)lsPacket->source->ethMAC.sa_data[1], (unsigned char)lsPacket->source->ethMAC.sa_data[2], (unsigned char)lsPacket->source->ethMAC.sa_data[3], (unsigned char)lsPacket->source->ethMAC.sa_data[4], (unsigned char)lsPacket->source->ethMAC.sa_data[5], dev, HASH_COUNT(peers));
 
@@ -432,7 +436,7 @@
  			pthread_mutex_lock(&peer_mutex);
  			printf("%ld -- %ld\n", current_time.tv_sec, s->lastLS);
  			if ((current_time.tv_sec - s->lastLS) > linkTimeout) {
- 				printf("PEER: %s has timed out.\n", send_peerList(s));
+ 				printf("PEER: %shas timed out.\n", send_peerList(s));
  				pthread_mutex_unlock(&peer_mutex);
  				remove_peer(s);
  			}
@@ -471,7 +475,7 @@ if (size < 0) {
  			remove_peer(peer);
  			print_peerList();
  			print_linkStateRecords();
- 			return NULL;
+ 			return;
  		}
 
  	if (debug) printf("Remote MAC: %s from %d\n", buffer, peer->net_fd);
@@ -487,10 +491,21 @@ if (size < 0) {
  void send_linkStatePacket(struct peerList *target, char *buffer) {
  	pthread_mutex_lock(&peer_mutex);
  	pthread_mutex_lock(&linkstate_mutex);
+ 	struct linkStateRecord *s, *tmp;
+ 	char *buf1 = malloc(MAXBUFFSIZE);
 
  	printf("\n^^FLOODING TO: %s", send_peerList(target));
- 	print_linkStateRecords();
 
+ 	HASH_ITER(hh, records, s, tmp) {
+ 		memset(buf1, 0, MAXBUFFSIZE);
+ 	/* Concat uniqueID | linkWeight */
+sprintf(buf1, "%ld:%ld %d ", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
+strcat(buffer, buf1);
+strcat(buffer, send_peerList(s->proxy1));
+strcat(buffer, send_peerList(s->proxy2));
+ 	}
+
+ 	printf("\n\n======FLOODING OUT: %s\n", buffer);
 
  	pthread_mutex_unlock(&peer_mutex);
  	pthread_mutex_unlock(&linkstate_mutex);
