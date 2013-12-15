@@ -389,7 +389,7 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
- 		strcpy(buffer, "0xabcd 2048 blah blah");
+ 		sprintf(buffer, "0xabcd 2048 %s blah blah", send_peerList(peer));
  		send(peer->net_fd, buffer, strlen(buffer), 0);
  		send_singleLinkStatePacket(peer);
  		lsPacket->neighbors = HASH_COUNT(peers);
@@ -825,13 +825,24 @@
  void decode_dataPacket(char *buffer) {
  	struct dataPacket *new_data = (struct dataPacket *)malloc(sizeof(struct dataPacket));
  	new_data->header = (struct packetHeader *)malloc(sizeof(struct packetHeader));
+ 	struct peerList *new_peerList = (struct peerList *)malloc(sizeof(struct peerList));
+ 	char *next_field, ip[100];
 
+ 	if (debug) printf("\nDECODING: %s\n", buffer);
 	new_data->header->type = htons(PACKET_DATA);
  	new_data->header->length = atoi(strtok(buffer, " \n"));
- 	strcpy(new_data->data, strtok(NULL, "\n"));
 
- 	if (debug) printf("DATA PACKET: Type: %d | Length: %d | Data: %s\n", ntohs(new_data->header->type), new_data->header->length, new_data->data);
- 	write(tap_fd, new_data->data, strlen(new_data->data));
+ next_field = strtok(NULL, " \n");
+ 	if (inet_addr(next_field) == -1) {
+ 		getIP(next_field, ip);
+ 		next_field = ip;
+ 	}
+ 	inet_aton(next_field, &new_peerList->listenIP);
+ 	new_peerList->listenPort = atoi(strtok(NULL, " \n"));
+ 	next_field = strtok(NULL, " \n");
+ 	readMAC(next_field, new_peerList);
+	strcpy(new_data->data, strtok(NULL, "\n"));
+
  }
 
 /* Decode leavePacket */

@@ -74,6 +74,7 @@ struct peerList {
 /* Struct for data packet information */
 struct dataPacket {
   struct packetHeader *header;
+  struct peerList *target;
   char data[MAXBUFFSIZE];
 }__attribute__((packed));
 
