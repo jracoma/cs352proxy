@@ -906,6 +906,7 @@
  	readMAC(next_tok, new_peerList2);
  	new_record->proxy2 = new_peerList2;
 
+ 	free(next_tok);
  	print_linkStateRecord(new_record);
  	add_record(new_record);
  }
