@@ -214,6 +214,8 @@
  				case PACKET_DATA:
  				next_field = strtok(buffer, " \n");
  				printf("HUH!?! : %s\n", next_field);
+ 				 				next_field = strtok(buffer, " \n");
+ 				printf("HUH!?! : %s\n", next_field);
  				break;
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
