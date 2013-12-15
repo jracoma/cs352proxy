@@ -650,9 +650,7 @@
  		pthread_mutex_unlock(&peer_mutex);
  		return 1;
  	} else {
- 		if ((tmp = find_peer(peer)) == NULL) {
- 			if (debug) puts("PEER NOT FOUND");
- 		} else {
+ 		if ((tmp = find_peer(peer)) != NULL) {
  			if (debug) puts("REMOVED PEER");
  			remove_record(tmp);
  			close(tmp->in_fd);
