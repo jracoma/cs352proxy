@@ -905,7 +905,7 @@
  	new_peerList1->listenPort = atoi(strtok(NULL, " \n"));
  	next_field = strtok(NULL, " \n");
  	readMAC(next_field, new_peerList2);
- 	new_record->proxy1 = new_peerList2;
+ 	new_record->proxy2 = new_peerList2;
 
  	print_linkStateRecord(new_record);
  	add_record(new_record);
