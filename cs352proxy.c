@@ -866,9 +866,10 @@
  		decode_singleLinkStateRecord(next_field, in_fd);
  	} else {
  		if (debug) puts("NOT SINGLE!");
- 		while (next_field = strtok(NULL, "|")) {
+ 		next_field = strtok(NULL, "|");
+ 		// while ((next_field = strtok(NULL, "|"))) {
  			printf("NEXT: %s\n", next_field);
- 		}
+ 		// }
  		decode_linkStateRecord(next_field);
  	}
  }
