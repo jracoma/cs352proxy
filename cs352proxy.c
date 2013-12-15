@@ -497,7 +497,7 @@
  	HASH_ITER(hh, records, s, tmp) {
  		memset(buf1, 0, MAXBUFFSIZE);
  	/* Concat uniqueID | linkWeight */
- 		sprintf(buf1, "%ld:%ld %d ", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
+ 		sprintf(buf1, "%ld:%ld %d", s->uniqueID.tv_sec, s->uniqueID.tv_usec, s->linkWeight);
  		strcat(buffer, buf1);
  		strcat(buffer, send_peerList(s->proxy1));
  		strcat(buffer, send_peerList(s->proxy2));
