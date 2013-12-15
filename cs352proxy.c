@@ -197,7 +197,7 @@
  	struct peerList *peer = (struct peerList *)temp;
  	int size;
  	uint16_t type;
- 	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE];
+ 	char buffer[MAXBUFFSIZE], buffer2[MAXBUFFSIZE], *next_field;
 
 	/* Listen for client packets and parse accordingly */
  	printf("Client connected from %s:%d - %d.\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->in_fd);
@@ -211,6 +211,10 @@
  			type = (uint16_t)strtol(buffer2, (char **)&buffer2, 0);
  			if (debug) printf("TYPE from %s: %x\n", send_peerList(peer), type);
  			switch (type) {
+ 				case PACKET_DATA:
+ 				next_field = strtok(buffer, " \n");
+ 				printf("HUH!?! : %s\n", next_field);
+ 				break;
  				case PACKET_LINKSTATE:
  				strncpy(buffer, buffer+7, sizeof(buffer));
  				decode_linkStatePacket(buffer, peer->in_fd);
@@ -224,6 +228,7 @@
  				break;
  				default:
  				if (debug) printf("Negative.\n");
+ 				break;
  			}
  		} else if (size < 0) {
  			printf("recv error from %s - %d | ERR: %d\n", send_peerList(peer), peer->in_fd, errno);
@@ -380,6 +385,8 @@
  		strcpy(buffer, peer->tapDevice);
  		peer->net_fd = new_fd;
  		printf("NEW PEER: Connected to server %s:%d - %d\n", inet_ntoa(peer->listenIP), peer->listenPort, peer->net_fd);
+ 		strcpy(buffer, "0xabcd 2048 blah blah");
+ 		send(peer->net_fd, buffer, strlen(buffer), 0);
  		send_singleLinkStatePacket(peer);
  		lsPacket->neighbors = HASH_COUNT(peers);
  		if (debug) print_linkStatePacket();
